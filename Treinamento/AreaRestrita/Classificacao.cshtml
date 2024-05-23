@@ -1,0 +1,108 @@
+@{
+    Page.Title = "Classificacao";
+    Layout = "~/AreaRestrita/_Layout.cshtml";
+}
+
+@using System.Data.SqlClient
+
+@functions {
+    private class Classificacao
+    {
+        public string NomeTime { get; set; }
+        public int GolsMarcados { get; set; }
+        public int GolsSofridos { get; set; }
+        public int SaldoGols { get; set; }
+        public int Pontos { get; set; }
+
+    }
+
+    List<Classificacao> classificacoes = null;
+
+    private void Consultar()
+    {
+
+        string procedure = GetNomeProcedure("C");
+        Dao dao = new Dao();
+
+        classificacoes = dao.ExecutarProcedureList<Classificacao>(procedure, null);
+
+    }
+
+    private string GetNomeProcedure(string acao)
+    {
+        switch (acao)
+        {
+            case "C": return "Stp_LGU_Classificacao_Sel";
+            default:
+                return null;
+        }
+    }
+
+
+
+    private void Manutencao()
+    {
+
+        string procedure = GetNomeProcedure(null);
+
+        Dao dao = new Dao();
+
+        dao.ExecutarProcedure(procedure, null);
+
+    }
+}
+
+@{
+    Consultar();
+}
+
+@section head {
+    <link href="~/Scripts/Style.css" rel="stylesheet">
+}
+
+<body>
+    <form name="form1" method="post">
+        <div class="container">
+            <h1>Classificacao</h1>
+
+            @if (classificacoes != null)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>NomeTime</th>
+                            <th>GolsMarcados</th>
+                            <th>GolsSofridos</th>
+                            <th>SaldoGols</th>
+                            <th>Pontos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Classificacao item in classificacoes)
+                        {
+                            <tr>
+                                <td>@item.NomeTime</td>
+                                <td>@item.GolsMarcados</td>
+                                <td>@item.GolsSofridos</td>
+                                <td>@item.SaldoGols</td>
+                                <td>@item.Pontos</td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </form>
+
+    <script>
+        function consultar() {
+            document.form1.acao.value = "C";
+            document.form1.submit();
+        }
+
+       
+    </script>
+</body>
+
+
