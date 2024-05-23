@@ -1,5 +1,5 @@
 ﻿@{
-    Page.Title = "Time";
+    Page.Title = "Artilharia";
     Layout = "~/AreaRestrita/_Layout.cshtml";
 }
 
@@ -8,9 +8,9 @@
 @functions {
     private class Artilharia
     {
-        public string Time { get; set; }
-        public string Artilheiro { get; set; }
-        public int GolsMarcados { get; set; }
+        public string NomeTime { get; set; }
+        public string NomeJogador { get; set; }
+        public int TotalGols { get; set; }
 
     }
 
@@ -84,19 +84,19 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Time</th>
-                            <th>Artilheiro</th>
-                            <th>GolsMarcados</th>
+                            <th>NomeTime</th>
+                            <th>NomeJogador</th>
+                            <th>TotalGols</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (Artilharia item in artilharias)
                         {
                             <tr>
-                                <td>@item.Time</td>
-                                <td>@item.Artilheiro</td>
+                                <td>@item.NomeTime</td>
+                                <td>@item.NomeJogador</td>
                                 <td>
-                                    @item.GolsMarcados
+                                    @item.TotalGols
                                 </td>
                             </tr>
 
