@@ -1,0 +1,156 @@
+﻿@{
+    Page.Title = "Time";
+    Layout = "~/AreaRestrita/_Layout.cshtml";
+}
+
+@using System.Data.SqlClient
+
+@functions {
+    private class Time
+    {
+        public string IdTime { get; set; }
+        public string Nome { get; set; }
+    }
+
+
+    string acao = null;
+    List<Time> times = null;
+    string idTime = null;
+    string nome = null;
+
+
+    private void AlimentaVariaveis()
+    {
+        acao = Request.Form["acao"];
+        idTime = Request.Form["idTime"];
+        nome = Request.Form["nome"];
+    }
+
+    private void Consultar()
+    {
+
+        string procedure = GetNomeProcedure("C");
+        Dao dao = new Dao();
+
+        times = dao.ExecutarProcedureList<Time>(procedure, null);
+
+    }
+
+    private string GetNomeProcedure(string acao)
+    {
+        switch (acao)
+        {
+            case "C": return "stp_LGU_Time_Sel";
+            case "I": return "stp_LGU_Time_Ins";
+            case "A": return "stp_LGU_Time_Upd";
+            case "E": return "stp_LGU_Time_Del";
+            default:
+                return null;
+        }
+    }
+
+    private void Incluir() { }
+    private void Alterar() { }
+    private void Excluir() { }
+
+    private void Manutencao()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@IdTime", idTime);
+        parametros.Add("@Nome", nome);
+
+        string procedure = GetNomeProcedure(acao);
+
+        Dao dao = new Dao();
+
+        dao.ExecutarProcedure(procedure, parametros);
+
+    }
+}
+
+@{
+    AlimentaVariaveis();
+
+    if(acao == "I" || acao == "A" || acao == "E")
+    {
+
+        Manutencao();
+    }
+
+
+    Consultar();
+    
+}
+
+@section head {
+    <link href="~/Scripts/Style.css" rel="stylesheet">
+}
+
+<body>
+    <form name="form1" method="post">
+        <input type="hidden" name="acao" id="acao" />
+        <input type="hidden" name="idTime" id="idTime" value="@idTime" />
+
+        <div class="container">
+            <h1>Time</h1>
+
+
+            <div>
+                <label for="nome">Nome: </label>
+                <input type="text" name="nome" id="nome" value="@nome" />
+            </div>
+
+            <button type="button" onclick="executarAcao('I')">Incluir</button>
+            <button type="button" onclick="executarAcao('E')">Excluir</button>
+            <button type="button" onclick="executarAcao('A')">Alterar</button>
+
+            @if (times != null)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>IdTime</th>
+                            <th>Nome</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Time item in times)
+                        {
+                            <tr>
+                                <td>@item.IdTime</td>
+                                <td>@item.Nome</td>
+                                <td>
+                                    <button type="button" onclick="editar('@item.IdTime', '@item.Nome')">Editar</button>
+                                </td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </form>
+
+    <script>
+        function executarAcao(acao) {
+            document.form1.acao.value = acao;
+            document.form1.submit();
+        }
+
+
+        function consultar() {
+            document.form1.acao.value = "C";
+            document.form1.submit();
+        }
+
+        function editar(idTime, nome) {
+            console.log({ idTime, nome });
+            document.form1.idTime.value = idTime;
+            document.form1.nome.value = nome;
+        }
+    </script>
+</body>
+
+
