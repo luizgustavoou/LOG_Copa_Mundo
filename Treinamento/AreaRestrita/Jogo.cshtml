@@ -1,0 +1,220 @@
+﻿@{
+    Page.Title = "Jogo";
+    Layout = "~/AreaRestrita/_Layout.cshtml";
+}
+
+@functions {
+    //private enum Acao
+    //    {
+    //        INCLUIR,
+    //        CONSULTAR,
+    //        EDITAR,
+    //        EXCLUIR
+    //    }
+
+    private class Jogo
+    {
+        public string IdJogo { get; set; }
+        public string IdTime1 { get; set; }
+        public string NomeTime1 { get; set; }
+        public string IdTime2 { get; set; }
+        public string NomeTime2 { get; set; }
+        public int Placar1 { get; set; }
+        public int Placar2 { get; set; }
+
+    }
+
+    private class Time
+    {
+        public string IdTime { get; set; }
+        public string Nome { get; set; }
+    }
+
+
+    string acao = null;
+    string idJogo = null;
+    string idTime1 = null;
+    string idTime2 = null;
+
+
+    List<Jogo> jogos = null;
+    List<Time> times = null;
+
+
+
+    private void AlimentaVariaveis()
+    {
+        acao = Request.Form["acao"];
+        idJogo = Request.Form["idJogo"];
+        idTime1 = Request.Form["idTime1"];
+        idTime2 = Request.Form["idTime2"];
+    }
+
+    private void ConsultarJogos()
+    {
+
+        string procedure = GetNomeProcedure("C");
+        Dao dao = new Dao();
+
+        jogos = dao.ExecutarProcedureList<Jogo>(procedure, null);
+
+    }
+
+    private void ConsultarTimes()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@TipoConsulta", 1);
+
+        string procedure = GetNomeProcedure("C");
+
+        Dao dao = new Dao();
+
+        times = dao.ExecutarProcedureList<Time>(procedure, parametros);
+    }
+
+    private string GetNomeProcedure(string acao)
+    {
+        switch (acao)
+        {
+            case "C": return "stp_LGU_Jogo_Sel";
+            case "I": return "stp_LGU_Jogo_Ins";
+            case "A": return "stp_LGU_Jogo_Upd";
+            case "E": return "stp_LGU_Jogo_Del";
+
+            default:
+                return null;
+        }
+    }
+
+    private void Manutencao()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@idJogo", idJogo);
+        parametros.Add("@idTime1", idTime1);
+        parametros.Add("@idTime2", idTime2);
+
+        string procedure = GetNomeProcedure(acao);
+
+        Dao dao = new Dao();
+
+        dao.ExecutarProcedure(procedure, parametros);
+
+
+    }
+}
+
+@{
+    AlimentaVariaveis();
+
+    if(acao == "I" || acao == "A" || acao == "E")
+    {
+
+        Manutencao();
+    }
+
+    ConsultarTimes();
+    ConsultarJogos();
+
+}
+
+@section head {
+    <link href="~/Scripts/Style.css" rel="stylesheet">
+}
+
+<body>
+    <form name="form1" id="form1" method="post">
+        <input type="hidden" name="acao" id="acao" />
+        <input type="hidden" name="idJogo" id="idJogo" value="@idJogo" />
+
+        <div class="container">
+            <h1>Jogo</h1>
+
+            <div>
+                <label for="idTime1">Time 1: </label>
+
+                <select name="idTime1" id="idTime1">
+                    <option value=""></option>
+                    @foreach (Time item in times)
+                    {
+                        <option value="@item.IdTime">@item.Nome</option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label for="idTime2">Time 2: </label>
+
+                <select name="idTime2" id="idTime2">
+                    <option value=""></option>
+                    @foreach (Time item in times)
+                    {
+                        <option value="@item.IdTime">@item.Nome</option>
+                    }
+                </select>
+            </div>
+
+            <button type="button" onclick="executarAcao('I')">Incluir</button>
+            <button type="button" onclick="executarAcao('E')">Excluir</button>
+            <button type="button" onclick="executarAcao('A')">Alterar</button>
+
+        </div>
+
+        @if (jogos != null)
+        {
+            <main>
+                <section>
+                    @foreach (Jogo item in jogos)
+                    {
+                        <div>
+                            <span>@item.NomeTime1</span>
+                            <span>@item.Placar1</span>
+                            <span>@item.NomeTime2</span>
+                            <span>@item.Placar2</span>
+
+                            @if (item.Placar1 == 0  && item.Placar2 == 0)
+                            {
+                            <span>
+                                <button type="button" onclick="editar('@item.IdJogo', '@item.IdTime1', '@item.IdTime2')">
+                                    Editar
+                                </button>
+                            </span>
+
+                            }
+                        </div>
+
+                    }
+                </section>
+            </main>
+        }
+    </form>
+
+    <script>
+
+        const form = document.getElementById("form1");
+
+        function executarAcao(acao) {
+            form.acao.value = acao;
+
+
+            if (form.idTime1.value == form.idTime2.value) {
+
+                window.alert("Não é possível selecionar o mesmo time nos campos");  
+
+                return;
+            }
+
+            form.submit();
+
+        }
+
+        function editar(idJogo, idTime1, idTime2) { 
+            form.idJogo.value = idJogo;
+            form.idTime2.value = idTime2;
+            form.idTime1.value = idTime1;
+        }
+    </script>
+</body>
+
+

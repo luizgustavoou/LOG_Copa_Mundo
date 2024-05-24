@@ -35,7 +35,6 @@
     string nome = null;
     string idTime = null;
 
-    string tipoConsulta = null;
 
     List<Jogador> jogadores = null;
     List<Time> times = null;
@@ -48,7 +47,6 @@
         idJogador = Request.Form["idJogador"];
         nome = Request.Form["nome"];
         idTime = Request.Form["idTime"];
-        tipoConsulta = Request.Form["tipoConsulta"];
     }
 
     private void ConsultarJogadores()
@@ -95,7 +93,6 @@
         parametros.Add("@IdJogador", idJogador);
         parametros.Add("@Nome", nome);
         parametros.Add("@IdTime", idTime);
-        parametros.Add("@TipoConsulta", tipoConsulta);
 
         string procedure = GetNomeProcedure(acao);
 
@@ -141,7 +138,8 @@
 
             <div>
                 <label for="idTime">Time: </label>
-                <select name="idTime" id="idTime">
+           
+                <select name="idTime" id="idTime" >
                     <option value=""></option>
                     @foreach (Time item in times)
                     {

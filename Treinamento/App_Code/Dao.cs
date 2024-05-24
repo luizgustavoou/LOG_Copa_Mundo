@@ -6,9 +6,6 @@ using System.Reflection;
 
 public class Dao
 {
-    
-
-
     private readonly string stringConexao = "Server=winserver2022;Database=dbTreinamento;Trusted_Connection=True;";
 
 
