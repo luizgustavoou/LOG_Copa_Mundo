@@ -1,11 +1,19 @@
 ﻿@{
-    Page.Title = "Time";
+    Page.Title = "Jogador";
     Layout = "~/AreaRestrita/_Layout.cshtml";
 }
 
 @using System.Data.SqlClient
 
 @functions {
+    private class Jogador
+    {
+        public string IdJogador { get; set; }
+        public string Nome { get; set; }
+        public string IdTime { get; set; }
+
+    }
+
     private class Time
     {
         public string IdTime { get; set; }
@@ -14,16 +22,23 @@
 
 
     string acao = null;
-    List<Time> times = null;
-    string idTime = null;
+    string idJogador = null;
     string nome = null;
+    string idTime = null;
+
+    List<Jogador> jogadores = null;
+    List<Time> times = null;
+
 
 
     private void AlimentaVariaveis()
     {
         acao = Request.Form["acao"];
-        idTime = Request.Form["idTime"];
+        idJogador = Request.Form["idJogador"];
         nome = Request.Form["nome"];
+        idTime = Request.Form["idTime"];
+
+
     }
 
     private void Consultar()
@@ -32,7 +47,8 @@
         string procedure = GetNomeProcedure("C");
         Dao dao = new Dao();
 
-        times = dao.ExecutarProcedureList<Time>(procedure, null);
+        jogadores = dao.ExecutarProcedureList<Jogador>(procedure, null);
+        times = dao.ExecutarProcedureList<Time>(GetNomeProcedure("CT"), null);
 
     }
 
@@ -40,34 +56,32 @@
     {
         switch (acao)
         {
-            case "C": return "stp_LGU_Time_Sel";
-            case "I": return "stp_LGU_Time_Ins";
-            case "A": return "stp_LGU_Time_Upd";
-            case "E": return "stp_LGU_Time_Del";
+            case "C": return "stp_LGU_Jogador_Sel";
+            case "I": return "stp_LGU_Jogador_Ins";
+            case "A": return "stp_LGU_Jogador_Upd";
+            case "E": return "stp_LGU_Jogador_Del";
+
+            case "CT": return "stp_LGU_Time_Sel";
+
             default:
                 return null;
         }
     }
 
-    private void Incluir() { }
-    private void Alterar() { }
-    private void Excluir() { }
-
     private void Manutencao()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
-        parametros.Add("@IdTime", idTime);
+        parametros.Add("@IdJogador", idJogador);
         parametros.Add("@Nome", nome);
+        parametros.Add("@IdTime", idTime);
 
-        string procedure = GetNomeProcedure(acao);
+        Console.WriteLine(parametros);
+        //string procedure = GetNomeProcedure(acao);
 
-    
-        
+        //Dao dao = new Dao();
 
-        Dao dao = new Dao();
-
-        dao.ExecutarProcedure(procedure, parametros);
+        //dao.ExecutarProcedure(procedure, parametros);
 
     }
 }
@@ -93,10 +107,10 @@
 <body>
     <form name="form1" method="post">
         <input type="hidden" name="acao" id="acao" />
-        <input type="hidden" name="idTime" id="idTime" value="@idTime" />
+        <input type="hidden" name="idJogador" id="idJogador" value="@idJogador" />
 
         <div class="container">
-            <h1>Time</h1>
+            <h1>Jogador</h1>
 
 
             <div>
@@ -104,28 +118,38 @@
                 <input type="text" name="nome" id="nome" value="@nome" />
             </div>
 
+            <div>
+                <label for="idTime">Time: </label>
+                <select name="idTime" id="idTime">
+                    @foreach (Time item in times)
+                    {
+                        <option value="@item.IdTime">@item.Nome</option>
+                    }
+                </select>
+            </div>
+
             <button type="button" onclick="executarAcao('I')">Incluir</button>
             <button type="button" onclick="executarAcao('E')">Excluir</button>
             <button type="button" onclick="executarAcao('A')">Alterar</button>
 
-            @if (times != null)
+            @if (jogadores != null)
             {
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>IdTime</th>
+                            <th>IdJogador</th>
                             <th>Nome</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (Time item in times)
+                        @foreach (Jogador item in jogadores)
                         {
                             <tr>
-                                <td>@item.IdTime</td>
+                                <td>@item.IdJogador</td>
                                 <td>@item.Nome</td>
                                 <td>
-                                    <button type="button" onclick="editar('@item.IdTime', '@item.Nome')">Editar</button>
+                                    <button type="button" onclick="editar('@item.IdJogador', '@item.Nome', '@item.IdTime')">Editar</button>
                                 </td>
                             </tr>
 
@@ -142,9 +166,11 @@
             document.form1.submit();
         }
 
-        function editar(idTime, nome) {
-            document.form1.idTime.value = idTime;
+        function editar(idJogador, nome, idTime) {
+            
+            document.form1.idJogador.value = idJogador;
             document.form1.nome.value = nome;
+            document.form1.idTime.value = idTime;
         }
     </script>
 </body>

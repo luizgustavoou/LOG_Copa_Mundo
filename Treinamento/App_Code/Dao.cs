@@ -97,7 +97,6 @@ public class Dao
                 foreach (var property in typeof(T).GetProperties())
                 {
                     string nomecoluna;
-
                     if(property.GetCustomAttribute<ColumnAttribute>() != null)
                     {
                         nomecoluna = property.GetCustomAttribute<ColumnAttribute>().Name;
