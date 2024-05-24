@@ -6,11 +6,20 @@
 @using System.Data.SqlClient
 
 @functions {
+    //private enum Acao
+    //    {
+    //        INCLUIR,
+    //        CONSULTAR,
+    //        EDITAR,
+    //        EXCLUIR
+    //    }
+
     private class Jogador
     {
         public string IdJogador { get; set; }
         public string Nome { get; set; }
         public string IdTime { get; set; }
+        public string NomeTime { get; set; }
 
     }
 
@@ -26,6 +35,8 @@
     string nome = null;
     string idTime = null;
 
+    string tipoConsulta = null;
+
     List<Jogador> jogadores = null;
     List<Time> times = null;
 
@@ -37,19 +48,30 @@
         idJogador = Request.Form["idJogador"];
         nome = Request.Form["nome"];
         idTime = Request.Form["idTime"];
-
-
+        tipoConsulta = Request.Form["tipoConsulta"];
     }
 
-    private void Consultar()
+    private void ConsultarJogadores()
     {
 
         string procedure = GetNomeProcedure("C");
         Dao dao = new Dao();
 
         jogadores = dao.ExecutarProcedureList<Jogador>(procedure, null);
-        times = dao.ExecutarProcedureList<Time>(GetNomeProcedure("CT"), null);
 
+    }
+
+    private void ConsultarTimes()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@TipoConsulta", 1);
+
+        string procedure = GetNomeProcedure("C");
+
+        Dao dao = new Dao();
+
+        times = dao.ExecutarProcedureList<Time>(procedure, parametros);
     }
 
     private string GetNomeProcedure(string acao)
@@ -60,8 +82,6 @@
             case "I": return "stp_LGU_Jogador_Ins";
             case "A": return "stp_LGU_Jogador_Upd";
             case "E": return "stp_LGU_Jogador_Del";
-
-            case "CT": return "stp_LGU_Time_Sel";
 
             default:
                 return null;
@@ -75,13 +95,14 @@
         parametros.Add("@IdJogador", idJogador);
         parametros.Add("@Nome", nome);
         parametros.Add("@IdTime", idTime);
+        parametros.Add("@TipoConsulta", tipoConsulta);
 
-        Console.WriteLine(parametros);
-        //string procedure = GetNomeProcedure(acao);
+        string procedure = GetNomeProcedure(acao);
 
-        //Dao dao = new Dao();
+        Dao dao = new Dao();
 
-        //dao.ExecutarProcedure(procedure, parametros);
+        dao.ExecutarProcedure(procedure, parametros);
+
 
     }
 }
@@ -95,9 +116,9 @@
         Manutencao();
     }
 
+    ConsultarTimes();
+    ConsultarJogadores();
 
-    Consultar();
-    
 }
 
 @section head {
@@ -121,6 +142,7 @@
             <div>
                 <label for="idTime">Time: </label>
                 <select name="idTime" id="idTime">
+                    <option value=""></option>
                     @foreach (Time item in times)
                     {
                         <option value="@item.IdTime">@item.Nome</option>
@@ -139,7 +161,8 @@
                         <tr>
                             <th>IdJogador</th>
                             <th>Nome</th>
-                            <th></th>
+                            <th>Time</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -148,6 +171,7 @@
                             <tr>
                                 <td>@item.IdJogador</td>
                                 <td>@item.Nome</td>
+                                <td>@item.NomeTime</td>
                                 <td>
                                     <button type="button" onclick="editar('@item.IdJogador', '@item.Nome', '@item.IdTime')">Editar</button>
                                 </td>
