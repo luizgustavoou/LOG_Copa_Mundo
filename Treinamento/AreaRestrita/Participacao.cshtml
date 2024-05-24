@@ -1,9 +1,21 @@
 ﻿@{
-    Page.Title = "Time";
+    Page.Title = "Participacao";
     Layout = "~/AreaRestrita/_Layout.cshtml";
 }
 
 @functions {
+    private class Jogo
+    {
+        public string IdJogo { get; set; }
+        public string IdTime1 { get; set; }
+        public string NomeTime1 { get; set; }
+        public string IdTime2 { get; set; }
+        public string NomeTime2 { get; set; }
+        public int Placar1 { get; set; }
+        public int Placar2 { get; set; }
+
+    }
+
     private class Time
     {
         public string IdTime { get; set; }
@@ -12,9 +24,11 @@
 
 
     string acao = null;
-    List<Time> times = null;
     string idTime = null;
     string nome = null;
+
+    List<Jogo> jogos = null;
+    List<Time> times = null;
 
 
     private void AlimentaVariaveis()
@@ -24,7 +38,7 @@
         nome = Request.Form["nome"];
     }
 
-    private void Consultar()
+    private void ConsultarParticipacoes()
     {
 
         string procedure = GetNomeProcedure("C");
@@ -34,14 +48,28 @@
 
     }
 
+    private void ConsultarJogos()
+    {
+
+        string procedure = GetNomeProcedure("C");
+        Dao dao = new Dao();
+
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@TipoRetorno", 1);
+
+        jogos = dao.ExecutarProcedureList<Jogo>(procedure, parametros);
+
+    }
+
     private string GetNomeProcedure(string acao)
     {
         switch (acao)
         {
-            case "C": return "stp_LGU_Time_Sel";
-            case "I": return "stp_LGU_Time_Ins";
-            case "A": return "stp_LGU_Time_Upd";
-            case "E": return "stp_LGU_Time_Del";
+            case "C": return "stp_LGU_Participacao_Sel";
+            case "I": return "stp_LGU_Participacao_Ins";
+            case "A": return "stp_LGU_Participacao_Upd";
+            case "E": return "stp_LGU_Participacao_Del";
             default:
                 return null;
         }
@@ -56,13 +84,12 @@
 
         string procedure = GetNomeProcedure(acao);
 
-    
-        
+
+
 
         Dao dao = new Dao();
 
         dao.ExecutarProcedure(procedure, parametros);
-
     }
 }
 
@@ -75,9 +102,9 @@
         Manutencao();
     }
 
+    ConsultarParticipacoes();
+    ConsultarJogos();
 
-    Consultar();
-    
 }
 
 @section head {
@@ -90,7 +117,7 @@
         <input type="hidden" name="idTime" id="idTime" value="@idTime" />
 
         <div class="container">
-            <h1>Time</h1>
+            @*<h1>Time</h1>
 
 
             <div>
@@ -126,7 +153,31 @@
                         }
                     </tbody>
                 </table>
+            }*@
+
+            <h1>Escolha uma partida</h1>
+                
+            @if (jogos != null)
+            {
+                <div>
+                    <select name="idJogoSelecionado" id="idJogoSelecionado">
+                        @foreach (Jogo item in jogos)
+                        {
+                            <option value="@item.IdJogo">
+                                <span>@item.NomeTime1</span>
+                                <span>@item.Placar1</span>
+                                <span>X</span>
+                                <span>@item.NomeTime2</span>
+                                <span>@item.Placar2</span>
+                            </option>
+                        }
+                    </select>
+                </div>
+         
             }
+            
+
+
         </div>
     </form>
 
