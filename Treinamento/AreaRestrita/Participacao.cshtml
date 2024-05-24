@@ -16,10 +16,12 @@
 
     }
 
-    private class Time
+    private class Participacao
     {
-        public string IdTime { get; set; }
-        public string Nome { get; set; }
+        public string IdParticipacao { get; set; }
+        public string idJogo { get; set; }
+        public string idJogador { get; set; }
+        public string GolsMarcados { get; set; }
     }
 
 
@@ -28,7 +30,7 @@
     string nome = null;
 
     List<Jogo> jogos = null;
-    List<Time> times = null;
+    List<Participacao> partipacoes = null;
 
 
     private void AlimentaVariaveis()
@@ -44,7 +46,7 @@
         string procedure = GetNomeProcedure("C");
         Dao dao = new Dao();
 
-        times = dao.ExecutarProcedureList<Time>(procedure, null);
+        partipacoes = dao.ExecutarProcedureList<Participacao>(procedure, null);
 
     }
 
@@ -117,64 +119,37 @@
         <input type="hidden" name="idTime" id="idTime" value="@idTime" />
 
         <div class="container">
-            @*<h1>Time</h1>
-
+            
+            @*Screen 1*@
 
             <div>
-                <label for="nome">Nome: </label>
-                <input type="text" name="nome" id="nome" value="@nome" />
+                <h1>Escolha uma partida</h1>
+                
+                @if (jogos != null)
+                {
+                    <div>
+                        <select name="idJogoSelecionado" id="idJogoSelecionado">
+                            @foreach (Jogo item in jogos)
+                            {
+                                <option value="@item.IdJogo">
+                                    <span>@item.NomeTime1</span>
+                                    <span>@item.Placar1</span>
+                                    <span>X</span>
+                                    <span>@item.NomeTime2</span>
+                                    <span>@item.Placar2</span>
+                                </option>
+                            }
+                        </select>
+                    </div>
+         
+                }
             </div>
 
-            <button type="button" onclick="executarAcao('I')">Incluir</button>
-            <button type="button" onclick="executarAcao('E')">Excluir</button>
-            <button type="button" onclick="executarAcao('A')">Alterar</button>
+            @*Screen 2*@
 
-            @if (times != null)
-            {
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>IdTime</th>
-                            <th>Nome</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (Time item in times)
-                        {
-                            <tr>
-                                <td>@item.IdTime</td>
-                                <td>@item.Nome</td>
-                                <td>
-                                    <button type="button" onclick="editar('@item.IdTime', '@item.Nome')">Editar</button>
-                                </td>
-                            </tr>
+            <div>
 
-                        }
-                    </tbody>
-                </table>
-            }*@
-
-            <h1>Escolha uma partida</h1>
-                
-            @if (jogos != null)
-            {
-                <div>
-                    <select name="idJogoSelecionado" id="idJogoSelecionado">
-                        @foreach (Jogo item in jogos)
-                        {
-                            <option value="@item.IdJogo">
-                                <span>@item.NomeTime1</span>
-                                <span>@item.Placar1</span>
-                                <span>X</span>
-                                <span>@item.NomeTime2</span>
-                                <span>@item.Placar2</span>
-                            </option>
-                        }
-                    </select>
-                </div>
-         
-            }
+            </div>
             
 
 
