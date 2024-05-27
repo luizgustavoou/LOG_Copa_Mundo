@@ -26,13 +26,11 @@
 
     private class Participacao
     {
-        public string IdParticipacao { get; set; }
-        public string idJogo { get; set; }
+   
         public string IdTime { get; set; }
         public string NomeTime { get; set; }
         public string IdJogador { get; set; }
         public string NomeJogador { get; set; }
-
         public int GolsMarcados { get; set; }
     }
 
@@ -167,6 +165,12 @@
                 @if (jogos != null)
                 {
                     <select name="idJogoSelecionado" id="idJogoSelecionado">
+                        @if (idJogo == null)
+                        {
+                            <option value="" selected>
+                           
+                            </option>
+                        }
                         @foreach (Jogo item in jogos)
                         {
                             if (@item.IdJogo == idJogo)
@@ -181,7 +185,7 @@
                             }
                             else
                             {
-                                <option value="@item.IdJogo" >
+                                <option value="@item.IdJogo">
                                     <span>@item.NomeTime1</span>
                                     <span>@item.Placar1</span>
                                     <span>X</span>
@@ -233,7 +237,7 @@
                     <span>@item.NomeJogador</span>
                     <span>@item.GolsMarcados</span>
                     <span>
-                        <button type="button" onclick="editar('@item.idJogo', '@item.IdJogador')">+1 Gols</button>
+                        <button type="button" onclick="editar('@idJogo', '@item.IdJogador')">+1 Gols</button>
                     </span>
                 </div>
 
