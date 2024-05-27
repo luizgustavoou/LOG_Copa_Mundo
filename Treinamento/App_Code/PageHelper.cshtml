@@ -1,6 +1,6 @@
 @helper MakeAlert()
 {
-    foreach (var item in ModelState)
+    foreach (var item in ModelState.Where(x => x.Key.StartsWith("alert-")))
     {
         foreach (var item1 in item.Value.Errors)
         {

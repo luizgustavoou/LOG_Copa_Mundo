@@ -12,6 +12,8 @@ public class Dao
     public void ExecutarProcedure(string procedure, Dictionary<string, object> parametros)
     {
 
+        List<SqlError> errors = null;
+
         SqlConnection conn = new SqlConnection(stringConexao);
 
         conn.Open();
@@ -21,7 +23,31 @@ public class Dao
 
         AdicionarParametros(cmmd, parametros);
 
+        // seta a configuração para disparar um evento, quando acontecer um erro de baixa relevancia na procedure
+        conn.FireInfoMessageEventOnUserErrors = true;
+
+        conn.InfoMessage += new SqlInfoMessageEventHandler((object sender, SqlInfoMessageEventArgs e) =>
+        {
+            // se a lista nao estiver instanciada
+            if(errors == null)
+            {
+                // instancia uma nova lista
+                errors = new List<SqlError>();
+            }
+
+            foreach (SqlError item in e.Errors)
+            {
+                // adiciona os errors na lista
+                errors.Add(item);
+            }
+        });
+
         cmmd.ExecuteNonQuery();
+
+        if(errors != null)
+        {
+            throw new ErroExecucaoException(errors);
+        }
 
         cmmd.Dispose();
 
@@ -40,6 +66,7 @@ public class Dao
 
     public List<T> ExecutarProcedureList<T>(string procedure, Dictionary<string, object> parametros)
     {
+        List<SqlError> errors = null;
         List<T> list = null;
 
 
@@ -52,7 +79,31 @@ public class Dao
 
         AdicionarParametros(cmmd, parametros);
 
+        // seta a configuração para disparar um evento, quando acontecer um erro de baixa relevancia na procedure
+        conn.FireInfoMessageEventOnUserErrors = true;
+
+        conn.InfoMessage += new SqlInfoMessageEventHandler((object sender, SqlInfoMessageEventArgs e) =>
+        {
+            // se a lista nao estiver instanciada
+            if (errors == null)
+            {
+                // instancia uma nova lista
+                errors = new List<SqlError>();
+            }
+
+            foreach (SqlError item in e.Errors)
+            {
+                // adiciona os errors na lista
+                errors.Add(item);
+            }
+        });
+
         SqlDataReader dr = cmmd.ExecuteReader();
+
+        if (errors != null)
+        {
+            throw new ErroExecucaoException(errors);
+        }
 
         list = CriaLista<T>(dr);
 

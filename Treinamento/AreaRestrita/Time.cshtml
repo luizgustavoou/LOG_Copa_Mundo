@@ -83,21 +83,17 @@
 
     if (acao == "I" || acao == "A" || acao == "E")
     {
-        try
+        Util.ExceptionHandler(() =>
         {
             Manutencao();
             LimpaVariaveis();
-
-        }
-        catch (Exception ex)
-        {
-            ModelState.AddError("nome", ex.Message);
-        }
+            ModelState.AddError("alert-success", "Operação realizada com sucesso.");
+        }, this.ModelState);
 
     }
 
+    Util.ExceptionHandler(Consultar, this.ModelState);
 
-    Consultar();
 
 }
 

@@ -48,7 +48,15 @@
 }
 
 @{
-    Consultar();
+    try
+    {
+
+        Consultar();
+    }
+    catch (Exception ex)
+    {
+        ModelState.AddError("alert-danger", ex.Message);
+    }
 
 }
 
