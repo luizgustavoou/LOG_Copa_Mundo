@@ -107,22 +107,22 @@
                 <input type="text" name="nome" id="nome" value="@nome" />
             </div>
 
-            <button type="submit" onclick="estadoInicial()">Limpar</button>
+            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
 
 
 
-            <button type="button" onclick="executarAcao('I')">Incluir</button>
-            <button type="button" onclick="executarAcao('E')">Excluir</button>
-            <button type="button" onclick="executarAcao('A')">Alterar</button>
+            <button class="btn btn-success" type="button" onclick="executarAcao('I')">Incluir</button>
+            <button class="btn btn-danger" type="button" onclick="executarAcao('E')">Excluir</button>
+            <button class="btn btn-warning" type="button" onclick="executarAcao('A')">Alterar</button>
 
             @if (times != null)
             {
-                <table class="table">
+                <table class="table table-dark table-striped table-hover">
                     <thead>
                         <tr>
-                            <th>IdTime</th>
-                            <th>Nome</th>
-                            <th></th>
+                            <th scope="col" class="table-dark">IdTime</th>
+                            <th scope="col" classs="table-dark">Nome</th>
+                            <th scope="col" classs="table-dark"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -132,14 +132,19 @@
                                 <td>@item.IdTime</td>
                                 <td>@item.Nome</td>
                                 <td>
-                                    <button type="button" onclick="editar('@item.IdTime', '@item.Nome')">Editar</button>
+                                    <button class="btn btn-warning" type="button" onclick="editar('@item.IdTime', '@item.Nome')">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    Editar</button>
                                 </td>
                             </tr>
 
                         }
                     </tbody>
                 </table>
+
             }
+
+
         </div>
     </form>
 

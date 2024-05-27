@@ -149,7 +149,7 @@
 }
 
 <body>
-    <form name="form1" id="form1" method="post">
+    <form class="flex-grow-1" name="form1" id="form1" method="post">
         <input type="hidden" name="acao" id="acao" />
         <input type="hidden" name="idJogo" id="idJogo" value="@idJogo" />
         <input type="hidden" name="idJogador" id="idJogador" value="@idJogador" />
@@ -196,6 +196,51 @@
                         }
                     </select>
 
+                    <div>
+                        @*Screen 2*@
+                        @if (idJogo != null && jogo != null)
+                        {
+                            <section class="d-flex gap-2 p-3">
+                                @*<h3>Resultado</h3>*@
+
+                              
+                                <div class="flex-grow-1 bg-light bg-gradient" style="min-height: 250px">
+                                    <span>@jogo.NomeTime1</span>
+                                    <span>@jogo.Placar1</span>
+                                </div>
+
+                            
+
+                                <div class="flex-grow-1 bg-light bg-gradient" style="min-height: 250px">
+                                    <span>@jogo.NomeTime2</span>
+                                    <span>@jogo.Placar2</span>
+                                </div>
+
+                                
+                            </section>
+
+                        }
+                        @if (idJogo != null && partipacoes != null)
+                        {
+                            <section>
+                                @foreach (Participacao item in partipacoes)
+                                {
+                                    <div>
+                                        <span>@item.NomeTime</span>
+                                        <span>@item.NomeJogador</span>
+                                        <span>@item.GolsMarcados</span>
+                                        <span>
+                                            <button type="button" onclick="editar('@idJogo', '@item.IdJogador')">+1 Gols</button>
+                                        </span>
+                                    </div>
+
+                                }
+
+                            </section>
+                        }
+
+                    </div>
+
 
                 }
             </div>
@@ -204,47 +249,7 @@
         </div>
     </form>
 
-    @*Screen 2*@
-    @if (idJogo != null && jogo != null)
-    {
-        <section class="resultado">
-            <h3>Resultado</h3>
-
-            <div class="placar">
-                <div class="time">
-                    <span>@jogo.NomeTime1</span>
-                    <span>@jogo.Placar1</span>
-                </div>
-
-                <span>X</span>
-
-                <div class="time">
-                    <span>@jogo.NomeTime2</span>
-                    <span>@jogo.Placar2</span>
-                </div>
-
-            </div>
-        </section>
-
-    }
-    @if (idJogo != null && partipacoes != null)
-    {
-        <section>
-            @foreach (Participacao item in partipacoes)
-            {
-                <div>
-                    <span>@item.NomeTime</span>
-                    <span>@item.NomeJogador</span>
-                    <span>@item.GolsMarcados</span>
-                    <span>
-                        <button type="button" onclick="editar('@idJogo', '@item.IdJogador')">+1 Gols</button>
-                    </span>
-                </div>
-
-            }
-
-        </section>
-    }
+ 
 
     <script>
         const form1 = document.getElementById("form1");
@@ -267,36 +272,9 @@
             form1.idJogador.value = idJogador;
             form1.acao.value = "A"
 
-            console.log({ idJogo, idJogador })
 
             form1.submit();
         }
     </script>
 </body>
 
-<style>
-
-    .resultado {
-        display: flex;
-
-        flex-direction: column;
-        gap: 0.3rem;
-        
-    }
-
-    .resultado .placar {
-        display: flex;
-        gap: 1rem
-    }
-
-    .placar > span {
-        font-size: 1rem;
-        font-weight: bold;
-    }
-
-    .resultado .time {
-        letter-spacing: 1px;
-        display: flex;
-        gap: 0.3rem
-    }
-</style>
