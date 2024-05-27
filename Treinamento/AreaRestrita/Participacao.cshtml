@@ -129,8 +129,15 @@
 
     if (acao == "I" || acao == "A")
     {
+        try
+        {
+            Manutencao();
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddError("alert-danger", ex.Message);
 
-        Manutencao();
+        }
     }
 
     if (idJogo != null)
@@ -156,11 +163,11 @@
 
         <div class="container">
 
-            @*Screen 1*@
 
             <div>
                 <h1>Escolha uma partida</h1>
-               
+                
+                @PageHelper.MakeAlert()
 
                 @if (jogos != null)
                 {
@@ -197,7 +204,6 @@
                     </select>
 
                     <div>
-                        @*Screen 2*@
                         @if (idJogo != null && jogo != null)
                         {
                             <section class="d-flex gap-2 p-3">

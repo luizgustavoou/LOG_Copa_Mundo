@@ -110,9 +110,16 @@
 
     if (acao == "I" || acao == "A" || acao == "E")
     {
+        try
+        {
+            Manutencao();
+            LimpaVariaveis();
 
-        Manutencao();
-        LimpaVariaveis();
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddError("alert-danger", ex.Message);
+        }
     }
 
     ConsultarTimes();
@@ -130,6 +137,8 @@
 
         <div class="container">
             <h1>Jogo</h1>
+
+            @PageHelper.MakeAlert()
 
             <div>
                 <label for="idTime1">Time 1: </label>

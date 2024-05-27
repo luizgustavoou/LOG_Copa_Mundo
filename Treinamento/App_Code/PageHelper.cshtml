@@ -1,0 +1,15 @@
+@helper MakeAlert()
+{
+    foreach (var item in ModelState)
+    {
+        foreach (var item1 in item.Value.Errors)
+        {
+            <div class="alert @Html.Raw(item.Key)">
+                @Html.Raw(item1)
+
+            </div>
+        }
+
+    }
+
+}

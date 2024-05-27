@@ -12,10 +12,10 @@
 
 
     string acao = null;
-    List<Time> times = null;
     string idTime = null;
     string nome = null;
 
+    List<Time> times = null;
 
     private void AlimentaVariaveis()
     {
@@ -78,9 +78,17 @@
 
     if (acao == "I" || acao == "A" || acao == "E")
     {
+        try
+        {
+            Manutencao();
+            LimpaVariaveis();
 
-        Manutencao();
-        LimpaVariaveis();
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddError("alert-danger", ex.Message);
+        }
+
     }
 
 
@@ -91,6 +99,7 @@
 @section head {
 }
 
+
 <body>
     <form name="form1" method="post">
         <input type="hidden" name="acao" id="acao" />
@@ -98,6 +107,8 @@
 
         <div class="container">
             <h1>Time</h1>
+
+            @PageHelper.MakeAlert()
 
 
 
@@ -130,7 +141,8 @@
                                 <td>
                                     <button class="btn btn-warning" type="button" onclick="editar('@item.IdTime', '@item.Nome')">
                                         <i class="bi bi-pencil-fill"></i>
-                                    Editar</button>
+                                        Editar
+                                    </button>
                                 </td>
                             </tr>
 
