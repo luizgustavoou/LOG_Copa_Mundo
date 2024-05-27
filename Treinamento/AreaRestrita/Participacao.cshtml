@@ -4,6 +4,14 @@
 }
 
 @functions {
+
+    //enum TipoRetorno
+    //{
+    //    BUSCAR_PARTICIPACOES = 1,
+    //    FILTRO_BUSCAR_PARTICIPACOES = 2,
+    //    BUSCAR_JOGOS = 3
+    //}
+
     private class Jogo
     {
         public string IdJogo { get; set; }
@@ -20,24 +28,31 @@
     {
         public string IdParticipacao { get; set; }
         public string idJogo { get; set; }
-        public string idJogador { get; set; }
-        public string GolsMarcados { get; set; }
+        public string IdTime { get; set; }
+        public string NomeTime { get; set; }
+        public string IdJogador { get; set; }
+        public string NomeJogador { get; set; }
+
+        public int GolsMarcados { get; set; }
     }
 
 
     string acao = null;
-    string idTime = null;
-    string nome = null;
+    string idJogo = null;
+    string idJogador = null;
 
     List<Jogo> jogos = null;
+
+    Jogo jogo = null;
     List<Participacao> partipacoes = null;
 
 
     private void AlimentaVariaveis()
     {
         acao = Request.Form["acao"];
-        idTime = Request.Form["idTime"];
-        nome = Request.Form["nome"];
+        idJogo = Request.Form["idJogo"];
+        idJogador = Request.Form["idJogador"];
+
     }
 
     private void ConsultarParticipacoes()
@@ -46,7 +61,14 @@
         string procedure = GetNomeProcedure("C");
         Dao dao = new Dao();
 
-        partipacoes = dao.ExecutarProcedureList<Participacao>(procedure, null);
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+
+        parametros.Add("@IdJogo", idJogo);
+        parametros.Add("@TipoRetorno", 2);
+
+
+        partipacoes = dao.ExecutarProcedureList<Participacao>(procedure, parametros);
 
     }
 
@@ -58,9 +80,23 @@
 
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
-        parametros.Add("@TipoRetorno", 1);
+        parametros.Add("@TipoRetorno", 3);
 
         jogos = dao.ExecutarProcedureList<Jogo>(procedure, parametros);
+
+    }
+
+    private void ConsultarJogo()
+    {
+        string procedure = GetNomeProcedure("C");
+        Dao dao = new Dao();
+
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@TipoRetorno", 4);
+        parametros.Add("@IdJogo", idJogo);
+
+        jogo = dao.ExecutarProcedureList<Jogo>(procedure, parametros).First();
 
     }
 
@@ -69,9 +105,7 @@
         switch (acao)
         {
             case "C": return "stp_LGU_Participacao_Sel";
-            case "I": return "stp_LGU_Participacao_Ins";
             case "A": return "stp_LGU_Participacao_Upd";
-            case "E": return "stp_LGU_Participacao_Del";
             default:
                 return null;
         }
@@ -81,13 +115,10 @@
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
-        parametros.Add("@IdTime", idTime);
-        parametros.Add("@Nome", nome);
+        parametros.Add("@IdJogo", idJogo);
+        parametros.Add("@IdJogador", idJogador);
 
         string procedure = GetNomeProcedure(acao);
-
-
-
 
         Dao dao = new Dao();
 
@@ -98,13 +129,19 @@
 @{
     AlimentaVariaveis();
 
-    if(acao == "I" || acao == "A" || acao == "E")
+    if (acao == "I" || acao == "A")
     {
 
         Manutencao();
     }
 
-    ConsultarParticipacoes();
+    if (idJogo != null)
+    {
+        ConsultarParticipacoes();
+        ConsultarJogo();
+
+    }
+
     ConsultarJogos();
 
 }
@@ -114,24 +151,28 @@
 }
 
 <body>
-    <form name="form1" method="post">
+    <form name="form1" id="form1" method="post">
         <input type="hidden" name="acao" id="acao" />
-        <input type="hidden" name="idTime" id="idTime" value="@idTime" />
+        <input type="hidden" name="idJogo" id="idJogo" value="@idJogo" />
+        <input type="hidden" name="idJogador" id="idJogador" value="@idJogador" />
 
         <div class="container">
-            
+
             @*Screen 1*@
 
             <div>
                 <h1>Escolha uma partida</h1>
-                
+               
+
                 @if (jogos != null)
                 {
-                    <div>
-                        <select name="idJogoSelecionado" id="idJogoSelecionado">
-                            @foreach (Jogo item in jogos)
+                    <p>@idJogo</p>
+                    <select name="idJogoSelecionado" id="idJogoSelecionado">
+                        @foreach (Jogo item in jogos)
+                        {
+                            if (@item.IdJogo == idJogo)
                             {
-                                <option value="@item.IdJogo">
+                                <option value="@item.IdJogo" selected>
                                     <span>@item.NomeTime1</span>
                                     <span>@item.Placar1</span>
                                     <span>X</span>
@@ -139,34 +180,120 @@
                                     <span>@item.Placar2</span>
                                 </option>
                             }
-                        </select>
-                    </div>
-         
+                            else
+                            {
+                                <option value="@item.IdJogo" >
+                                    <span>@item.NomeTime1</span>
+                                    <span>@item.Placar1</span>
+                                    <span>X</span>
+                                    <span>@item.NomeTime2</span>
+                                    <span>@item.Placar2</span>
+                                </option>
+                            }
+                        }
+                    </select>
+
+
                 }
             </div>
-
-            @*Screen 2*@
-
-            <div>
-
-            </div>
-            
 
 
         </div>
     </form>
 
+    @*Screen 2*@
+    @if (idJogo != null && jogo != null)
+    {
+        <section class="resultado">
+            <h3>Resultado</h3>
+
+            <div class="placar">
+                <div class="time">
+                    <span>@jogo.NomeTime1</span>
+                    <span>@jogo.Placar1</span>
+                </div>
+
+                <span>X</span>
+
+                <div class="time">
+                    <span>@jogo.NomeTime2</span>
+                    <span>@jogo.Placar2</span>
+                </div>
+
+            </div>
+        </section>
+
+    }
+    @if (idJogo != null && partipacoes != null)
+    {
+        <section>
+            @foreach (Participacao item in partipacoes)
+            {
+                <div>
+                    <span>@item.NomeTime</span>
+                    <span>@item.NomeJogador</span>
+                    <span>@item.GolsMarcados</span>
+                    <span>
+                        <button type="button" onclick="editar('@item.idJogo', '@item.IdJogador')">+1 Gols</button>
+                    </span>
+                </div>
+
+            }
+
+        </section>
+    }
+
     <script>
-        function executarAcao(acao) {
-            document.form1.acao.value = acao;
-            document.form1.submit();
+        const form1 = document.getElementById("form1");
+        const selectJogoSelecionado = document.getElementById("idJogoSelecionado");
+
+        function handleJogoSelecionado() {
+            form1.idJogo.value = selectJogoSelecionado.value;
+            form1.submit();
         }
 
-        function editar(idTime, nome) {
-            document.form1.idTime.value = idTime;
-            document.form1.nome.value = nome;
+        selectJogoSelecionado.addEventListener("change", handleJogoSelecionado)
+
+        function executarAcao(acao) {
+            form1.acao.value = acao;
+            form1.submit();
+        }
+
+        function editar(idJogo, idJogador) {
+            form1.idJogo.value = idJogo;
+            form1.idJogador.value = idJogador;
+            form1.acao.value = "A"
+
+            console.log({ idJogo, idJogador })
+
+            form1.submit();
         }
     </script>
 </body>
 
+<style>
 
+    .resultado {
+        display: flex;
+
+        flex-direction: column;
+        gap: 0.3rem;
+        
+    }
+
+    .resultado .placar {
+        display: flex;
+        gap: 1rem
+    }
+
+    .placar > span {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    .resultado .time {
+        letter-spacing: 1px;
+        display: flex;
+        gap: 0.3rem
+    }
+</style>
