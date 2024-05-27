@@ -19,9 +19,9 @@
 
     private void AlimentaVariaveis()
     {
-        acao = Request.Form["acao"];
-        idTime = Request.Form["idTime"];
-        nome = Request.Form["nome"];
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+        idTime = Util.ChecaNulo(Request.Form["idTime"]);
+        nome = Util.ChecaNulo(Request.Form["nome"]);
     }
 
     private void Consultar()
@@ -56,8 +56,8 @@
 
         string procedure = GetNomeProcedure(acao);
 
-    
-        
+
+
 
         Dao dao = new Dao();
 

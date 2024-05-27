@@ -36,10 +36,10 @@
 
     private void AlimentaVariaveis()
     {
-        acao = Request.Form["acao"];
-        idJogo = Request.Form["idJogo"];
-        idTime1 = Request.Form["idTime1"];
-        idTime2 = Request.Form["idTime2"];
+        acao =  Util.ChecaNulo(Request.Form["acao"]);
+        idJogo =  Util.ChecaNulo(Request.Form["idJogo"]);
+        idTime1 =  Util.ChecaNulo(Request.Form["idTime1"]);
+        idTime2 =  Util.ChecaNulo(Request.Form["idTime2"]);
     }
 
     private void ConsultarJogos()

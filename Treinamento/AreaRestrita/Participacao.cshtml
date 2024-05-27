@@ -49,9 +49,9 @@
 
     private void AlimentaVariaveis()
     {
-        acao = Request.Form["acao"];
-        idJogo = Request.Form["idJogo"];
-        idJogador = Request.Form["idJogador"];
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+        idJogo = Util.ChecaNulo(Request.Form["idJogo"]);
+        idJogador = Util.ChecaNulo(Request.Form["idJogador"]);
 
     }
 
@@ -166,7 +166,6 @@
 
                 @if (jogos != null)
                 {
-                    <p>@idJogo</p>
                     <select name="idJogoSelecionado" id="idJogoSelecionado">
                         @foreach (Jogo item in jogos)
                         {
