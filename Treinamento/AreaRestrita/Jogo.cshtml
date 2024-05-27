@@ -36,10 +36,10 @@
 
     private void AlimentaVariaveis()
     {
-        acao =  Util.ChecaNulo(Request.Form["acao"]);
-        idJogo =  Util.ChecaNulo(Request.Form["idJogo"]);
-        idTime1 =  Util.ChecaNulo(Request.Form["idTime1"]);
-        idTime2 =  Util.ChecaNulo(Request.Form["idTime2"]);
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+        idJogo = Util.ChecaNulo(Request.Form["idJogo"]);
+        idTime1 = Util.ChecaNulo(Request.Form["idTime1"]);
+        idTime2 = Util.ChecaNulo(Request.Form["idTime2"]);
     }
 
     private void LimpaVariaveis()
@@ -108,7 +108,7 @@
 @{
     AlimentaVariaveis();
 
-    if(acao == "I" || acao == "A" || acao == "E")
+    if (acao == "I" || acao == "A" || acao == "E")
     {
 
         Manutencao();
@@ -121,7 +121,6 @@
 }
 
 @section head {
-    <link href="~/Scripts/Style.css" rel="stylesheet">
 }
 
 <body>
@@ -135,7 +134,7 @@
             <div>
                 <label for="idTime1">Time 1: </label>
 
-                <select name="idTime1" id="idTime1">
+                <select class="form-select" name="idTime1" id="idTime1">
                     <option value=""></option>
                     @foreach (Time item in times)
                     {
@@ -144,10 +143,10 @@
                 </select>
             </div>
 
-            <div>
+            <div class="mb-3">
                 <label for="idTime2">Time 2: </label>
 
-                <select name="idTime2" id="idTime2">
+                <select class="form-select" name="idTime2" id="idTime2">
                     <option value=""></option>
                     @foreach (Time item in times)
                     {
@@ -161,36 +160,44 @@
             <button class="btn btn-danger" type="button" onclick="executarAcao('E')">Excluir</button>
             <button class="btn btn-warning" type="button" onclick="executarAcao('A')">Alterar</button>
 
-        </div>
-
-        @if (jogos != null)
-        {
-            <main>
-                <section>
-                    @foreach (Jogo item in jogos)
-                    {
-                        <div>
-                            <span>@item.NomeTime1</span>
-                            <span>@item.Placar1</span>
-                            <span>@item.NomeTime2</span>
-                            <span>@item.Placar2</span>
-
-                            @if (item.Placar1 == 0 && item.Placar2 == 0)
-                            {
-                                <span>
+            @if (jogos != null)
+            {
+                <table class="mt-2 table table-dark table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Time 1</th>
+                            <th>Time 2</th>
+                            <th>Placar 1</th>
+                            <th>Placar 2</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Jogo item in jogos)
+                        {
+                            <tr>
+                                <td>@item.NomeTime1</td>
+                                <td>@item.NomeTime2</td>
+                                <td>@item.Placar1</td>
+                                <td>@item.Placar2</td>
+                                <td>
                                     <button class="btn btn-warning" type="button" onclick="editar('@item.IdJogo', '@item.IdTime1', '@item.IdTime2')">
                                         <i class="bi bi-pencil-fill"></i>
                                         Editar
                                     </button>
-                                </span>
+                                </td>
+                            </tr>
 
-                            }
-                        </div>
+                        }
+                    </tbody>
+                </table>
 
-                    }
-                </section>
-            </main>
-        }
+
+            }
+
+        </div>
+
+      
     </form>
 
     <script src="~/Scripts/scripts.js">
