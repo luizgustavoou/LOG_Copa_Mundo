@@ -93,10 +93,15 @@
             <h1>Time</h1>
 
 
+
             <div>
                 <label for="nome">Nome: </label>
                 <input type="text" name="nome" id="nome" value="@nome" />
             </div>
+
+            <button type="submit" onclick="estadoInicial()">Limpar</button>
+
+
 
             <button type="button" onclick="executarAcao('I')">Incluir</button>
             <button type="button" onclick="executarAcao('E')">Excluir</button>
@@ -139,6 +144,29 @@
         function editar(idTime, nome) {
             document.form1.idTime.value = idTime;
             document.form1.nome.value = nome;
+        }
+
+        function estadoInicial() {
+            var elements = document.querySelectorAll('input, select');
+
+            if (elements) {
+                elements.forEach(function(item) {
+                    var type = item.type;
+                    var tag = item.tagName.toLowerCase();
+
+                  
+                    if (type == 'text' || type == 'hidden' || type == 'password' || tag == 'textarea') {
+                        item.value = '';
+                    } else if (type == 'checkbox' || type == 'radio') {
+                        item.checked = false;
+                    } else if (tag == 'select') {
+                        item.selectedIndex = -1;
+
+                    }
+                })
+            }
+
+
         }
     </script>
 </body>
