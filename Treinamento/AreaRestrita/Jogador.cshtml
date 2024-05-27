@@ -49,6 +49,14 @@
         idTime = Util.ChecaNulo(Request.Form["idTime"]);
     }
 
+    private void LimpaVariaveis()
+    {
+        acao = null;
+        idJogador = null;
+        nome = null;
+        idTime = null;
+    }
+
     private void ConsultarJogadores()
     {
 
@@ -111,6 +119,7 @@
     {
 
         Manutencao();
+        LimpaVariaveis();
     }
 
     ConsultarTimes();

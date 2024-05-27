@@ -24,6 +24,13 @@
         nome = Util.ChecaNulo(Request.Form["nome"]);
     }
 
+    private void LimpaVariaveis()
+    {
+        acao = null;
+        idTime = null;
+        nome = null;
+    }
+
     private void Consultar()
     {
 
@@ -73,11 +80,12 @@
     {
 
         Manutencao();
+        LimpaVariaveis();
     }
 
 
     Consultar();
-    
+
 }
 
 @section head {
