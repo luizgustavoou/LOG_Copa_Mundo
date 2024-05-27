@@ -138,8 +138,8 @@
 
             <div>
                 <label for="idTime">Time: </label>
-           
-                <select name="idTime" id="idTime" >
+
+                <select name="idTime" id="idTime">
                     <option value=""></option>
                     @foreach (Time item in times)
                     {
@@ -148,6 +148,7 @@
                 </select>
             </div>
 
+            <button type="submit" onclick="estadoInicial()">Limpar</button>
             <button type="button" onclick="executarAcao('I')">Incluir</button>
             <button type="button" onclick="executarAcao('E')">Excluir</button>
             <button type="button" onclick="executarAcao('A')">Alterar</button>
@@ -182,11 +183,14 @@
         </div>
     </form>
 
+    <script src="~/Scripts/scripts.js">
+    </script>
+
     <script>
-        function executarAcao(acao) {
-            document.form1.acao.value = acao;
-            document.form1.submit();
-        }
+        //function executarAcao(acao) {
+        //    document.form1.acao.value = acao;
+        //    document.form1.submit();
+        //}
 
         function editar(idJogador, nome, idTime) {
             

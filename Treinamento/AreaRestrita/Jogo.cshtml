@@ -147,6 +147,7 @@
                 </select>
             </div>
 
+            <button type="submit" onclick="estadoInicial()">Limpar</button>
             <button type="button" onclick="executarAcao('I')">Incluir</button>
             <button type="button" onclick="executarAcao('E')">Excluir</button>
             <button type="button" onclick="executarAcao('A')">Alterar</button>
@@ -165,13 +166,13 @@
                             <span>@item.NomeTime2</span>
                             <span>@item.Placar2</span>
 
-                            @if (item.Placar1 == 0  && item.Placar2 == 0)
+                            @if (item.Placar1 == 0 && item.Placar2 == 0)
                             {
-                            <span>
-                                <button type="button" onclick="editar('@item.IdJogo', '@item.IdTime1', '@item.IdTime2')">
-                                    Editar
-                                </button>
-                            </span>
+                                <span>
+                                    <button type="button" onclick="editar('@item.IdJogo', '@item.IdTime1', '@item.IdTime2')">
+                                        Editar
+                                    </button>
+                                </span>
 
                             }
                         </div>
@@ -182,26 +183,29 @@
         }
     </form>
 
+    <script src="~/Scripts/scripts.js">
+    </script>
+
     <script>
 
         const form = document.getElementById("form1");
 
-        function executarAcao(acao) {
-            form.acao.value = acao;
+        //function executarAcao(acao) {
+        //    form.acao.value = acao;
 
 
-            if (form.idTime1.value == form.idTime2.value) {
+        //    if (form.idTime1.value == form.idTime2.value) {
 
-                window.alert("Não é possível selecionar o mesmo time nos campos");  
+        //        window.alert("Não é possível selecionar o mesmo time nos campos");
 
-                return;
-            }
+        //        return;
+        //    }
 
-            form.submit();
+        //    form.submit();
 
-        }
+        //}
 
-        function editar(idJogo, idTime1, idTime2) { 
+        function editar(idJogo, idTime1, idTime2) {
             form.idJogo.value = idJogo;
             form.idTime2.value = idTime2;
             form.idTime1.value = idTime1;

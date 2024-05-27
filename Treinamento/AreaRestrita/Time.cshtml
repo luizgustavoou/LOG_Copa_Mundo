@@ -135,39 +135,17 @@
         </div>
     </form>
 
-    <script>
-        function executarAcao(acao) {
-            document.form1.acao.value = acao;
-            document.form1.submit();
-        }
+    <script src="~/Scripts/scripts.js">
 
+    </script>
+
+    <script>
         function editar(idTime, nome) {
             document.form1.idTime.value = idTime;
             document.form1.nome.value = nome;
         }
 
-        function estadoInicial() {
-            var elements = document.querySelectorAll('input, select');
 
-            if (elements) {
-                elements.forEach(function(item) {
-                    var type = item.type;
-                    var tag = item.tagName.toLowerCase();
-
-                  
-                    if (type == 'text' || type == 'hidden' || type == 'password' || tag == 'textarea') {
-                        item.value = '';
-                    } else if (type == 'checkbox' || type == 'radio') {
-                        item.checked = false;
-                    } else if (tag == 'select') {
-                        item.selectedIndex = -1;
-
-                    }
-                })
-            }
-
-
-        }
     </script>
 </body>
 
