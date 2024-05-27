@@ -128,7 +128,7 @@
 }
 
 @section head {
-    <link href="~/Scripts/Style.css" rel="stylesheet">
+
 }
 
 <body>
@@ -157,14 +157,14 @@
                 </select>
             </div>
 
-            <button type="submit" onclick="estadoInicial()">Limpar</button>
-            <button type="button" onclick="executarAcao('I')">Incluir</button>
-            <button type="button" onclick="executarAcao('E')">Excluir</button>
-            <button type="button" onclick="executarAcao('A')">Alterar</button>
+            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+            <button class="btn btn-success" type="button" onclick="executarAcao('I')">Incluir</button>
+            <button class="btn btn-danger" type="button" onclick="executarAcao('E')">Excluir</button>
+            <button class="btn btn-warning" type="button" onclick="executarAcao('A')">Alterar</button>
 
             @if (jogadores != null)
             {
-                <table class="table">
+                <table class="table table-dark table-striped table-hover">
                     <thead>
                         <tr>
                             <th>IdJogador</th>
@@ -181,7 +181,9 @@
                                 <td>@item.Nome</td>
                                 <td>@item.NomeTime</td>
                                 <td>
-                                    <button type="button" onclick="editar('@item.IdJogador', '@item.Nome', '@item.IdTime')">Editar</button>
+                                    <button class="btn btn-warning" type="button" onclick="editar('@item.IdJogador', '@item.Nome', '@item.IdTime')">Editar
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </button>
                                 </td>
                             </tr>
 
