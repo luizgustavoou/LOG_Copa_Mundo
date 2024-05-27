@@ -54,6 +54,11 @@
         }
     }
 
+    private string isInvalid(string key)
+    {
+        return (!ModelState.IsValidField(key) ? "is-invalid" : "");
+    }
+
     private void Manutencao()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
@@ -86,7 +91,7 @@
         }
         catch (Exception ex)
         {
-            ModelState.AddError("alert-danger", ex.Message);
+            ModelState.AddError("nome", ex.Message);
         }
 
     }
@@ -108,14 +113,17 @@
         <div class="container">
             <h1>Time</h1>
 
-            @PageHelper.MakeAlert()
+         @PageHelper.MakeAlert()
 
 
 
-            <div class="mb-3">
-                <label for="nome" class="form-label">Nome: </label>
-                <input class="form-control" type="text" name="nome" id="nome" value="@nome" />
-            </div>
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome: </label>
+            <input class="form-control @isInvalid("nome")" type="text" name="nome" id="nome" value="@nome" />
+            @PageHelper.makeFeedback("nome")
+
+
+        </div>
 
             <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
             <button class="btn btn-success" type="button" onclick="executarAcao('I')">Incluir</button>
