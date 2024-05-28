@@ -180,26 +180,13 @@
                         }
                         @foreach (Jogo item in jogos)
                         {
-                            if (@item.IdJogo == idJogo)
-                            {
-                                <option value="@item.IdJogo" selected>
-                                    <span>@item.NomeTime1</span>
-                                    <span>@item.Placar1</span>
-                                    <span>X</span>
-                                    <span>@item.NomeTime2</span>
-                                    <span>@item.Placar2</span>
-                                </option>
-                            }
-                            else
-                            {
-                                <option value="@item.IdJogo">
-                                    <span>@item.NomeTime1</span>
-                                    <span>@item.Placar1</span>
-                                    <span>X</span>
-                                    <span>@item.NomeTime2</span>
-                                    <span>@item.Placar2</span>
-                                </option>
-                            }
+                            <option value="@item.IdJogo" @(idJogo == item.IdJogo ? "selected" : "")>
+                                <span>@item.NomeTime1</span>
+                                <span>@item.Placar1</span>
+                                <span>X</span>
+                                <span>@item.NomeTime2</span>
+                                <span>@item.Placar2</span>
+                            </option>
                         }
                     </select>
 

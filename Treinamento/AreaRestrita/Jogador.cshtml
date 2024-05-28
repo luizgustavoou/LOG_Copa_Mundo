@@ -165,7 +165,7 @@
                     <option value=""></option>
                     @foreach (Time item in times)
                     {
-                        <option value="@item.IdTime">@item.Nome</option>
+                        <option value="@item.IdTime" @(idTime == item.IdTime ? "selected" : "")>@item.Nome</option>
                     }
 
 
