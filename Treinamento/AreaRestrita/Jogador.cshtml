@@ -39,21 +39,25 @@
 
     string acao = null;
     string idJogador = null;
-    string nome = null;
-    string idTime = null;
     View view = View.Index;
+
+    Jogador jogador = null;
 
     List<Jogador> jogadores = null;
     List<Time> times = null;
 
 
+    private void instanciarJogador()
+    {
+        if (jogador != null) return;
+
+        jogador = new Jogador();
+    }
 
     private void AlimentaVariaveis()
     {
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idJogador = Util.ChecaNulo(Request.Form["idJogador"]);
-        nome = Util.ChecaNulo(Request.Form["nome"]);
-        idTime = Util.ChecaNulo(Request.Form["idTime"]);
 
         if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
         {
@@ -65,8 +69,6 @@
     {
         acao = null;
         idJogador = null;
-        nome = null;
-        idTime = null;
     }
 
     private void ConsultarJogadores()
@@ -117,9 +119,9 @@
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
-        parametros.Add("@IdJogador", idJogador);
-        parametros.Add("@Nome", nome);
-        parametros.Add("@IdTime", idTime);
+        parametros.Add("@IdJogador", jogador.IdJogador);
+        parametros.Add("@Nome", jogador.Nome);
+        parametros.Add("@IdTime", jogador.IdTime);
 
         string procedure = GetNomeProcedure(acao);
 
@@ -128,15 +130,36 @@
         dao.ExecutarProcedure(procedure, parametros);
     }
 
+    private void ExecutarManutencao()
+    {
+        instanciarJogador();
+
+        jogador.IdJogador = Request.Form["IdJogador"];
+        jogador.Nome = Request.Form["Nome"];
+        jogador.IdTime = Request.Form["IdTime"];
+        jogador.NomeTime = Request.Form["NomeTime"];
+
+
+        Manutencao();
+        view = View.Index;
+        LimpaVariaveis();
+        ModelState.AddError("alert-success", "Operação realizada com sucesso.");
+
+    }
+
     private void CarregarDados()
     {
-        if(view == View.Edit && acao == "C" && jogadores != null && jogadores.Count == 1)
-        {
-            Jogador jogador = jogadores.FirstOrDefault();
+        instanciarJogador();
 
-            idJogador = jogador.IdJogador;
-            nome = jogador.Nome;
-            idTime = jogador.IdTime;
+        if (view == View.Edit && acao == "C" && jogadores != null && jogadores.Count == 1)
+        {
+            Jogador jogadorCarregado = jogadores.FirstOrDefault();
+
+            jogador.IdJogador = jogadorCarregado.IdJogador;
+            jogador.Nome = jogadorCarregado.Nome;
+            jogador.IdTime = jogadorCarregado.IdTime;
+            jogador.NomeTime = jogadorCarregado.NomeTime;
+
         }
     }
 }
@@ -146,20 +169,15 @@
 
     if(acao == "I" || acao == "A" || acao == "E")
     {
-        Util.ExceptionHandler(() => {
-            Manutencao();
-            view = View.Index;
-            LimpaVariaveis();
-            ModelState.AddError("alert-success", "Operação realizada com sucesso.");
-        }, this.ModelState);
+        Util.ExceptionHandler(ExecutarManutencao, this.ModelState);
 
     }
 
-    Util.ExceptionHandler(() => {
+    Util.ExceptionHandler(() =>
+    {
         ConsultarTimes();
         ConsultarJogadores();
         CarregarDados();
-
     }, this.ModelState);
 
 }
@@ -185,7 +203,7 @@
             {
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome: </label>
-                    <input class="form-control @isInvalid("nome")" type="text" name="nome" id="nome" value="@nome" />
+                    <input class="form-control @isInvalid("nome")" type="text" name="nome" id="nome" value="@jogador.Nome" />
                     @PageHelper.makeFeedback("nome")
                 </div>
 
@@ -196,7 +214,7 @@
                         <option value=""></option>
                         @foreach (Time item in times)
                         {
-                            <option value="@item.IdTime" @(idTime == item.IdTime ? "selected" : "")>@item.Nome</option>
+                            <option value="@item.IdTime" @(jogador.IdTime == item.IdTime ? "selected" : "")>@item.Nome</option>
                         }
 
 
@@ -206,8 +224,6 @@
                 </div>
 
             }
-
-
 
 
             <div class="mb-3">
@@ -229,10 +245,6 @@
                     <button class="btn btn-danger" type="button" onclick="executarAcao('E')">Excluir</button>
                     <button class="btn btn-warning" type="button" onclick="executarAcao('A')">Alterar</button>
                 }
-
-
-
-
             </div>
 
             @if (jogadores != null)

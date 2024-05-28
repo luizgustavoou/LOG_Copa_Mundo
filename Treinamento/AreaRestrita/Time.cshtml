@@ -19,18 +19,19 @@
 
 
     string acao = null;
+
     string idTime = null;
-    string nome = null;
+
+    Time time = null;
+
 
     View view = View.Index;
-
     List<Time> times = null;
 
     private void AlimentaVariaveis()
     {
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idTime = Util.ChecaNulo(Request.Form["idTime"]);
-        nome = Util.ChecaNulo(Request.Form["nome"]);
 
         if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
         {
@@ -42,7 +43,7 @@
     {
         acao = null;
         idTime = null;
-        nome = null;
+        time = null;
     }
 
     private void Consultar()
@@ -79,9 +80,8 @@
     private void Manutencao()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
-
-        parametros.Add("@IdTime", idTime);
-        parametros.Add("@Nome", nome);
+        parametros.Add("@IdTime", time.IdTime);
+        parametros.Add("@Nome", time.Nome);
 
         string procedure = GetNomeProcedure(acao);
 
@@ -91,14 +91,43 @@
 
     }
 
+    private void instanciarTime()
+    {
+        if (time == null)
+        {
+            time = new Time();
+        }
+    }
+
     private void carregarDados()
     {
+        instanciarTime();
+
         if (view == View.Edit && acao == "C" && times != null && times.Count == 1)
         {
-            Time time = times.FirstOrDefault();
-            idTime = time.IdTime;
-            nome = time.Nome;
+            if(idTime != null)
+            {
+
+
+                Time timeCarregado = times.FirstOrDefault();
+
+                time.IdTime = timeCarregado.IdTime;
+                time.Nome = timeCarregado.Nome;
+            }
         }
+    }
+
+    private void executarManutencao()
+    {
+        time = new Time() {
+            IdTime = Util.ChecaNulo(Request.Form["idTime"]),
+            Nome= Util.ChecaNulo(Request.Form["nome"])
+        };
+
+        Manutencao();
+        view = View.Index;
+        LimpaVariaveis();
+        ModelState.AddError("alert-success", "Operação realizada com sucesso.");
     }
 }
 
@@ -107,13 +136,7 @@
 
     if (acao == "I" || acao == "A" || acao == "E")
     {
-        Util.ExceptionHandler(() =>
-        {
-            Manutencao();
-            view = View.Index;
-            LimpaVariaveis();
-            ModelState.AddError("alert-success", "Operação realizada com sucesso.");
-        }, this.ModelState);
+        Util.ExceptionHandler(executarManutencao, this.ModelState);
 
     }
 
@@ -148,7 +171,7 @@
             {
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome: </label>
-                    <input class="form-control @isInvalid("nome")" type="text" name="nome" id="nome" value="@nome" />
+                    <input class="form-control @isInvalid("nome")" type="text" name="nome" id="nome" value="@time.Nome" />
                     @PageHelper.makeFeedback("nome")
                 </div>
             }
@@ -231,8 +254,6 @@
         function novo() {
             document.form1.view.value = "@((int)View.New)";
             executarAcao('');
-
-
         }
 
 

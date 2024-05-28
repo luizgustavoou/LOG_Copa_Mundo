@@ -32,22 +32,26 @@
 
     string acao = null;
     string idJogo = null;
-    string idTime1 = null;
-    string idTime2 = null;
 
+    Jogo jogo = null;
 
     View view = View.Index;
     List<Jogo> jogos = null;
     List<Time> times = null;
 
 
+    private void instanciarJogo()
+    {
+        if (jogo != null) return;
+
+        jogo = new Jogo();
+    }
+
 
     private void AlimentaVariaveis()
     {
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idJogo = Util.ChecaNulo(Request.Form["idJogo"]);
-        idTime1 = Util.ChecaNulo(Request.Form["idTime1"]);
-        idTime2 = Util.ChecaNulo(Request.Form["idTime2"]);
 
         if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
         {
@@ -59,8 +63,6 @@
     {
         acao = null;
         idJogo = null;
-        idTime1 = null;
-        idTime2 = null;
     }
 
     private void ConsultarJogos()
@@ -110,12 +112,15 @@
 
     private void CarregadarDados()
     {
-        if(view == View.Edit && acao == "C" && jogos != null && jogos.Count == 1)
-        {
-            Jogo jogo = jogos.FirstOrDefault();
+        instanciarJogo();
 
-            idTime1 = jogo.IdTime1;
-            idTime2 = jogo.IdTime2;
+        if (view == View.Edit && acao == "C" && jogos != null && jogos.Count == 1)
+        {
+
+            Jogo jogoCarregado = jogos.FirstOrDefault();
+
+            jogo.IdTime1 = jogo.IdTime1;
+            jogo.IdTime2 = jogo.IdTime2;
         }
     }
 
@@ -123,15 +128,28 @@
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
-        parametros.Add("@idJogo", idJogo);
-        parametros.Add("@idTime1", idTime1);
-        parametros.Add("@idTime2", idTime2);
+        parametros.Add("@idJogo", jogo.IdJogo);
+        parametros.Add("@idTime1", jogo.IdTime1);
+        parametros.Add("@idTime2", jogo.IdTime2);
 
         string procedure = GetNomeProcedure(acao);
 
         Dao dao = new Dao();
 
         dao.ExecutarProcedure(procedure, parametros);
+    }
+
+    private void ExecutarManutencao()
+    {
+        instanciarJogo();
+
+        jogo.IdTime1 = Request.Form["idTime1"];
+        jogo.IdTime2 = Request.Form["IdTime2"];
+
+        Manutencao();
+        view = View.Index;
+        ModelState.AddError("alert-success", "Operação realizada com sucesso");
+        LimpaVariaveis();
     }
 }
 
@@ -140,13 +158,7 @@
 
     if (acao == "I" || acao == "A" || acao == "E")
     {
-        Util.ExceptionHandler(() =>
-        {
-            Manutencao();
-            view = View.Index;
-            ModelState.AddError("alert-success", "Operação realizada com sucesso");
-            LimpaVariaveis();
-        }, this.ModelState);
+        Util.ExceptionHandler(ExecutarManutencao, this.ModelState);
     }
 
     Util.ExceptionHandler(() =>
@@ -180,7 +192,7 @@
                         <option value=""></option>
                         @foreach (Time item in times)
                         {
-                            <option value="@item.IdTime" @(idTime1 == item.IdTime ? "selected" : "")>@item.Nome</option>
+                            <option value="@item.IdTime" @(jogo.IdTime1 == item.IdTime ? "selected" : "")>@item.Nome</option>
                         }
                     </select>
                     @PageHelper.makeFeedback("idTime1")
@@ -193,7 +205,7 @@
                         <option value=""></option>
                         @foreach (Time item in times)
                         {
-                            <option value="@item.IdTime" @(idTime2 == item.IdTime ? "selected" : "")>@item.Nome</option>
+                            <option value="@item.IdTime" @(jogo.IdTime2 == item.IdTime ? "selected" : "")>@item.Nome</option>
                         }
                     </select>
                     @PageHelper.makeFeedback("idTime2")
@@ -262,7 +274,7 @@
             }
 
 
-</form>
+    </form>
 
     <script src="~/Scripts/scripts.js">
     </script>
