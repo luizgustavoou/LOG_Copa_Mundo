@@ -94,6 +94,11 @@
         }
     }
 
+    private string isInvalid(string key)
+    {
+        return (!ModelState.IsValidField(key) ? "is-invalid" : "");
+    }
+
     private void Manutencao()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
@@ -117,20 +122,18 @@
 
     if(acao == "I" || acao == "A" || acao == "E")
     {
-        try
-        {
+        Util.ExceptionHandler(() => {
             Manutencao();
             LimpaVariaveis();
-
-        }
-        catch (Exception ex) {
-            ModelState.AddError("alert-danger", ex.Message);
-        }
+        }, this.ModelState);
 
     }
 
-    ConsultarTimes();
-    ConsultarJogadores();
+    Util.ExceptionHandler(() => {
+        ConsultarTimes();
+        ConsultarJogadores();
+
+    }, this.ModelState);
 
 }
 
@@ -151,20 +154,27 @@
 
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome: </label>
-                <input class="form-control" type="text" name="nome" id="nome" value="@nome" />
+                <input class="form-control @isInvalid("nome")" type="text" name="nome" id="nome" value="@nome" />
+                @PageHelper.makeFeedback("nome")
             </div>
 
             <div class="mb-3">
                 <label for="idTime">Time: </label>
 
-                <select class="form-select" name="idTime" id="idTime">
+                <select class="form-select @isInvalid("idTime")" name="idTime" id="idTime">
                     <option value=""></option>
                     @foreach (Time item in times)
                     {
                         <option value="@item.IdTime">@item.Nome</option>
                     }
+
+
                 </select>
+                @PageHelper.makeFeedback("idTime")
+             
             </div>
+
+     
 
             <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
             <button class="btn btn-success" type="button" onclick="executarAcao('I')">Incluir</button>

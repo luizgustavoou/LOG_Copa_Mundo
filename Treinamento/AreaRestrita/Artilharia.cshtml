@@ -48,16 +48,8 @@
 }
 
 @{
-    try
-    {
 
-        Consultar();
-    }
-    catch (Exception ex)
-    {
-        ModelState.AddError("alert-danger", ex.Message);
-    }
-
+    Util.ExceptionHandler(Consultar, this.ModelState);
 }
 
 @section head {
@@ -68,6 +60,8 @@
     <form name="form1" method="post">
         <div class="container">
             <h1>Artilharia</h1>
+
+            @PageHelper.MakeAlert()
 
             @if (artilharias != null)
             {

@@ -53,7 +53,7 @@
 }
 
 @{
-    Consultar();
+    Util.ExceptionHandler(Consultar, this.ModelState);
 }
 
 @section head {
@@ -64,6 +64,9 @@
     <form name="form1" method="post">
         <div class="container">
             <h1>Classificacao</h1>
+
+
+            @PageHelper.MakeAlert()
 
             @if (classificacoes != null)
             {

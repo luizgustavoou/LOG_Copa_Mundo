@@ -87,6 +87,11 @@
         }
     }
 
+    private string isInvalid(string key)
+    {
+        return (!ModelState.IsValidField(key) ? "is-invalid" : "");
+    }
+
     private void Manutencao()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
@@ -100,8 +105,6 @@
         Dao dao = new Dao();
 
         dao.ExecutarProcedure(procedure, parametros);
-
-
     }
 }
 
@@ -110,21 +113,17 @@
 
     if (acao == "I" || acao == "A" || acao == "E")
     {
-        try
-        {
+        Util.ExceptionHandler(() => {
             Manutencao();
             LimpaVariaveis();
-
-        }
-        catch (Exception ex)
-        {
-            ModelState.AddError("alert-danger", ex.Message);
-        }
+        }, this.ModelState);
     }
 
-    ConsultarTimes();
-    ConsultarJogos();
-
+    Util.ExceptionHandler(() =>
+    {
+        ConsultarTimes();
+        ConsultarJogos();
+    }, this.ModelState);
 }
 
 @section head {
@@ -143,25 +142,27 @@
             <div>
                 <label for="idTime1">Time 1: </label>
 
-                <select class="form-select" name="idTime1" id="idTime1">
+                <select class="form-select @isInvalid("idTime1")" name="idTime1" id="idTime1">
                     <option value=""></option>
                     @foreach (Time item in times)
                     {
                         <option value="@item.IdTime">@item.Nome</option>
                     }
                 </select>
+                @PageHelper.makeFeedback("idTime1")
             </div>
 
             <div class="mb-3">
                 <label for="idTime2">Time 2: </label>
 
-                <select class="form-select" name="idTime2" id="idTime2">
+                <select class="form-select @isInvalid("idTime2")" name="idTime2" id="idTime2">
                     <option value=""></option>
                     @foreach (Time item in times)
                     {
                         <option value="@item.IdTime">@item.Nome</option>
                     }
                 </select>
+                @PageHelper.makeFeedback("idTime2")
             </div>
 
             <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
