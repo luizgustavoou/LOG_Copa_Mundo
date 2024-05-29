@@ -112,15 +112,9 @@
 
     private void CarregadarDados()
     {
-        instanciarJogo();
-
         if (view == View.Edit && acao == "C" && jogos != null && jogos.Count == 1)
         {
-
-            Jogo jogoCarregado = jogos.FirstOrDefault();
-
-            jogo.IdTime1 = jogo.IdTime1;
-            jogo.IdTime2 = jogo.IdTime2;
+            jogo = jogos.FirstOrDefault();
         }
     }
 
@@ -167,9 +161,6 @@
         ConsultarJogos();
         CarregadarDados();
     }, this.ModelState);
-}
-
-@section head {
 }
 
 <body>
@@ -238,9 +229,9 @@
                 }
             </div>
 
-            @if (jogos != null)
+            @if (view == View.Index)
             {
-                if (view == View.Index)
+                if (jogos != null)
                 {
                     <table class="mt-2 table table-dark table-striped table-hover">
                         <thead>
@@ -261,7 +252,7 @@
                                     <td>@item.Placar1</td>
                                     <td>@item.Placar2</td>
                                     <td>
-                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdJogo', '@item.IdTime1', '@item.IdTime2')" @(item.Placar1 > 0 || item.Placar2 > 0 ? "disabled" : "")>
+                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdJogo')" @(item.Placar1 > 0 || item.Placar2 > 0 ? "disabled" : "")>
                                             <i class="bi bi-pencil-fill"></i>
                                             Editar
                                         </button>
@@ -274,7 +265,7 @@
             }
 
 
-    </form>
+</form>
 
     <script src="~/Scripts/scripts.js">
     </script>
@@ -283,14 +274,14 @@
 
         const form = document.getElementById("form1");
 
-        function editar(idJogo, idTime1, idTime2) {
-            document.form1.view.value = "@((int)View.Edit)"
+        function editar(idJogo) {
+            form.view.value = "@((int)View.Edit)"
             form.idJogo.value = idJogo;
             executarAcao('C');
         }
 
         function novo() {
-            document.form1.view.value = "@((int)View.New)"
+            form.view.value = "@((int)View.New)"
             executarAcao('C');
         }
     </script>

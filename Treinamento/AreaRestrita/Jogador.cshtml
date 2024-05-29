@@ -149,17 +149,9 @@
 
     private void CarregarDados()
     {
-        instanciarJogador();
-
         if (view == View.Edit && acao == "C" && jogadores != null && jogadores.Count == 1)
         {
-            Jogador jogadorCarregado = jogadores.FirstOrDefault();
-
-            jogador.IdJogador = jogadorCarregado.IdJogador;
-            jogador.Nome = jogadorCarregado.Nome;
-            jogador.IdTime = jogadorCarregado.IdTime;
-            jogador.NomeTime = jogadorCarregado.NomeTime;
-
+            jogador = jogadores.FirstOrDefault();
         }
     }
 }

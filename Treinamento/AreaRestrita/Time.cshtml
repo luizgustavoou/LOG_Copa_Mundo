@@ -35,7 +35,7 @@
 
         if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
         {
-            view = (View) Enum.Parse(typeof(View), Request.Form["view"]);
+            view = (View)Enum.Parse(typeof(View), Request.Form["view"]);
         }
     }
 
@@ -101,27 +101,19 @@
 
     private void carregarDados()
     {
-        instanciarTime();
-
         if (view == View.Edit && acao == "C" && times != null && times.Count == 1)
         {
-            if(idTime != null)
-            {
+            time = times.FirstOrDefault();
 
-
-                Time timeCarregado = times.FirstOrDefault();
-
-                time.IdTime = timeCarregado.IdTime;
-                time.Nome = timeCarregado.Nome;
-            }
         }
     }
 
     private void executarManutencao()
     {
-        time = new Time() {
+        time = new Time()
+        {
             IdTime = Util.ChecaNulo(Request.Form["idTime"]),
-            Nome= Util.ChecaNulo(Request.Form["nome"])
+            Nome = Util.ChecaNulo(Request.Form["nome"])
         };
 
         Manutencao();
@@ -177,31 +169,31 @@
             }
 
 
-        <div class="mb-3">
-            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+            <div class="mb-3">
+                <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
 
-            @if (view == View.Index)
-            {
-                <button class="btn btn-primary" type="button" onclick="novo()">Novo</button>
+                @if (view == View.Index)
+                {
+                    <button class="btn btn-primary" type="button" onclick="novo()">Novo</button>
 
-            }
+                }
 
-            @if (view == View.New)
-            {
-                <button class="btn btn-success" type="button" onclick="executarAcao('I')">Inserir</button>
+                @if (view == View.New)
+                {
+                    <button class="btn btn-success" type="button" onclick="executarAcao('I')">Inserir</button>
 
-            }
+                }
 
-            @if (view == View.Edit)
-            {
-                <button class="btn btn-danger" type="button" onclick="executarAcao('E')">Excluir</button>
-                <button class="btn btn-warning" type="button" onclick="executarAcao('A')">Alterar</button>
+                @if (view == View.Edit)
+                {
+                    <button class="btn btn-danger" type="button" onclick="executarAcao('E')">Excluir</button>
+                    <button class="btn btn-warning" type="button" onclick="executarAcao('A')">Alterar</button>
 
-            }
+                }
 
 
 
-        </div>
+            </div>
 
             @if (view == View.Index)
             {
