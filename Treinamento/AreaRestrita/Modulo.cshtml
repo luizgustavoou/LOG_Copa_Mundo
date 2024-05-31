@@ -15,6 +15,7 @@
     {
         public string IdModulo { get; set; }
         public string IdSistema { get; set; }
+        public string Sistema { get; set; }
         public string Codigo { get; set; }
         public string Caption { get; set; }
     }
@@ -249,7 +250,7 @@
                         <thead>
                             <tr>
                                 <th>IdModulo</th>
-                                <th>IdSistema</th>
+                                <th>Sistema</th>
                                 <th>Código</th>
                                 <th>Caption</th>
                                 <th></th>
@@ -260,7 +261,7 @@
                             {
                                 <tr>
                                     <td>@item.IdModulo</td>
-                                    <td>@item.IdSistema</td>
+                                    <td>@item.Sistema</td>
                                     <td>@item.Codigo</td>
                                     <td>@item.Caption</td>
                                     <td>
