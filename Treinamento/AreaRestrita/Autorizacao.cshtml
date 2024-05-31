@@ -34,13 +34,8 @@
 
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idOperador = Util.ChecaNulo(Request.Form["idOperador"]);
-    }
+        idsAcao = Request.Form["idAcao"];
 
-    private void LimpaVariaveis()
-    {
-        acao = null;
-        idOperador = null;
-        autorizacoes = null;
     }
 
     private void ConsultarAutorizacoesOperador()
@@ -88,8 +83,8 @@
     private void Manutencao()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
-        parametros.Add("@@IdOperador", idOperador);
-        //parametros.Add("@IdAcao", );
+        parametros.Add("@IdOperador", idOperador);
+        parametros.Add("@IdsAcao", idsAcao);
 
 
         string procedure = GetNomeProcedure(acao);
@@ -103,7 +98,6 @@
     private void executarManutencao()
     {
         Manutencao();
-        LimpaVariaveis();
         ModelState.AddError("alert-success", "Operação realizada com sucesso.");
     }
 }
@@ -111,7 +105,7 @@
 @{
     AlimentaVariaveis();
 
-    if (acao == "I" || acao == "A" || acao == "E")
+    if (acao == "A")
     {
         Util.ExceptionHandler(executarManutencao, this.ModelState);
 
@@ -131,8 +125,11 @@
         <input type="hidden" name="acao" id="acao" />
         <input type="hidden" name="idOperador" id="idOperador" value="@idOperador" />
 
+
         <div class="container">
             <h1>Autorizações</h1>
+
+            @PageHelper.MakeAlert()
 
             <div class="mb-3">
                 <label for="idOperadorSelecionado">Operador: </label>
@@ -171,13 +168,15 @@
                                 <td>@item.NomePagina</td>
                                 <td>@item.NomeAcao</td>
                                 <td>
-                                    <input type="checkbox" name="idAcao" value="@item.IdAcao" @(item.Permissao == 1 ?  "checked" : "")>
+                                    <input type="checkbox" name="idAcao" id="idAcao" value="@item.IdAcao" @(item.Permissao == 1 ?  "checked" : "")>
                                 </td>
                             </tr>
 
                         }
                     </tbody>
                 </table>
+
+                <button class="btn btn-primary" onclick="executarAcao('A')">Registar</button>
 
             }
         </div>
