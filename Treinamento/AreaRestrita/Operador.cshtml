@@ -1,5 +1,5 @@
 ﻿@{
-    Page.Title = "Modulo";
+    Page.Title = "Operador";
     Layout = "~/AreaRestrita/_Layout.cshtml";
 }
 
@@ -11,39 +11,31 @@
         Edit
     }
 
-    private class Modulo
+    private class Operador
     {
-        public string IdModulo { get; set; }
-        public string IdSistema { get; set; }
-        public string Codigo { get; set; }
-        public string Caption { get; set; }
-    }
-
-    private class Sistema
-    {
-        public string IdSistema { get; set; }
-        public string Codigo { get; set; }
-        public string Caption { get; set; }
+        public string IdOperador { get; set; }
+        public string Cpf { get; set; }
+        public string Nome { get; set; }
+        public string Senha { get; set; }
     }
 
 
     string acao = null;
 
-    string idModulo = null;
+    string idOperador = null;
 
-    Modulo modulo = null;
+    Operador operador = null;
 
 
     View view = View.Index;
-    List<Modulo> modulos = null;
-    List<Sistema> sistemas = null;
+    List<Operador> operadores = null;
 
     private void AlimentaVariaveis()
     {
-        modulo = new Modulo();
+        operador = new Operador();
 
         acao = Util.ChecaNulo(Request.Form["acao"]);
-        idModulo = Util.ChecaNulo(Request.Form["idModulo"]);
+        idOperador = Util.ChecaNulo(Request.Form["idOperador"]);
 
         if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
         {
@@ -54,33 +46,20 @@
     private void LimpaVariaveis()
     {
         acao = null;
-        idModulo = null;
-        modulo = null;
+        idOperador = null;
+        operador = null;
     }
 
-    private void ConsultarModulos()
+    private void Consultar()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
-        parametros.Add("@IdModulo", idModulo);
+        parametros.Add("@IdOperador", idOperador);
 
 
         string procedure = GetNomeProcedure("C");
         Dao dao = new Dao();
 
-        modulos = dao.ExecutarProcedureList<Modulo>(procedure, parametros);
-
-    }
-
-    private void ConsultarSistemas()
-    {
-        Dictionary<string, object> parametros = new Dictionary<string, object>();
-        parametros.Add("@TipoRetorno", 1);
-
-
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
-        sistemas = dao.ExecutarProcedureList<Sistema>(procedure, parametros);
+        operadores = dao.ExecutarProcedureList<Operador>(procedure, parametros);
 
     }
 
@@ -88,10 +67,10 @@
     {
         switch (acao)
         {
-            case "C": return "stp_LGU_Modulo_Sel";
-            case "I": return "stp_LGU_Modulo_Ins";
-            case "A": return "stp_LGU_Modulo_Upd";
-            case "E": return "stp_LGU_Modulo_Del";
+            case "C": return "stp_LGU_Operador_Sel";
+            case "I": return "stp_LGU_Operador_Ins";
+            case "A": return "stp_LGU_Operador_Upd";
+            case "E": return "stp_LGU_Operador_Del";
             default:
                 return null;
         }
@@ -105,10 +84,10 @@
     private void Manutencao()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
-        parametros.Add("@IdModulo", modulo.IdModulo);
-        parametros.Add("@IdSistema", modulo.IdSistema);
-        parametros.Add("@Codigo", modulo.Codigo);
-        parametros.Add("@Caption", modulo.Caption);
+        parametros.Add("@IdOperador", operador.IdOperador);
+        parametros.Add("@Cpf", operador.Cpf);
+        parametros.Add("@Nome", operador.Nome);
+        parametros.Add("@Senha", operador.Senha);
 
         string procedure = GetNomeProcedure(acao);
 
@@ -118,31 +97,31 @@
 
     }
 
-    private void instanciarModulo()
+    private void instanciarOperador()
     {
-        if (modulo == null)
+        if (operador == null)
         {
-            modulo = new Modulo();
+            operador = new Operador();
         }
     }
 
     private void carregarDados()
     {
-        if (view == View.Edit && acao == "C" && modulos != null && modulos.Count == 1)
+        if (view == View.Edit && acao == "C" && operadores != null && operadores.Count == 1)
         {
-            modulo = modulos.FirstOrDefault();
+            operador = operadores.FirstOrDefault();
 
         }
     }
 
     private void executarManutencao()
     {
-        modulo = new Modulo()
+        operador = new Operador()
         {
-            IdModulo = Util.ChecaNulo(Request.Form["idModulo"]),
-            IdSistema = Util.ChecaNulo(Request.Form["idSistema"]),
-            Codigo = Util.ChecaNulo(Request.Form["codigo"]),
-            Caption = Util.ChecaNulo(Request.Form["caption"])
+            IdOperador = Util.ChecaNulo(Request.Form["idOperador"]),
+            Cpf = Util.ChecaNulo(Request.Form["cpf"]),
+            Nome = Util.ChecaNulo(Request.Form["nome"]),
+            Senha = Util.ChecaNulo(Request.Form["senha"])
         };
 
         Manutencao();
@@ -163,8 +142,7 @@
 
     Util.ExceptionHandler(() =>
     {
-        ConsultarSistemas();
-        ConsultarModulos();
+        Consultar();
         carregarDados();
 
     }, this.ModelState);
@@ -176,11 +154,11 @@
 <body>
     <form class="text-light" name="form1" method="post">
         <input type="hidden" name="acao" id="acao" />
-        <input type="hidden" name="idModulo" id="idModulo" value="@idModulo" />
+        <input type="hidden" name="idOperador" id="idOperador" value="@idOperador" />
         <input type="hidden" name="view" id="view" value="@((int)view)" />
 
         <div class="container">
-            <h1>Modulo</h1>
+            <h1>Operadores</h1>
 
             @PageHelper.MakeAlert()
 
@@ -189,31 +167,21 @@
             @if (view == View.New || view == View.Edit)
             {
                 <div class="mb-3">
-                    <label for="idSistema">Sistema: </label>
-
-                    <select class="form-select @isInvalid("idSistema")" name="idSistema" id="idSistema">
-                        <option value=""></option>
-                        @foreach (Sistema item in sistemas)
-                        {
-                            <option value="@item.IdSistema" @(item.IdSistema == modulo.IdSistema ? "selected" : "")>@item.Caption</option>
-                        }
-
-
-                    </select>
-                    @PageHelper.makeFeedback("idSistema")
-
+                    <label for="cpf" class="form-label">CPF: </label>
+                    <input class="form-control @isInvalid("cpf")" type="text" name="cpf" id="cpf" value="@operador.Cpf" />
+                    @PageHelper.makeFeedback("cpf")
                 </div>
 
                 <div class="mb-3">
-                    <label for="codigo" class="form-label">Código: </label>
-                    <input class="form-control @isInvalid("codigo")" type="text" name="codigo" id="codigo" value="@modulo.Codigo" />
-                    @PageHelper.makeFeedback("codigo")
+                    <label for="nome" class="form-label">Nome: </label>
+                    <input class="form-control @isInvalid("nome")" type="text" name="nome" id="nome" value="@operador.Nome" />
+                    @PageHelper.makeFeedback("nome")
                 </div>
 
                 <div class="mb-3">
-                    <label for="caption" class="form-label">Caption: </label>
-                    <input class="form-control @isInvalid("caption")" type="text" name="caption" id="caption" value="@modulo.Caption" />
-                    @PageHelper.makeFeedback("caption")
+                    <label for="senha" class="form-label">Senha: </label>
+                    <input class="form-control @isInvalid("senha")" type="password" name="senha" id="senha" value="@operador.Senha" />
+                    @PageHelper.makeFeedback("senha")
                 </div>
             }
 
@@ -239,32 +207,35 @@
                     <button class="btn btn-warning" type="button" onclick="executarAcao('A')">Alterar</button>
 
                 }
+
+
+
             </div>
 
             @if (view == View.Index)
             {
-                if (modulos != null)
+                if (operadores != null)
                 {
                     <table class="mt-2 table table-dark table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>IdModulo</th>
-                                <th>IdSistema</th>
-                                <th>Código</th>
-                                <th>Caption</th>
+                                <th>IdOperador</th>
+                                <th>CPF</th>
+                                <th>Nome</th>
+                                <th>Senha</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (Modulo item in modulos)
+                            @foreach (Operador item in operadores)
                             {
                                 <tr>
-                                    <td>@item.IdModulo</td>
-                                    <td>@item.IdSistema</td>
-                                    <td>@item.Codigo</td>
-                                    <td>@item.Caption</td>
+                                    <td>@item.IdOperador</td>
+                                    <td>@item.Cpf</td>
+                                    <td>@item.Nome</td>
+                                    <td>@(new string(item.Senha.Select(c =>  '*').ToArray()))</td>
                                     <td>
-                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdModulo')">
+                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdOperador')">
                                             <i class="bi bi-pencil-fill"></i>
                                             Editar
                                         </button>
@@ -287,9 +258,9 @@
 
 
     <script>
-        function editar(idModulo) {
+        function editar(idOperador) {
             document.form1.view.value = "@((int)View.Edit)"
-            document.form1.idModulo.value = idModulo;
+            document.form1.idOperador.value = idOperador;
             executarAcao('C');
         }
 
