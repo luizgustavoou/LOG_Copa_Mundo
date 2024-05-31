@@ -23,7 +23,7 @@
 
     string acao = null;
     string idOperador = null;
-
+    string idsAcao = null;
 
     List<Autorizacao> autorizacoes = null;
     List<Operador> operadores = null;
@@ -171,7 +171,7 @@
                                 <td>@item.NomePagina</td>
                                 <td>@item.NomeAcao</td>
                                 <td>
-                                    @item.Permissao
+                                    <input type="checkbox" name="idAcao" value="@item.IdAcao" @(item.Permissao == 1 ?  "checked" : "")>
                                 </td>
                             </tr>
 
