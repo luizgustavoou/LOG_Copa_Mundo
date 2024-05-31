@@ -1,77 +1,63 @@
 ﻿@{
-    Page.Title = "Modulo";
+    Page.Title = "Autorizacao";
     Layout = "~/AreaRestrita/_Layout.cshtml";
 }
 
 @functions {
-    private enum View
+    private class Autorizacao
     {
-        Index,
-        New,
-        Edit
+        public string NomeSistema { get; set; }
+        public string NomeModulo { get; set; }
+        public string NomePagina { get; set; }
+        public int IdAcao { get; set; }
+        public string NomeAcao { get; set; }
+        public int Permissao { get; set; }
     }
 
-    private class Modulo
+    private class Operador
     {
-        public string IdModulo { get; set; }
-        public string IdSistema { get; set; }
-        public string Codigo { get; set; }
-        public string Caption { get; set; }
-    }
-
-    private class Sistema
-    {
-        public string IdSistema { get; set; }
-        public string Codigo { get; set; }
-        public string Caption { get; set; }
+        public string IdOperador { get; set; }
+        public string Nome { get; set; }
     }
 
 
     string acao = null;
-
-    string idModulo = null;
-
-    Modulo modulo = null;
+    string idOperador = null;
 
 
-    View view = View.Index;
-    List<Modulo> modulos = null;
-    List<Sistema> sistemas = null;
+    List<Autorizacao> autorizacoes = null;
+    List<Operador> operadores = null;
 
     private void AlimentaVariaveis()
     {
-        modulo = new Modulo();
+
 
         acao = Util.ChecaNulo(Request.Form["acao"]);
-        idModulo = Util.ChecaNulo(Request.Form["idModulo"]);
-
-        if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
-        {
-            view = (View)Enum.Parse(typeof(View), Request.Form["view"]);
-        }
+        idOperador = Util.ChecaNulo(Request.Form["idOperador"]);
     }
 
     private void LimpaVariaveis()
     {
         acao = null;
-        idModulo = null;
-        modulo = null;
+        idOperador = null;
+        autorizacoes = null;
     }
 
-    private void ConsultarModulos()
+    private void ConsultarAutorizacoesOperador()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
-        parametros.Add("@IdModulo", idModulo);
+        parametros.Add("@TipoRetorno", 2);
+        parametros.Add("@IdOperador", idOperador);
 
 
         string procedure = GetNomeProcedure("C");
         Dao dao = new Dao();
 
-        modulos = dao.ExecutarProcedureList<Modulo>(procedure, parametros);
+        autorizacoes = dao.ExecutarProcedureList<Autorizacao>(procedure, parametros);
 
     }
 
-    private void ConsultarSistemas()
+    private void ConsultarOperadores()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
         parametros.Add("@TipoRetorno", 1);
@@ -80,18 +66,15 @@
         string procedure = GetNomeProcedure("C");
         Dao dao = new Dao();
 
-        sistemas = dao.ExecutarProcedureList<Sistema>(procedure, parametros);
-
+        operadores = dao.ExecutarProcedureList<Operador>(procedure, parametros);
     }
 
     private string GetNomeProcedure(string acao)
     {
         switch (acao)
         {
-            case "C": return "stp_LGU_Modulo_Sel";
-            case "I": return "stp_LGU_Modulo_Ins";
-            case "A": return "stp_LGU_Modulo_Upd";
-            case "E": return "stp_LGU_Modulo_Del";
+            case "C": return "stp_LGU_Autorizacao_Sel";
+            case "A": return "stp_LGU_Autorizacao_Upd";
             default:
                 return null;
         }
@@ -105,10 +88,9 @@
     private void Manutencao()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
-        parametros.Add("@IdModulo", modulo.IdModulo);
-        parametros.Add("@IdSistema", modulo.IdSistema);
-        parametros.Add("@Codigo", modulo.Codigo);
-        parametros.Add("@Caption", modulo.Caption);
+        parametros.Add("@@IdOperador", idOperador);
+        //parametros.Add("@IdAcao", );
+
 
         string procedure = GetNomeProcedure(acao);
 
@@ -118,35 +100,9 @@
 
     }
 
-    private void instanciarModulo()
-    {
-        if (modulo == null)
-        {
-            modulo = new Modulo();
-        }
-    }
-
-    private void carregarDados()
-    {
-        if (view == View.Edit && acao == "C" && modulos != null && modulos.Count == 1)
-        {
-            modulo = modulos.FirstOrDefault();
-
-        }
-    }
-
     private void executarManutencao()
     {
-        modulo = new Modulo()
-        {
-            IdModulo = Util.ChecaNulo(Request.Form["idModulo"]),
-            IdSistema = Util.ChecaNulo(Request.Form["idSistema"]),
-            Codigo = Util.ChecaNulo(Request.Form["codigo"]),
-            Caption = Util.ChecaNulo(Request.Form["caption"])
-        };
-
         Manutencao();
-        view = View.Index;
         LimpaVariaveis();
         ModelState.AddError("alert-success", "Operação realizada com sucesso.");
     }
@@ -163,122 +119,66 @@
 
     Util.ExceptionHandler(() =>
     {
-        ConsultarSistemas();
-        ConsultarModulos();
-        carregarDados();
+        ConsultarOperadores();
 
     }, this.ModelState);
-
-
 }
 
 
 <body>
     <form class="text-light" name="form1" method="post">
         <input type="hidden" name="acao" id="acao" />
-        <input type="hidden" name="idModulo" id="idModulo" value="@idModulo" />
-        <input type="hidden" name="view" id="view" value="@((int)view)" />
+        <input type="hidden" name="idOperador" id="idOperador" value="@idOperador" />
 
         <div class="container">
-            <h1>Modulo</h1>
-
-            @PageHelper.MakeAlert()
-
-
-
-            @if (view == View.New || view == View.Edit)
-            {
-                <div class="mb-3">
-                    <label for="idSistema">Sistema: </label>
-
-                    <select class="form-select @isInvalid("idSistema")" name="idSistema" id="idSistema">
-                        <option value=""></option>
-                        @foreach (Sistema item in sistemas)
-                        {
-                            <option value="@item.IdSistema" @(item.IdSistema == modulo.IdSistema ? "selected" : "")>@item.Caption</option>
-                        }
-
-
-                    </select>
-                    @PageHelper.makeFeedback("idSistema")
-
-                </div>
-
-                <div class="mb-3">
-                    <label for="codigo" class="form-label">Código: </label>
-                    <input class="form-control @isInvalid("codigo")" type="text" name="codigo" id="codigo" value="@modulo.Codigo" />
-                    @PageHelper.makeFeedback("codigo")
-                </div>
-
-                <div class="mb-3">
-                    <label for="caption" class="form-label">Caption: </label>
-                    <input class="form-control @isInvalid("caption")" type="text" name="caption" id="caption" value="@modulo.Caption" />
-                    @PageHelper.makeFeedback("caption")
-                </div>
-            }
-
+            <h1>Autorizações</h1>
 
             <div class="mb-3">
-                <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+                <label for="idOperador">Operador: </label>
 
-                @if (view == View.Index)
-                {
-                    <button class="btn btn-primary" type="button" onclick="novo()">Novo</button>
+                <select class="form-select @isInvalid("idOperador")" name="idOperador" id="idOperador">
+                    <option value=""></option>
+                    @foreach (Operador item in operadores)
+                    {
+                        <option value="@item.IdOperador" @(item.IdOperador == idOperador ? "selected" : "")>@item.Nome</option>
+                    }
 
-                }
 
-                @if (view == View.New)
-                {
-                    <button class="btn btn-success" type="button" onclick="executarAcao('I')">Inserir</button>
+                </select>
+                @PageHelper.makeFeedback("idOperador")
 
-                }
-
-                @if (view == View.Edit)
-                {
-                    <button class="btn btn-danger" type="button" onclick="executarAcao('E')">Excluir</button>
-                    <button class="btn btn-warning" type="button" onclick="executarAcao('A')">Alterar</button>
-
-                }
             </div>
 
-            @if (view == View.Index)
+            @if (autorizacoes != null)
             {
-                if (modulos != null)
-                {
-                    <table class="mt-2 table table-dark table-striped table-hover">
-                        <thead>
+                <table class="mt-2 table table-dark table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Sistema</th>
+                            <th>Módulo</th>
+                            <th>Página</th>
+                            <th>Ação</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Autorizacao item in autorizacoes)
+                        {
                             <tr>
-                                <th>IdModulo</th>
-                                <th>IdSistema</th>
-                                <th>Código</th>
-                                <th>Caption</th>
-                                <th></th>
+                                <td>@item.NomeSistema</td>
+                                <td>@item.NomeModulo</td>
+                                <td>@item.NomePagina</td>
+                                <td>@item.NomeAcao</td>
+                                <td>
+                                    lorem ipsum
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (Modulo item in modulos)
-                            {
-                                <tr>
-                                    <td>@item.IdModulo</td>
-                                    <td>@item.IdSistema</td>
-                                    <td>@item.Codigo</td>
-                                    <td>@item.Caption</td>
-                                    <td>
-                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdModulo')">
-                                            <i class="bi bi-pencil-fill"></i>
-                                            Editar
-                                        </button>
-                                    </td>
-                                </tr>
 
-                            }
-                        </tbody>
-                    </table>
+                        }
+                    </tbody>
+                </table>
 
-                }
             }
-
-
         </div>
     </form>
 
@@ -287,14 +187,12 @@
 
 
     <script>
-        function editar(idModulo) {
-            document.form1.view.value = "@((int)View.Edit)"
-            document.form1.idModulo.value = idModulo;
+        function editar(idAutorizacao) {
+            document.form1.idAutorizacao.value = idAutorizacao;
             executarAcao('C');
         }
 
         function novo() {
-            document.form1.view.value = "@((int)View.New)";
             executarAcao('');
         }
 
