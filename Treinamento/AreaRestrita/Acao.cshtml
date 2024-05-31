@@ -23,6 +23,8 @@
     {
         public string IdAcao { get; set; }
         public string IdPagina { get; set; }
+        public string PaginaCodigo { get; set; }
+        public string PaginaCaption { get; set; }
         public string Codigo { get; set; }
         public string Caption { get; set; }
         public string NomeProcedure { get; set; }
@@ -261,9 +263,10 @@
                         <thead>
                             <tr>
                                 <th>IdAcao</th>
-                                <th>IdPagina</th>
                                 <th>Código</th>
                                 <th>Caption</th>
+                                <th>Código da página</th>
+                                <th>Caption da página</th>
                                 <th>Nome Procedure</th>
                                 <th></th>
                             </tr>
@@ -273,9 +276,10 @@
                             {
                                 <tr>
                                     <td>@item.IdAcao</td>
-                                    <td>@item.IdPagina</td>
                                     <td>@item.Codigo</td>
                                     <td>@item.Caption</td>
+                                    <td>@item.PaginaCodigo</td>
+                                    <td>@item.PaginaCaption</td>
                                     <td>@item.NomeProcedure</td>
                                     <td>
                                         <button class="btn btn-warning" type="button" onclick="editar('@item.IdAcao')">
