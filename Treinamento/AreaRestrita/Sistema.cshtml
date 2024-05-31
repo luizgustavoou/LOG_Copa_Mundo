@@ -31,6 +31,8 @@
 
     private void AlimentaVariaveis()
     {
+        sistema = new Sistema();
+
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idSistema = Util.ChecaNulo(Request.Form["idSistema"]);
 
@@ -38,6 +40,10 @@
         {
             view = (View)Enum.Parse(typeof(View), Request.Form["view"]);
         }
+
+
+
+
     }
 
     private void LimpaVariaveis()
