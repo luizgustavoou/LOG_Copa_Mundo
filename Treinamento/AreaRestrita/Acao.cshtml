@@ -1,5 +1,5 @@
 ﻿@{
-    Page.Title = "Modulo";
+    Page.Title = "Pagina";
     Layout = "~/AreaRestrita/_Layout.cshtml";
 }
 
@@ -11,39 +11,40 @@
         Edit
     }
 
-    private class Modulo
+    private class Pagina
     {
+        public string IdPagina { get; set; }
         public string IdModulo { get; set; }
-        public string IdSistema { get; set; }
         public string Codigo { get; set; }
         public string Caption { get; set; }
     }
 
-    private class Sistema
+    private class Acao
     {
-        public string IdSistema { get; set; }
+        public string IdAcao { get; set; }
+        public string IdPagina { get; set; }
         public string Codigo { get; set; }
         public string Caption { get; set; }
+        public string NomeProcedure { get; set; }
     }
 
 
     string acao = null;
+    string idAcao = null;
 
-    string idModulo = null;
-
-    Modulo modulo = null;
 
 
     View view = View.Index;
-    List<Modulo> modulos = null;
-    List<Sistema> sistemas = null;
+    Acao entidadeAcao = null;
+    List<Acao> acoes = null;
+    List<Pagina> paginas = null;
 
     private void AlimentaVariaveis()
     {
-        modulo = new Modulo();
+        entidadeAcao = new Acao();
 
         acao = Util.ChecaNulo(Request.Form["acao"]);
-        idModulo = Util.ChecaNulo(Request.Form["idModulo"]);
+        idAcao = Util.ChecaNulo(Request.Form["idAcao"]);
 
         if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
         {
@@ -54,24 +55,27 @@
     private void LimpaVariaveis()
     {
         acao = null;
-        idModulo = null;
-        modulo = null;
+        idAcao = null;
+
+        entidadeAcao = null;
+        acoes = null;
+        paginas = null;
     }
 
-    private void ConsultarModulos()
+    private void ConsultarAcaos()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
-        parametros.Add("@IdModulo", idModulo);
+        parametros.Add("@IdAcao", idAcao);
 
 
         string procedure = GetNomeProcedure("C");
         Dao dao = new Dao();
 
-        modulos = dao.ExecutarProcedureList<Modulo>(procedure, parametros);
+        acoes = dao.ExecutarProcedureList<Acao>(procedure, parametros);
 
     }
 
-    private void ConsultarSistemas()
+    private void ConsultarPaginas()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
         parametros.Add("@TipoRetorno", 1);
@@ -80,18 +84,19 @@
         string procedure = GetNomeProcedure("C");
         Dao dao = new Dao();
 
-        sistemas = dao.ExecutarProcedureList<Sistema>(procedure, parametros);
+        paginas = dao.ExecutarProcedureList<Pagina>(procedure, parametros);
 
     }
+
 
     private string GetNomeProcedure(string acao)
     {
         switch (acao)
         {
-            case "C": return "stp_LGU_Modulo_Sel";
-            case "I": return "stp_LGU_Modulo_Ins";
-            case "A": return "stp_LGU_Modulo_Upd";
-            case "E": return "stp_LGU_Modulo_Del";
+            case "C": return "stp_LGU_Acao_Sel";
+            case "I": return "stp_LGU_Acao_Ins";
+            case "A": return "stp_LGU_Acao_Upd";
+            case "E": return "stp_LGU_Acao_Del";
             default:
                 return null;
         }
@@ -105,10 +110,11 @@
     private void Manutencao()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
-        parametros.Add("@IdModulo", modulo.IdModulo);
-        parametros.Add("@IdSistema", modulo.IdSistema);
-        parametros.Add("@Codigo", modulo.Codigo);
-        parametros.Add("@Caption", modulo.Caption);
+        parametros.Add("@IdAcao", entidadeAcao.IdAcao);
+        parametros.Add("@IdPagina", entidadeAcao.IdPagina);
+        parametros.Add("@Codigo", entidadeAcao.Codigo);
+        parametros.Add("@Caption", entidadeAcao.Caption);
+        parametros.Add("@NomeProcedure", entidadeAcao.NomeProcedure);
 
         string procedure = GetNomeProcedure(acao);
 
@@ -118,31 +124,31 @@
 
     }
 
-    private void instanciarModulo()
+    private void instanciarPagina()
     {
-        if (modulo == null)
+        if (entidadeAcao == null)
         {
-            modulo = new Modulo();
+            entidadeAcao = new Acao();
         }
     }
 
     private void carregarDados()
     {
-        if (view == View.Edit && acao == "C" && modulos != null && modulos.Count == 1)
+        if (view == View.Edit && acao == "C" && acoes != null && acoes.Count == 1)
         {
-            modulo = modulos.FirstOrDefault();
-
+            entidadeAcao = acoes.FirstOrDefault();
         }
     }
 
     private void executarManutencao()
     {
-        modulo = new Modulo()
+        entidadeAcao = new Acao()
         {
-            IdModulo = Util.ChecaNulo(Request.Form["idModulo"]),
-            IdSistema = Util.ChecaNulo(Request.Form["idSistema"]),
+            IdAcao = Util.ChecaNulo(Request.Form["idAcao"]),
+            IdPagina = Util.ChecaNulo(Request.Form["idPagina"]),
             Codigo = Util.ChecaNulo(Request.Form["codigo"]),
-            Caption = Util.ChecaNulo(Request.Form["caption"])
+            Caption = Util.ChecaNulo(Request.Form["caption"]),
+            NomeProcedure = Util.ChecaNulo(Request.Form["nomeProcedure"])
         };
 
         Manutencao();
@@ -163,8 +169,8 @@
 
     Util.ExceptionHandler(() =>
     {
-        ConsultarSistemas();
-        ConsultarModulos();
+        ConsultarAcaos();
+        ConsultarPaginas();
         carregarDados();
 
     }, this.ModelState);
@@ -176,11 +182,11 @@
 <body>
     <form class="text-light" name="form1" method="post">
         <input type="hidden" name="acao" id="acao" />
-        <input type="hidden" name="idModulo" id="idModulo" value="@idModulo" />
+        <input type="hidden" name="idAcao" id="idAcao" value="@idAcao" />
         <input type="hidden" name="view" id="view" value="@((int)view)" />
 
         <div class="container">
-            <h1>Modulo</h1>
+            <h1>Ações</h1>
 
             @PageHelper.MakeAlert()
 
@@ -189,31 +195,37 @@
             @if (view == View.New || view == View.Edit)
             {
                 <div class="mb-3">
-                    <label for="idSistema">Sistema: </label>
+                    <label for="idPagina">Páginas: </label>
 
-                    <select class="form-select @isInvalid("idSistema")" name="idSistema" id="idSistema">
+                    <select class="form-select @isInvalid("idPagina")" name="idPagina" id="idPagina">
                         <option value=""></option>
-                        @foreach (Sistema item in sistemas)
+                        @foreach (Pagina item in paginas)
                         {
-                            <option value="@item.IdSistema" @(item.IdSistema == modulo.IdSistema ? "selected" : "")>@item.Caption</option>
+                            <option value="@item.IdPagina" @(item.IdPagina == entidadeAcao.IdPagina ? "selected" : "")>@item.Caption</option>
                         }
 
 
                     </select>
-                    @PageHelper.makeFeedback("idSistema")
+                    @PageHelper.makeFeedback("idPagina")
 
                 </div>
 
                 <div class="mb-3">
                     <label for="codigo" class="form-label">Código: </label>
-                    <input class="form-control @isInvalid("codigo")" type="text" name="codigo" id="codigo" value="@modulo.Codigo" />
+                    <input class="form-control @isInvalid("codigo")" type="text" name="codigo" id="codigo" value="@entidadeAcao.Codigo" />
                     @PageHelper.makeFeedback("codigo")
                 </div>
 
                 <div class="mb-3">
                     <label for="caption" class="form-label">Caption: </label>
-                    <input class="form-control @isInvalid("caption")" type="text" name="caption" id="caption" value="@modulo.Caption" />
+                    <input class="form-control @isInvalid("caption")" type="text" name="caption" id="caption" value="@entidadeAcao.Caption" />
                     @PageHelper.makeFeedback("caption")
+                </div>
+
+                <div class="mb-3">
+                    <label for="nomeProcedure" class="form-label">Nome da procedure: </label>
+                    <input class="form-control @isInvalid("nomeProcedure")" type="text" name="nomeProcedure" id="nomeProcedure" value="@entidadeAcao.NomeProcedure" />
+                    @PageHelper.makeFeedback("nomeProcedure")
                 </div>
             }
 
@@ -243,28 +255,30 @@
 
             @if (view == View.Index)
             {
-                if (modulos != null)
+                if (acoes != null)
                 {
                     <table class="mt-2 table table-dark table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>IdModulo</th>
-                                <th>IdSistema</th>
+                                <th>IdAcao</th>
+                                <th>IdPagina</th>
                                 <th>Código</th>
                                 <th>Caption</th>
+                                <th>Nome Procedure</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (Modulo item in modulos)
+                            @foreach (Acao item in acoes)
                             {
                                 <tr>
-                                    <td>@item.IdModulo</td>
-                                    <td>@item.IdSistema</td>
+                                    <td>@item.IdAcao</td>
+                                    <td>@item.IdPagina</td>
                                     <td>@item.Codigo</td>
                                     <td>@item.Caption</td>
+                                    <td>@item.NomeProcedure</td>
                                     <td>
-                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdModulo')">
+                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdAcao')">
                                             <i class="bi bi-pencil-fill"></i>
                                             Editar
                                         </button>
@@ -277,19 +291,15 @@
 
                 }
             }
-
-
         </div>
     </form>
 
     <script src="~/Scripts/scripts.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
     <script>
-        function editar(idModulo) {
+        function editar(idAcao) {
             document.form1.view.value = "@((int)View.Edit)"
-            document.form1.idModulo.value = idModulo;
+            document.form1.idAcao.value = idAcao;
             executarAcao('C');
         }
 
