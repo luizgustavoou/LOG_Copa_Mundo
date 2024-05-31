@@ -120,13 +120,14 @@
     Util.ExceptionHandler(() =>
     {
         ConsultarOperadores();
+        ConsultarAutorizacoesOperador();
 
     }, this.ModelState);
 }
 
 
 <body>
-    <form class="text-light" name="form1" method="post">
+    <form class="text-light" id="form1" name="form1" method="post">
         <input type="hidden" name="acao" id="acao" />
         <input type="hidden" name="idOperador" id="idOperador" value="@idOperador" />
 
@@ -134,9 +135,9 @@
             <h1>Autorizações</h1>
 
             <div class="mb-3">
-                <label for="idOperador">Operador: </label>
+                <label for="idOperadorSelecionado">Operador: </label>
 
-                <select class="form-select @isInvalid("idOperador")" name="idOperador" id="idOperador">
+                <select id="idOperadorSelecionado" class="form-select @isInvalid("idOperadorSelecionado")" name="idOperadorSelecionado" >
                     <option value=""></option>
                     @foreach (Operador item in operadores)
                     {
@@ -145,7 +146,7 @@
 
 
                 </select>
-                @PageHelper.makeFeedback("idOperador")
+                @*@PageHelper.makeFeedback("idOperadorSelecionado")*@
 
             </div>
 
@@ -170,7 +171,7 @@
                                 <td>@item.NomePagina</td>
                                 <td>@item.NomeAcao</td>
                                 <td>
-                                    lorem ipsum
+                                    @item.Permissao
                                 </td>
                             </tr>
 
@@ -187,8 +188,19 @@
 
 
     <script>
+        const form1 = document.getElementById("form1");
+
+        const selectJogoSelecionado = document.getElementById("idOperadorSelecionado");
+
+        function handleJogoSelecionado() {
+            form1.idOperador.value = selectJogoSelecionado.value;
+            form1.submit();
+        }
+
+        selectJogoSelecionado.addEventListener("change", handleJogoSelecionado)
+
         function editar(idAutorizacao) {
-            document.form1.idAutorizacao.value = idAutorizacao;
+            form1.idAutorizacao.value = idAutorizacao;
             executarAcao('C');
         }
 
