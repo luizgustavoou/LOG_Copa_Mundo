@@ -1,4 +1,5 @@
-﻿@{
+﻿@RenderPage("~/AreaRestrita/Seguranca.cshtml");
+@{
     Page.Title = "Jogador";
     Layout = "~/AreaRestrita/_Layout.cshtml";
 }
@@ -159,7 +160,7 @@
 @{
     AlimentaVariaveis();
 
-    if(acao == "I" || acao == "A" || acao == "E")
+    if (acao == "I" || acao == "A" || acao == "E")
     {
         Util.ExceptionHandler(ExecutarManutencao, this.ModelState);
 
@@ -213,7 +214,7 @@
 
             }
 
-            
+
 
 
             <div class="mb-3">

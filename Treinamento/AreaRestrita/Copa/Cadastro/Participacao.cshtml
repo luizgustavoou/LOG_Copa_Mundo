@@ -1,4 +1,5 @@
-﻿@{
+﻿@RenderPage("~/AreaRestrita/Seguranca.cshtml");
+@{
     Page.Title = "Participacao";
     Layout = "~/AreaRestrita/_Layout.cshtml";
 }
@@ -156,7 +157,7 @@
 }
 
 <body>
-    
+
 
     <form class="text-light flex-grow-1" name="form1" id="form1" method="post">
         <input type="hidden" name="acao" id="acao" />
@@ -202,7 +203,7 @@
 
                                 <div class="px-5 border border-5 rounded position-absolute flex-grow-1 justify-content-center align-items-center px-4 py-2 d-flex gap-2" style="height: 150%; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: black; border-color: #C9CCCB">
                                     <span class="fw-bolder" style="font-size: 2.5rem; ">
-                                        @jogo.Placar1 
+                                        @jogo.Placar1
                                     </span>
                                     <span class="fw-bolder" style="font-size: 2.5rem; ">
                                         -
