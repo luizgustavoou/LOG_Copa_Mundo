@@ -101,7 +101,7 @@ public class Dao
 
         List<Autorizacao> autorizacoes = ExecutarProcedureList<Autorizacao>("stp_LGU_MontaMenu", parametros);
 
-        if (autorizacoes == null) // != null
+        if (autorizacoes == null)
         {
             throw new InvalidOperationException("Operador não autorizado para executar essa ação");
         }

@@ -14,13 +14,28 @@
 
 }
 
-@helper makeFeedback(string key) {
+@helper makeFeedback(string key)
+{
     foreach (var item in ModelState.Where(x => x.Key.Equals(key, StringComparison.OrdinalIgnoreCase)))
     {
         foreach (var item1 in item.Value.Errors)
         {
-         <div class="invalid-feedback">@(item1)</div>
+            <div class="invalid-feedback">@(item1)</div>
         }
 
     }
+}
+
+@helper MakeBotao(List<Botao> botoes, string acao)
+{
+    if (botoes.Any(x => x.Codigo == acao))
+    {
+        Botao botao = botoes.Find(x => x.Codigo == acao);
+
+        if (botao != null)
+        {
+            <button class="btn btn-success" type="button" onclick="executarAcao('@botao.Codigo')">@botao.Caption</button>
+        }
+    }
+
 }

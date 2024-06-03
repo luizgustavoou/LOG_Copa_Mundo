@@ -17,21 +17,27 @@
         public string Nome { get; set; }
     }
 
-    string acao = null;
 
-    string idTime = null;
-
-    Time time = null;
 
 
     View view = View.Index;
+    string acao = null;
+    string idTime = null;
     List<Time> times = null;
+    List<Botao> botoes = null;
+    Time time = null;
+
+
 
     private void AlimentaVariaveis()
     {
+
         time = new Time();
+
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idTime = Util.ChecaNulo(Request.Form["idTime"]);
+        botoes = new BotaoDao().GetAll();
+
 
         if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
         {
@@ -147,31 +153,34 @@
             }
 
 
-            <div class="mb-3">
-                <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+        <div class="mb-3">
+            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
 
-                @if (view == View.Index)
+
+            @if (view == View.New)
+            {
+                @PageHelper.MakeBotao(botoes, "I")
+            }
+
+            @if (view == View.Edit)
+            {
+                @PageHelper.MakeBotao(botoes, "E")
+                @PageHelper.MakeBotao(botoes, "A")
+
+            }
+
+            @if (view == View.Index)
+            {
+                if(botoes.Any(x => x.Codigo == "I"))
                 {
-                    <button class="btn btn-primary" type="button" onclick="novo()">Novo</button>
-
+                    <button class="btn btn-primary" type="button" onclick="novo()">Adicionar novo</button>
                 }
 
-                @if (view == View.New)
-                {
-                    <button class="btn btn-success" type="button" onclick="executarAcao('I')">Inserir</button>
-
-                }
-
-                @if (view == View.Edit)
-                {
-                    <button class="btn btn-danger" type="button" onclick="executarAcao('E')">Excluir</button>
-                    <button class="btn btn-warning" type="button" onclick="executarAcao('A')">Alterar</button>
-
-                }
+            }
 
 
 
-            </div>
+        </div>
 
             @if (view == View.Index)
             {
@@ -192,10 +201,13 @@
                                     <td>@item.IdTime</td>
                                     <td>@item.Nome</td>
                                     <td>
+                                        @if(botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
+                                        {
                                         <button class="btn btn-warning" type="button" onclick="editar('@item.IdTime', '@item.Nome')">
                                             <i class="bi bi-pencil-fill"></i>
                                             Editar
                                         </button>
+                                        }
                                     </td>
                                 </tr>
 
