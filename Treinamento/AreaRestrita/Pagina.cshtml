@@ -11,6 +11,7 @@
         Edit
     }
 
+
     private class Pagina
     {
         public string IdPagina { get; set; }
@@ -25,7 +26,9 @@
         public string IdModulo { get; set; }
         public string Codigo { get; set; }
         public string Caption { get; set; }
+        public string NomeSistema { get; set; }
     }
+
 
 
     string acao = null;
@@ -198,7 +201,7 @@
                         <option value=""></option>
                         @foreach (Modulo item in modulos)
                         {
-                            <option value="@item.IdModulo" @(item.IdModulo == pagina.IdModulo ? "selected" : "")>@item.Caption</option>
+                            <option value="@item.IdModulo" @(item.IdModulo == pagina.IdModulo ? "selected" : "")>@(@item.NomeSistema + " -> " + @item.Caption)</option>
                         }
 
 

@@ -14,7 +14,10 @@
     private class Pagina
     {
         public string IdPagina { get; set; }
+        public string IdSistema { get; set; }
+        public string NomeSistema { get; set; }
         public string IdModulo { get; set; }
+        public string NomeModulo { get; set; }
         public string Codigo { get; set; }
         public string Caption { get; set; }
     }
@@ -203,7 +206,7 @@
                         <option value=""></option>
                         @foreach (Pagina item in paginas)
                         {
-                            <option value="@item.IdPagina" @(item.IdPagina == entidadeAcao.IdPagina ? "selected" : "")>@item.Caption</option>
+                            <option value="@item.IdPagina" @(item.IdPagina == entidadeAcao.IdPagina ? "selected" : "")>@(item.NomeSistema + " -> " + item.NomeModulo + " -> " + item.Caption)</option>
                         }
 
 
