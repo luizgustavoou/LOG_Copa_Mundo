@@ -19,6 +19,8 @@
     string cpf = null;
     string senha = null;
 
+    bool redirect = false;
+
     private string isInvalid(string key)
     {
         return (!ModelState.IsValidField(key) ? "is-invalid" : "");
@@ -31,7 +33,9 @@
         senha = Util.ChecaNulo(Request.Form["senha"]);
     }
 
-    public void Consultar()
+
+
+    private void Consultar()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
         parametros.Add("@Cpf", cpf);
@@ -45,7 +49,8 @@
             if (operador != null)
             {
                 Session["IdOperador"] = operador.IdOperador;
-                Response.Redirect("~/");
+                redirect = true;
+                //Response.Redirect("~/");
             }
         }
     }
@@ -63,47 +68,55 @@
         }, this.ModelState);
     }
 }
+<html>
+    <head>
+        @if(redirect)
+            {
+                <meta http-equiv="refresh" content="3;url=/" />
+            }
+    </head>
+    <body>
+        <form name="form1" method="post">
 
-<body>
-    <form name="form1" method="post">
+            <div class="container">
+                @PageHelper.MakeAlert()
+                <input type="hidden" name="acao" value="@acao" />
+                <div class="row">
 
-        <div class="container">
-            @PageHelper.MakeAlert()
-            <input type="hidden" name="acao" value="@acao" />
-            <div class="row">
+                    <div class="col">
+                        <label for="cpf" class="form-label">CPF: </label>
+                        <input class="form-control @isInvalid("cpf")" type="text" name="cpf" id="cpf" />
+                        @PageHelper.makeFeedback("cpf")
 
-                <div class="col">
-                    <label for="cpf" class="form-label">CPF: </label>
-                    <input class="form-control @isInvalid("cpf")" type="text" name="cpf" id="cpf" />
-                    @PageHelper.makeFeedback("cpf")
-
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <label for="senha" class="form-label">Senha: </label>
-                    <input class="form-control @isInvalid("senha")" type="password" name="senha" id="senha" />
-                    @PageHelper.makeFeedback("senha")
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <button class="btn btn-primary" type="button" onclick="acessar()">Acessar</button>
+                    </div>
                 </div>
 
+                <div class="row">
+                    <div class="col">
+                        <label for="senha" class="form-label">Senha: </label>
+                        <input class="form-control @isInvalid("senha")" type="password" name="senha" id="senha" />
+                        @PageHelper.makeFeedback("senha")
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <button class="btn btn-primary" type="button" onclick="acessar()">Acessar</button>
+                    </div>
+
+                </div>
+
             </div>
 
-        </div>
+        </form>
+        <script>
+            function acessar() {
+                document.form1.acao.value = "A";
+                document.form1.submit();
+            }
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 
-    </form>
-    <script>
-        function acessar() {
-            document.form1.acao.value = "A";
-            document.form1.submit();
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
 
+</html>
