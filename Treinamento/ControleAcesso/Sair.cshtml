@@ -1,0 +1,20 @@
+﻿@{
+    Page.Title = "Controle de Acesso";
+    Layout = "~/ControleAcesso/_Layout.cshtml";
+
+
+}
+
+@{
+    if (Session["IdOperador"] != null)
+    {
+        Session["IdOperador"] = null;
+        Response.Redirect("~/");
+    }
+}
+
+
+<body>
+    <h2>Sessão encerrada</h2>
+</body>
+

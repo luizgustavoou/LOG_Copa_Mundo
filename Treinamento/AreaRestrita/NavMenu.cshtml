@@ -25,14 +25,11 @@
         Dao dao = new Dao();
 
         paginas = dao.ExecutarProcedureList<Pagina>(procedure, parametros);
-
     }
-
 }
 
 @{
     Consultar();
-
 }
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark-subtle" data-bs-theme="dark">
@@ -96,6 +93,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="~/AreaRestrita/Administrativo/Seguranca/Autorizacao.cshtml">Autorizações</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="~/ControleAcesso/Sair.cshtml">Sair</a>
                     </li>
             </ul>
         </div>

@@ -1,9 +1,9 @@
 ﻿@{
-    Session["idOperador"] = "9";
+    
 
     if (Session["idOperador"] == null)
     {
-        Response.Redirect("AreaRestrita/");
+        Response.Redirect("/ControleAcesso");
     }
     else
     {

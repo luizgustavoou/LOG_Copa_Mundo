@@ -3,6 +3,83 @@
     Layout = "~/ControleAcesso/_Layout.cshtml";
 }
 
+@functions {
+    public class Operador
+    {
+        public string IdOperador { get; set; }
+        public string Nome { get; set; }
+    }
+
+    string acao = null;
+    string cpf = null;
+    string senha = null;
+
+    private void AlimentaVariaveis()
+    {
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+        cpf = Util.ChecaNulo(Request.Form["cpf"]);
+        senha = Util.ChecaNulo(Request.Form["senha"]);
+    }
+
+    public void Consultar()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+        parametros.Add("@Cpf", cpf);
+        parametros.Add("@Senha", senha);
+
+        List<Operador> operadores = new Dao().ExecutarProcedureList<Operador>("stp_LGU_AbreSessao", parametros);
+
+        if (operadores != null)
+        {
+            Operador operador = operadores.FirstOrDefault();
+            if (operador != null)
+            {
+                Session["IdOperador"] = operador.IdOperador;
+                Response.Redirect("~/");
+            }
+        }
+    }
+}
+
+@{
+    AlimentaVariaveis();
+
+    if (acao == "A")
+    {
+        Consultar();
+    }
+}
+
 <body>
     <h1>Controle de acesso</h1>
+    <form name="form1" method="post">
+        <input type="hidden" name="acao" value="@acao" />
+        <div class="row">
+            <div class="col">
+                <label>Cpf</label>
+                <input type="text" name="cpf" value="@cpf" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label>Senha</label>
+                <input type="password" name="senha" value="@senha" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <button type="button" onclick="acessar()">Acessar</button>
+            </div>
+
+        </div>
+    </form>
+    <script>
+        function acessar() {
+            document.form1.acao.value = "A";
+            document.form1.submit();
+        }
+    </script>
 </body>
+
