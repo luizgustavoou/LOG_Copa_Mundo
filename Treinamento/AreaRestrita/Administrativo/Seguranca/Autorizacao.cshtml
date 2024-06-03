@@ -32,7 +32,7 @@
     {
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idOperador = Util.ChecaNulo(Request.Form["idOperador"]);
-        idsAcao = Request.Form["idAcao"];
+        idsAcao = Util.ChecaNulo(Request.Form["idAcao"]);
 
     }
 
