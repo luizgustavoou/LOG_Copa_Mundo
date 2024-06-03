@@ -3,10 +3,18 @@ using System.Collections.Generic;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
+using System.Linq;
 
 public class Dao
 {
+    private class Autorizacao
+    {
+        public string NomeProcedure { get; set; }
+    }
+
     private readonly string stringConexao = "Server=winserver2022;Database=dbTreinamento;Trusted_Connection=True;";
+
+
 
 
     public void ExecutarProcedure(string procedure, Dictionary<string, object> parametros)
@@ -62,6 +70,44 @@ public class Dao
             CommandType = System.Data.CommandType.StoredProcedure,
             CommandTimeout = 60
         };
+    }
+
+    public List<T> ExecutarAcaoList<T>(string acao, Dictionary<string, object> parametros)
+    {
+        string procedure = GetNomeProcedure(acao);
+
+        return ExecutarProcedureList<T>(procedure, parametros);
+    }
+
+    public void ExecutarAcao(string acao, Dictionary<string, object> parametros)
+    {
+        string procedure = GetNomeProcedure(acao);
+
+        ExecutarProcedure(procedure, parametros);
+    }
+
+    private string GetNomeProcedure(string acao)
+    {
+        Identificacao identificacao = new Identificacao();
+
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@TipoConsulta", "C_Acao");
+        parametros.Add("@IdOperador", identificacao.IdOperador);
+        parametros.Add("@CodigoSistema", identificacao.Sistema);
+        parametros.Add("@CodigoModulo", identificacao.Modulo);
+        parametros.Add("@CodigoPagina", identificacao.Pagina);
+        parametros.Add("@CodigoAcao", acao);
+
+        List<Autorizacao> autorizacoes = ExecutarProcedureList<Autorizacao>("stp_LGU_MontaMenu", parametros);
+
+        if (autorizacoes == null) // != null
+        {
+            throw new InvalidOperationException("Operador não autorizado para executar essa ação");
+        }
+
+
+        return autorizacoes.FirstOrDefault().NomeProcedure;
     }
 
     public List<T> ExecutarProcedureList<T>(string procedure, Dictionary<string, object> parametros)

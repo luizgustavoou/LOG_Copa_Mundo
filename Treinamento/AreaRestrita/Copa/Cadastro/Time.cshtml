@@ -17,7 +17,6 @@
         public string Nome { get; set; }
     }
 
-
     string acao = null;
 
     string idTime = null;
@@ -52,26 +51,11 @@
         Dictionary<string, object> parametros = new Dictionary<string, object>();
         parametros.Add("@IdTime", idTime);
 
-
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
-        times = dao.ExecutarProcedureList<Time>(procedure, parametros);
+        times = new Dao().ExecutarAcaoList<Time>("C", parametros);
 
     }
 
-    private string GetNomeProcedure(string acao)
-    {
-        switch (acao)
-        {
-            case "C": return "stp_LGU_Time_Sel";
-            case "I": return "stp_LGU_Time_Ins";
-            case "A": return "stp_LGU_Time_Upd";
-            case "E": return "stp_LGU_Time_Del";
-            default:
-                return null;
-        }
-    }
+
 
     private string isInvalid(string key)
     {
@@ -84,11 +68,8 @@
         parametros.Add("@IdTime", time.IdTime);
         parametros.Add("@Nome", time.Nome);
 
-        string procedure = GetNomeProcedure(acao);
 
-        Dao dao = new Dao();
-
-        dao.ExecutarProcedure(procedure, parametros);
+        new Dao().ExecutarAcao(acao, parametros);
 
     }
 
