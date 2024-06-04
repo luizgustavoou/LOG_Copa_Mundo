@@ -46,8 +46,18 @@
     List<Participacao> partipacoes = null;
 
 
+    private void instanciarJogo()
+    {
+        if(jogo == null)
+        {
+            jogo = new Jogo();
+        }
+
+    }
+
     private void AlimentaVariaveis()
     {
+        instanciarJogo();
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idJogo = Util.ChecaNulo(Request.Form["idJogo"]);
         idJogador = Util.ChecaNulo(Request.Form["idJogador"]);
@@ -56,46 +66,30 @@
 
     private void ConsultarParticipacoes()
     {
-
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
         Dictionary<string, object> parametros = new Dictionary<string, object>();
-
-
         parametros.Add("@IdJogo", idJogo);
         parametros.Add("@TipoRetorno", 2);
 
-
-        partipacoes = dao.ExecutarProcedureList<Participacao>(procedure, parametros);
-
+        partipacoes = new Dao().ExecutarAcaoList<Participacao>("C", parametros);
     }
 
     private void ConsultarJogos()
     {
-
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
         parametros.Add("@TipoRetorno", 3);
 
-        jogos = dao.ExecutarProcedureList<Jogo>(procedure, parametros);
+        jogos = new Dao().ExecutarAcaoList<Jogo>("C", parametros);
 
     }
 
     private void ConsultarJogo()
     {
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
         Dictionary<string, object> parametros = new Dictionary<string, object>();
-
         parametros.Add("@TipoRetorno", 4);
         parametros.Add("@IdJogo", idJogo);
 
-        jogo = dao.ExecutarProcedureList<Jogo>(procedure, parametros).First();
+        jogo = new Dao().ExecutarAcaoList<Jogo>("C", parametros).First();
 
     }
 
@@ -117,11 +111,7 @@
         parametros.Add("@IdJogo", idJogo);
         parametros.Add("@IdJogador", idJogador);
 
-        string procedure = GetNomeProcedure(acao);
-
-        Dao dao = new Dao();
-
-        dao.ExecutarProcedure(procedure, parametros);
+        new Dao().ExecutarAcao(acao, parametros);
     }
 }
 
