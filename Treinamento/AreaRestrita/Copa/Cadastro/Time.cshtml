@@ -31,7 +31,7 @@
     private void AlimentaVariaveis()
     {
 
-        time = new Time();
+        instanciarTime();
 
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idTime = Util.ChecaNulo(Request.Form["idTime"]);
@@ -125,8 +125,6 @@
         carregarDados();
 
     }, this.ModelState);
-
-
 }
 
 <body>

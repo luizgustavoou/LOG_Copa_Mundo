@@ -78,10 +78,7 @@
         Dictionary<string, object> parametros = new Dictionary<string, object>();
         parametros.Add("@IdJogador", idJogador);
 
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
-        jogadores = dao.ExecutarProcedureList<Jogador>(procedure, parametros);
+        jogadores = new Dao().ExecutarAcaoList<Jogador>("C", parametros);
 
     }
 
@@ -91,11 +88,10 @@
 
         parametros.Add("@TipoConsulta", 1);
 
-        string procedure = GetNomeProcedure("C");
 
-        Dao dao = new Dao();
+        times = new Dao().ExecutarAcaoList<Time>("C", parametros);
 
-        times = dao.ExecutarProcedureList<Time>(procedure, parametros);
+
     }
 
     private string GetNomeProcedure(string acao)
@@ -127,9 +123,8 @@
 
         string procedure = GetNomeProcedure(acao);
 
-        Dao dao = new Dao();
+        new Dao().ExecutarAcao(acao, parametros);
 
-        dao.ExecutarProcedure(procedure, parametros);
     }
 
     private void ExecutarManutencao()
