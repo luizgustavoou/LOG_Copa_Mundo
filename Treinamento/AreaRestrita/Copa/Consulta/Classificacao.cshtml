@@ -19,46 +19,13 @@
 
     private void Consultar()
     {
-
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
-
-
-        classificacoes = dao.ExecutarProcedureList<Classificacao>(procedure, null);
-
-    }
-
-    private string GetNomeProcedure(string acao)
-    {
-        switch (acao)
-        {
-            case "C": return "Stp_LGU_Classificacao_Sel";
-            default:
-                return null;
-        }
-    }
-
-
-
-    private void Manutencao()
-    {
-
-        string procedure = GetNomeProcedure(null);
-
-        Dao dao = new Dao();
-
-        dao.ExecutarProcedure(procedure, null);
+        classificacoes = new Dao().ExecutarAcaoList<Classificacao>("C", null);
 
     }
 }
 
 @{
     Util.ExceptionHandler(Consultar, this.ModelState);
-}
-
-@section head {
-
 }
 
 <body>
