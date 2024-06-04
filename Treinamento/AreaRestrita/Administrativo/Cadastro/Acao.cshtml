@@ -44,6 +44,7 @@
     Acao entidadeAcao = null;
     List<Acao> acoes = null;
     List<Pagina> paginas = null;
+    List<Botao> botoes = null;
 
     private void AlimentaVariaveis()
     {
@@ -51,6 +52,7 @@
 
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idAcao = Util.ChecaNulo(Request.Form["idAcao"]);
+        botoes = new BotaoDao().GetAll();
 
         if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
         {
@@ -72,41 +74,16 @@
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
         parametros.Add("@IdAcao", idAcao);
-
-
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
-        acoes = dao.ExecutarProcedureList<Acao>(procedure, parametros);
-
+        acoes = new Dao().ExecutarAcaoList<Acao>("C", parametros);
     }
 
     private void ConsultarPaginas()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
         parametros.Add("@TipoRetorno", 1);
-
-
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
-        paginas = dao.ExecutarProcedureList<Pagina>(procedure, parametros);
-
+        paginas = new Dao().ExecutarAcaoList<Pagina>("C", parametros);
     }
 
-
-    private string GetNomeProcedure(string acao)
-    {
-        switch (acao)
-        {
-            case "C": return "stp_LGU_Acao_Sel";
-            case "I": return "stp_LGU_Acao_Ins";
-            case "A": return "stp_LGU_Acao_Upd";
-            case "E": return "stp_LGU_Acao_Del";
-            default:
-                return null;
-        }
-    }
 
     private string isInvalid(string key)
     {
@@ -122,11 +99,7 @@
         parametros.Add("@Caption", entidadeAcao.Caption);
         parametros.Add("@NomeProcedure", entidadeAcao.NomeProcedure);
 
-        string procedure = GetNomeProcedure(acao);
-
-        Dao dao = new Dao();
-
-        dao.ExecutarProcedure(procedure, parametros);
+        new Dao().ExecutarAcao(acao, parametros);
 
     }
 
@@ -236,28 +209,29 @@
             }
 
 
-            <div class="mb-3">
-                <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+        <div class="mb-3">
+            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
 
-                @if (view == View.Index)
+            @if (view == View.New)
+            {
+                @PageHelper.MakeBotao(botoes, "I")
+            }
+
+            @if (view == View.Index)
+            {
+                if (botoes.Any(x => x.Codigo == "I"))
                 {
                     <button class="btn btn-primary" type="button" onclick="novo()">Novo</button>
-
                 }
+            }
 
-                @if (view == View.New)
-                {
-                    <button class="btn btn-success" type="button" onclick="executarAcao('I')">Inserir</button>
 
-                }
-
-                @if (view == View.Edit)
-                {
-                    <button class="btn btn-danger" type="button" onclick="executarAcao('E')">Excluir</button>
-                    <button class="btn btn-warning" type="button" onclick="executarAcao('A')">Alterar</button>
-
-                }
-            </div>
+            @if (view == View.Edit)
+            {
+                @PageHelper.MakeBotao(botoes, "E")
+                @PageHelper.MakeBotao(botoes, "A")
+            }
+        </div>
 
             @if (view == View.Index)
             {
@@ -286,10 +260,13 @@
                                     <td>@item.PaginaCaption</td>
                                     <td>@item.NomeProcedure</td>
                                     <td>
-                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdAcao')">
-                                            <i class="bi bi-pencil-fill"></i>
-                                            Editar
-                                        </button>
+                                        @if (botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
+                                        {
+                                            <button class="btn btn-warning" type="button" onclick="editar('@item.IdAcao')">
+                                                <i class="bi bi-pencil-fill"></i>
+                                                Editar
+                                            </button>
+                                        }
                                     </td>
                                 </tr>
 
