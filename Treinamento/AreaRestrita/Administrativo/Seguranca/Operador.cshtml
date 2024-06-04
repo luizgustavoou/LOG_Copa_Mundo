@@ -30,6 +30,7 @@
 
     View view = View.Index;
     List<Operador> operadores = null;
+    List<Botao> botoes = null;
 
     private void AlimentaVariaveis()
     {
@@ -37,6 +38,7 @@
 
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idOperador = Util.ChecaNulo(Request.Form["idOperador"]);
+        botoes = new BotaoDao().GetAll();
 
         if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
         {
@@ -55,26 +57,8 @@
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
         parametros.Add("@IdOperador", idOperador);
+        operadores = new Dao().ExecutarAcaoList<Operador>("C", parametros);
 
-
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
-        operadores = dao.ExecutarProcedureList<Operador>(procedure, parametros);
-
-    }
-
-    private string GetNomeProcedure(string acao)
-    {
-        switch (acao)
-        {
-            case "C": return "stp_LGU_Operador_Sel";
-            case "I": return "stp_LGU_Operador_Ins";
-            case "A": return "stp_LGU_Operador_Upd";
-            case "E": return "stp_LGU_Operador_Del";
-            default:
-                return null;
-        }
     }
 
     private string isInvalid(string key)
@@ -90,11 +74,7 @@
         parametros.Add("@Nome", operador.Nome);
         parametros.Add("@Senha", operador.Senha);
 
-        string procedure = GetNomeProcedure(acao);
-
-        Dao dao = new Dao();
-
-        dao.ExecutarProcedure(procedure, parametros);
+        new Dao().ExecutarAcao(acao, parametros);
 
     }
 
@@ -187,31 +167,31 @@
             }
 
 
-            <div class="mb-3">
-                <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+        <div class="mb-3">
+            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+            @if (view == View.New)
+            {
+                @PageHelper.MakeBotao(botoes, "I")
+            }
 
-                @if (view == View.Index)
+            @if (view == View.Edit)
+            {
+                @PageHelper.MakeBotao(botoes, "E")
+                @PageHelper.MakeBotao(botoes, "A")
+            }
+
+            @if (view == View.Index)
+            {
+                if(botoes.Any(x => x.Codigo == "I"))
                 {
                     <button class="btn btn-primary" type="button" onclick="novo()">Novo</button>
-
                 }
 
-                @if (view == View.New)
-                {
-                    <button class="btn btn-success" type="button" onclick="executarAcao('I')">Inserir</button>
-
-                }
-
-                @if (view == View.Edit)
-                {
-                    <button class="btn btn-danger" type="button" onclick="executarAcao('E')">Excluir</button>
-                    <button class="btn btn-warning" type="button" onclick="executarAcao('A')">Alterar</button>
-
-                }
+            }
 
 
 
-            </div>
+        </div>
 
             @if (view == View.Index)
             {
@@ -236,10 +216,13 @@
                                     <td>@item.Nome</td>
                                     <td>@(new string(item.Senha.Select(c =>  '*').ToArray()))</td>
                                     <td>
-                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdOperador')">
-                                            <i class="bi bi-pencil-fill"></i>
-                                            Editar
-                                        </button>
+                                        @if (botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
+                                        {
+                                            <button class="btn btn-warning" type="button" onclick="editar('@item.IdOperador')">
+                                                <i class="bi bi-pencil-fill"></i>
+                                                Editar
+                                            </button>
+                                        }
                                     </td>
                                 </tr>
 
