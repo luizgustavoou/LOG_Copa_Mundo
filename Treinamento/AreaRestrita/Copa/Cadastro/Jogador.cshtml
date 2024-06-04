@@ -189,31 +189,31 @@
 
             }
 
-        <div class="mb-3">
-            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+            <div class="mb-3">
+                <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
 
-            @if (view == View.New)
-            {
-                @PageHelper.MakeBotao(botoes, "I")
-
-            }
-
-            @if (view == View.Edit)
-            {
-
-                @PageHelper.MakeBotao(botoes, "E")
-                @PageHelper.MakeBotao(botoes, "A")
-            }
-
-            @if (view == View.Index)
-            {
-                if (botoes.Any(x => x.Codigo == "I"))
+                @if (view == View.New)
                 {
-                    <button class="btn btn-primary" type="button" onclick="novo()">Adicionar novo</button>
+                    @PageHelper.MakeBotao(botoes, "I")
+
                 }
 
-            }
-        </div>
+                @if (view == View.Edit)
+                {
+
+                    @PageHelper.MakeBotao(botoes, "E")
+                    @PageHelper.MakeBotao(botoes, "A")
+                }
+
+                @if (view == View.Index)
+                {
+                    if (botoes.Any(x => x.Codigo == "I"))
+                    {
+                        <button class="btn btn-primary" type="button" onclick="novo()">Adicionar novo</button>
+                    }
+
+                }
+            </div>
 
             @if (jogadores != null)
             {
