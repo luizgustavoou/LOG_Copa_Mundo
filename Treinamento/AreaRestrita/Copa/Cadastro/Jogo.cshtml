@@ -70,41 +70,16 @@
     private void ConsultarJogos()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
-
         parametros.Add("@IdJogo", idJogo);
-
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
-        jogos = dao.ExecutarProcedureList<Jogo>(procedure, parametros);
+        jogos = new Dao().ExecutarAcaoList<Jogo>("C", parametros);
 
     }
 
     private void ConsultarTimes()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
-
         parametros.Add("@TipoConsulta", 1);
-
-        string procedure = GetNomeProcedure("C");
-
-        Dao dao = new Dao();
-
-        times = dao.ExecutarProcedureList<Time>(procedure, parametros);
-    }
-
-    private string GetNomeProcedure(string acao)
-    {
-        switch (acao)
-        {
-            case "C": return "stp_LGU_Jogo_Sel";
-            case "I": return "stp_LGU_Jogo_Ins";
-            case "A": return "stp_LGU_Jogo_Upd";
-            case "E": return "stp_LGU_Jogo_Del";
-
-            default:
-                return null;
-        }
+        times = new Dao().ExecutarAcaoList<Time>("C", parametros);
     }
 
     private string isInvalid(string key)
@@ -124,23 +99,22 @@
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
-        parametros.Add("@idJogo", Util.ChecaNulo(jogo.IdJogo));
-        parametros.Add("@idTime1", Util.ChecaNulo(jogo.IdTime1));
-        parametros.Add("@idTime2", Util.ChecaNulo(jogo.IdTime2));
+        parametros.Add("@IdJogo", Util.ChecaNulo(jogo.IdJogo));
+        parametros.Add("@IdTime1", Util.ChecaNulo(jogo.IdTime1));
+        parametros.Add("@IdTime2", Util.ChecaNulo(jogo.IdTime2));
 
-        string procedure = GetNomeProcedure(acao);
-
-        Dao dao = new Dao();
-
-        dao.ExecutarProcedure(procedure, parametros);
+        new Dao().ExecutarAcao(acao, parametros);
     }
 
     private void ExecutarManutencao()
     {
-        instanciarJogo();
 
-        jogo.IdTime1 = Request.Form["idTime1"];
-        jogo.IdTime2 = Request.Form["IdTime2"];
+        jogo = new Jogo()
+        {
+            IdJogo = Util.ChecaNulo(Request.Form["IdJogo"]),
+            IdTime1 = Util.ChecaNulo(Request.Form["idTime1"]),
+            IdTime2 = Util.ChecaNulo(Request.Form["IdTime2"])
+        };
 
         Manutencao();
         view = View.Index;

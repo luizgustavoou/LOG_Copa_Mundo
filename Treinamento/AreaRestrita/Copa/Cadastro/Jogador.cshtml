@@ -4,17 +4,8 @@
     Layout = "~/AreaRestrita/_Layout.cshtml";
 }
 
-@using System.Data.SqlClient
 
 @functions {
-    //private enum Acao
-    //    {
-    //        INCLUIR,
-    //        CONSULTAR,
-    //        EDITAR,
-    //        EXCLUIR
-    //    }
-
     private enum View
     {
         Index,
@@ -94,20 +85,6 @@
 
     }
 
-    private string GetNomeProcedure(string acao)
-    {
-        switch (acao)
-        {
-            case "C": return "stp_LGU_Jogador_Sel";
-            case "I": return "stp_LGU_Jogador_Ins";
-            case "A": return "stp_LGU_Jogador_Upd";
-            case "E": return "stp_LGU_Jogador_Del";
-
-            default:
-                return null;
-        }
-    }
-
     private string isInvalid(string key)
     {
         return (!ModelState.IsValidField(key) ? "is-invalid" : "");
@@ -120,8 +97,6 @@
         parametros.Add("@IdJogador", Util.ChecaNulo(jogador.IdJogador));
         parametros.Add("@Nome", Util.ChecaNulo(jogador.Nome));
         parametros.Add("@IdTime", Util.ChecaNulo(jogador.IdTime));
-
-        string procedure = GetNomeProcedure(acao);
 
         new Dao().ExecutarAcao(acao, parametros);
 

@@ -18,42 +18,13 @@
 
     private void Consultar()
     {
-
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
-        artilharias = dao.ExecutarProcedureList<Artilharia>(procedure, null);
-
-    }
-
-    private string GetNomeProcedure(string acao)
-    {
-        switch (acao)
-        {
-            case "C": return "Stp_LGU_Artilharia_Sel";
-            default:
-                return null;
-        }
-    }
-
-    private void Manutencao()
-    {
-
-        string procedure = GetNomeProcedure(null);
-
-        Dao dao = new Dao();
-
-        dao.ExecutarProcedure(procedure, null);
+        artilharias = new Dao().ExecutarAcaoList<Artilharia>("C", null);
 
     }
 }
 
 @{
     Util.ExceptionHandler(Consultar, this.ModelState);
-}
-
-@section head {
-
 }
 
 <body>
