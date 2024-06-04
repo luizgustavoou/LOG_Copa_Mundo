@@ -5,14 +5,6 @@
 }
 
 @functions {
-
-    //enum TipoRetorno
-    //{
-    //    BUSCAR_PARTICIPACOES = 1,
-    //    FILTRO_BUSCAR_PARTICIPACOES = 2,
-    //    BUSCAR_JOGOS = 3
-    //}
-
     private class Jogo
     {
         public string IdJogo { get; set; }
@@ -22,7 +14,6 @@
         public string NomeTime2 { get; set; }
         public int Placar1 { get; set; }
         public int Placar2 { get; set; }
-
     }
 
     private class Participacao
@@ -41,9 +32,9 @@
     string idJogador = null;
 
     List<Jogo> jogos = null;
-
     Jogo jogo = null;
     List<Participacao> partipacoes = null;
+    List<Botao> botoes = null;
 
 
     private void instanciarJogo()
@@ -52,7 +43,6 @@
         {
             jogo = new Jogo();
         }
-
     }
 
     private void AlimentaVariaveis()
@@ -61,7 +51,7 @@
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idJogo = Util.ChecaNulo(Request.Form["idJogo"]);
         idJogador = Util.ChecaNulo(Request.Form["idJogador"]);
-
+        botoes = new BotaoDao().GetAll();
     }
 
     private void ConsultarParticipacoes()
@@ -147,8 +137,6 @@
 }
 
 <body>
-
-
     <form class="text-light flex-grow-1" name="form1" id="form1" method="post">
         <input type="hidden" name="acao" id="acao" />
         <input type="hidden" name="idJogo" id="idJogo" value="@idJogo" />
@@ -222,7 +210,10 @@
                                         <span>@item.NomeJogador</span>
                                         <span>@item.GolsMarcados</span>
                                         <span>
-                                            <button class="btn btn-success" type="button" onclick="editar('@idJogo', '@item.IdJogador')"><i class="bi bi-plus-lg"></i> Gols</button>
+                                            @if(botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
+                                            {
+                                                <button class="btn btn-success" type="button" onclick="editar('@idJogo', '@item.IdJogador')"><i class="bi bi-plus-lg"></i> Gols</button>
+                                            }
                                         </span>
                                     </div>
 
