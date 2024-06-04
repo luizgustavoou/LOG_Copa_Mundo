@@ -28,12 +28,14 @@
 
     List<Autorizacao> autorizacoes = null;
     List<Operador> operadores = null;
+    List<Botao> botoes = null;
 
     private void AlimentaVariaveis()
     {
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idOperador = Util.ChecaNulo(Request.Form["idOperador"]);
         idsAcao = Util.ChecaNulo(Request.Form["idAcao"]);
+        botoes = new BotaoDao().GetAll();
 
     }
 
@@ -42,12 +44,7 @@
         Dictionary<string, object> parametros = new Dictionary<string, object>();
         parametros.Add("@TipoRetorno", 2);
         parametros.Add("@IdOperador", idOperador);
-
-
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
-        autorizacoes = dao.ExecutarProcedureList<Autorizacao>(procedure, parametros);
+        autorizacoes = new Dao().ExecutarAcaoList<Autorizacao>("C", parametros);
 
     }
 
@@ -56,22 +53,7 @@
         Dictionary<string, object> parametros = new Dictionary<string, object>();
         parametros.Add("@TipoRetorno", 1);
 
-
-        string procedure = GetNomeProcedure("C");
-        Dao dao = new Dao();
-
-        operadores = dao.ExecutarProcedureList<Operador>(procedure, parametros);
-    }
-
-    private string GetNomeProcedure(string acao)
-    {
-        switch (acao)
-        {
-            case "C": return "stp_LGU_Autorizacao_Sel";
-            case "A": return "stp_LGU_Autorizacao_Upd";
-            default:
-                return null;
-        }
+        operadores = new Dao().ExecutarAcaoList<Operador>("C", parametros);
     }
 
     private string isInvalid(string key)
@@ -85,12 +67,7 @@
         parametros.Add("@IdOperador", idOperador);
         parametros.Add("@IdsAcao", idsAcao);
 
-
-        string procedure = GetNomeProcedure(acao);
-
-        Dao dao = new Dao();
-
-        dao.ExecutarProcedure(procedure, parametros);
+        new Dao().ExecutarProcedure(acao, parametros);
 
     }
 
@@ -167,7 +144,10 @@
                                 <td>@item.NomePagina</td>
                                 <td>@item.NomeAcao</td>
                                 <td>
-                                    <input class="form-check-input" type="checkbox" name="idAcao" id="idAcao" value="@item.IdAcao" @(item.Permissao == 1 ? "checked" : "")>
+                                    @if (botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
+                                    {
+                                        <input class="form-check-input" type="checkbox" name="idAcao" id="idAcao" value="@item.IdAcao" @(item.Permissao == 1 ? "checked" : "")>
+                                    }
                                 </td>
                             </tr>
 
