@@ -51,6 +51,7 @@
 
     private void AlimentaVariaveis()
     {
+        instanciarJogo();
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idJogo = Util.ChecaNulo(Request.Form["idJogo"]);
 
@@ -123,9 +124,9 @@
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
-        parametros.Add("@idJogo", jogo.IdJogo);
-        parametros.Add("@idTime1", jogo.IdTime1);
-        parametros.Add("@idTime2", jogo.IdTime2);
+        parametros.Add("@idJogo", Util.ChecaNulo(jogo.IdJogo));
+        parametros.Add("@idTime1", Util.ChecaNulo(jogo.IdTime1));
+        parametros.Add("@idTime2", Util.ChecaNulo(jogo.IdTime2));
 
         string procedure = GetNomeProcedure(acao);
 
