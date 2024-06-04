@@ -39,6 +39,7 @@
     View view = View.Index;
     List<Jogo> jogos = null;
     List<Time> times = null;
+    List<Botao> botoes = null;
 
 
     private void instanciarJogo()
@@ -54,6 +55,7 @@
         instanciarJogo();
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idJogo = Util.ChecaNulo(Request.Form["idJogo"]);
+        botoes = new BotaoDao().GetAll();
 
         if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
         {
@@ -179,31 +181,30 @@
                 </div>
             }
 
-            <div class="mb-3">
-                <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+        <div class="mb-3">
+            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
 
+            @if (view == View.New)
+            {
+                @PageHelper.MakeBotao(botoes, "I");
 
-                @if (view == View.Index)
+            }
+
+            @if (view == View.Edit)
+            {
+                @PageHelper.MakeBotao(botoes, "E")
+                @PageHelper.MakeBotao(botoes, "A")
+            }
+
+            @if (view == View.Index)
+            {
+                if (botoes.Any(x => x.Codigo == "I"))
                 {
-                    <button class="btn btn-success" type="button" onclick="novo()">Novo</button>
+                    <button class="btn btn-success" type="button" onclick="novo()">Adicionar novo</button>
 
                 }
-
-                @if (view == View.New)
-                {
-                    <button class="btn btn-success" type="button" onclick="executarAcao('I')">Incluir</button>
-
-                }
-
-                @if (view == View.Edit)
-                {
-                    <button class="btn btn-danger" type="button" onclick="executarAcao('E')">Excluir</button>
-                    <button class="btn btn-warning" type="button" onclick="executarAcao('A')">
-                        Alterar
-                    </button>
-
-                }
-            </div>
+            }
+        </div>
 
             @if (view == View.Index)
             {
@@ -228,10 +229,13 @@
                                     <td>@item.Placar1</td>
                                     <td>@item.Placar2</td>
                                     <td>
-                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdJogo')" @(item.Placar1 > 0 || item.Placar2 > 0 ? "disabled" : "")>
-                                            <i class="bi bi-pencil-fill"></i>
-                                            Editar
-                                        </button>
+                                        @if (botoes.Any(x => x.Codigo == "E" || x.Codigo == "E"))
+                                        {
+                                            <button class="btn btn-warning" type="button" onclick="editar('@item.IdJogo')" @(item.Placar1 > 0 || item.Placar2 > 0 ? "disabled" : "")>
+                                                <i class="bi bi-pencil-fill"></i>
+                                                Editar
+                                            </button>
+                                        }
                                     </td>
                                 </tr>
                             }
