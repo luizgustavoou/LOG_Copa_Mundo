@@ -10,14 +10,18 @@ public static class Util
     public  enum TypeFormat
     {
         BRAZIL_DATE = 23,
+        BRAZIL_DATETIME = 24,
         AMERICAN_DATE = 103,
+        AMERICAN_DATETIME = 104,
         TIME_DEFAULT = 108
     }
 
     private static Dictionary<TypeFormat, string> styles = new Dictionary<TypeFormat, string>()
     {
         { TypeFormat.BRAZIL_DATE, "dd/MM/yyyy" },
-        { TypeFormat.AMERICAN_DATE, "yy/MM/dd" },
+        { TypeFormat.BRAZIL_DATETIME, "dd/MM/yyyy HH:mm:ss" },
+        { TypeFormat.AMERICAN_DATE, "yy/MM/dd HH:mm:ss" },
+        { TypeFormat.AMERICAN_DATETIME, "yy/MM/dd" },
         { TypeFormat.TIME_DEFAULT, "HH:mm:ss" }
     };
 

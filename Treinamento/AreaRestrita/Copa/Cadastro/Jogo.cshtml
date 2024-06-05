@@ -36,6 +36,9 @@
     string acao = null;
     string idJogo = null;
 
+    string data = null;
+    string hora = null;
+
     Jogo jogo = null;
 
     View view = View.Index;
@@ -57,6 +60,8 @@
         instanciarJogo();
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idJogo = Util.ChecaNulo(Request.Form["idJogo"]);
+        data = Util.ChecaNulo(Request.Form["data"]);
+        hora = Util.ChecaNulo(Request.Form["hora"]);
         botoes = new BotaoDao().GetAll();
 
         if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
@@ -106,6 +111,7 @@
         parametros.Add("@IdJogo", Util.ChecaNulo(jogo.IdJogo));
         parametros.Add("@IdTime1", Util.ChecaNulo(jogo.IdTime1));
         parametros.Add("@IdTime2", Util.ChecaNulo(jogo.IdTime2));
+        parametros.Add("@DataInicio", data + "T" + hora + ":00");
 
         new Dao().ExecutarAcao(acao, parametros);
     }
@@ -181,6 +187,21 @@
                 </select>
                 @PageHelper.makeFeedback("idTime2")
             </div>
+
+            <div class="mb-3">
+                <label class="text-white" for="dataInicio">Data inicial: </label>
+                <input class="form-select @isInvalid("dataInicio")"  type="hidden" name="dataInicio" id="dataInicio"/>
+
+                <div class="d-flex gap-3">
+                    <input class="form-select @isInvalid("dataInicio")" type="date" name="data" id="data" />
+
+                    <input class="form-select @isInvalid("dataInicio")" type="time" name="hora" id="hora"/>
+
+                </div>
+
+                @PageHelper.makeFeedback("dataInicio")
+
+            </div>
         }
 
         <div class="mb-3">
@@ -232,7 +253,7 @@
                                 <td>@item.NomeTime2</td>
                                 <td>@item.Placar1</td>
                                 <td>@item.Placar2</td>
-                                <td>@Util.FormatarData(item.DataInicio, Util.TypeFormat.BRAZIL_DATE).ToString()</td>
+                                <td>@Util.FormatarData(item.DataInicio, Util.TypeFormat.BRAZIL_DATETIME).ToString()</td>
                                 <td>@item.DataFim</td>
                                 <td>
                                     @if (botoes.Any(x => x.Codigo == "E" || x.Codigo == "E"))
