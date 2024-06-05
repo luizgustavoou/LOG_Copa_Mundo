@@ -21,6 +21,8 @@
         public string NomeTime2 { get; set; }
         public int Placar1 { get; set; }
         public int Placar2 { get; set; }
+        public string DataInicio{ get; set; }
+        public string DataFim { get; set; }
 
     }
 
@@ -217,6 +219,8 @@
                             <th>Time 2</th>
                             <th>Placar 1</th>
                             <th>Placar 2</th>
+                            <th>Início</th>
+                            <th>Fim</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -228,6 +232,8 @@
                                 <td>@item.NomeTime2</td>
                                 <td>@item.Placar1</td>
                                 <td>@item.Placar2</td>
+                                <td>@Util.FormatarData(item.DataInicio, Util.TypeFormat.BRAZIL_DATE).ToString()</td>
+                                <td>@item.DataFim</td>
                                 <td>
                                     @if (botoes.Any(x => x.Codigo == "E" || x.Codigo == "E"))
                                     {
