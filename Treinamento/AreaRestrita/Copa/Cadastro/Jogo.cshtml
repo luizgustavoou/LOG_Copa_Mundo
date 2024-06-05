@@ -193,9 +193,9 @@
                 <input class="form-select @isInvalid("dataInicio")"  type="hidden" name="dataInicio" id="dataInicio"/>
 
                 <div class="d-flex gap-3">
-                    <input class="form-select @isInvalid("dataInicio")" type="date" name="data" id="data" />
+                    <input class="form-select @isInvalid("dataInicio")" type="date" name="data" id="data" value="@(jogo.DataInicio != null ? Util.FormatarData(@jogo.DataInicio, Util.TypeFormat.AMERICAN_DATE) : null)"  />
 
-                    <input class="form-select @isInvalid("dataInicio")" type="time" name="hora" id="hora"/>
+                    <input class="form-select @isInvalid("dataInicio")" type="time" name="hora" id="hora" value="@(jogo.DataInicio != null ? Util.FormatarData(@jogo.DataInicio, Util.TypeFormat.TIME_DEFAULT) : null)" />
 
                 </div>
 
@@ -288,7 +288,7 @@
 
         function novo() {
             form.view.value = "@((int)View.New)"
-            executarAcao('C');
+            executarAcao('');
         }
 </script>
 

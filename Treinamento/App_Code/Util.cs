@@ -18,10 +18,10 @@ public static class Util
 
     private static Dictionary<TypeFormat, string> styles = new Dictionary<TypeFormat, string>()
     {
-        { TypeFormat.BRAZIL_DATE, "dd/MM/yyyy" },
-        { TypeFormat.BRAZIL_DATETIME, "dd/MM/yyyy HH:mm:ss" },
-        { TypeFormat.AMERICAN_DATE, "yy/MM/dd HH:mm:ss" },
-        { TypeFormat.AMERICAN_DATETIME, "yy/MM/dd" },
+        { TypeFormat.BRAZIL_DATETIME, "dd-MM-yyyy HH:mm:ss" },
+        { TypeFormat.BRAZIL_DATE, "dd-MM-yyyy" },
+        { TypeFormat.AMERICAN_DATETIME, "yyyy-MM-dd HH:mm:ss" },
+        { TypeFormat.AMERICAN_DATE, "yyyy-MM-dd" },
         { TypeFormat.TIME_DEFAULT, "HH:mm:ss" }
     };
 
@@ -62,8 +62,9 @@ public static string ChecaNulo(string str)
 
     public static string FormatarData(string data, TypeFormat style)
     {
+        string saida = DateTime.Parse(data).ToString(styles[style]);
 
-        return DateTime.Parse(data).ToString(styles[style]);
+        return saida;
 
         
     }
