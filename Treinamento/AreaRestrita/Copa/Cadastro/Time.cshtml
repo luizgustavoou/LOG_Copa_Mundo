@@ -216,19 +216,20 @@
     </div>
 </form>
 
-    <script src="~/Scripts/scripts.js"></script>
+<script src="~/Scripts/scripts.js"></script>
 
-    <script>
-        function editar(idTime, nome) {
-            document.form1.view.value = "@((int)View.Edit)"
-            document.form1.idTime.value = idTime;
-            executarAcao('C');
-        }
+<script>
 
-        function novo() {
-            document.form1.view.value = "@((int)View.New)";
-            executarAcao('');
-        }
-    </script>
+    function editar(idTime, nome) {
+        document.form1.view.value = "@((int)View.Edit)"
+        document.form1.idTime.value = idTime;
+        executarAcao('C');
+    }
+
+    function novo() {
+        document.form1.view.value = "@((int)View.New)";
+        executarAcao('');
+    }
+</script>
 
 

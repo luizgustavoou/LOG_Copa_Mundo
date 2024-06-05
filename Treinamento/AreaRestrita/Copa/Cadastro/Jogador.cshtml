@@ -19,6 +19,7 @@
         public string Nome { get; set; }
         public string IdTime { get; set; }
         public string NomeTime { get; set; }
+        public decimal Salario { get; set; }
 
     }
 
@@ -49,7 +50,7 @@
 
     private void AlimentaVariaveis()
     {
-        jogador = new Jogador();
+        instanciarJogador();
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idJogador = Util.ChecaNulo(Request.Form["idJogador"]);
 
@@ -101,6 +102,7 @@
         parametros.Add("@IdJogador", Util.ChecaNulo(jogador.IdJogador));
         parametros.Add("@Nome", Util.ChecaNulo(jogador.Nome));
         parametros.Add("@IdTime", Util.ChecaNulo(jogador.IdTime));
+        parametros.Add("@Salario", jogador.Salario);
 
         new Dao().ExecutarAcao(acao, parametros);
 
@@ -114,6 +116,7 @@
         jogador.Nome = Request.Form["Nome"];
         jogador.IdTime = Request.Form["IdTime"];
         jogador.NomeTime = Request.Form["NomeTime"];
+        jogador.Salario = Decimal.Parse(Request.Form["Salario"]);
 
 
         Manutencao();
@@ -156,7 +159,7 @@
     <input type="hidden" name="idJogador" id="idJogador" value="@idJogador" />
     <input type="hidden" name="view" id="view" value="@view" />
 
-    <div class="container">
+    <div class="text-white container">
         <h1>Jogador</h1>
 
 
@@ -185,6 +188,12 @@
                 </select>
                 @PageHelper.makeFeedback("idTime")
 
+            </div>
+
+            <div class="mb-3">
+                <label for="salario" class="form-label">Salário: </label>
+                <input class="form-control @isInvalid("salario")" type="text" name="salario" id="salario" value="@jogador.Salario" />
+                @PageHelper.makeFeedback("salario")
             </div>
 
         }
@@ -225,6 +234,7 @@
                             <th>IdJogador</th>
                             <th>Nome</th>
                             <th>Time</th>
+                            <th>Salário</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -235,6 +245,7 @@
                                 <td>@item.IdJogador</td>
                                 <td>@item.Nome</td>
                                 <td>@item.NomeTime</td>
+                                <td>@item.Salario.ToString("C2")</td>
                                 <td>
                                     @if (botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
                                     {
@@ -258,7 +269,14 @@
 
 <script src="~/Scripts/scripts.js"></script>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js"
+        integrity="sha256-yE5LLp5HSQ/z+hJeCqkz9hdjNkk1jaiGG0tDCraumnA="
+        crossorigin="anonymous"></script>
+
 <script>
+    $('input[name="salario"]').mask('000.000.000.000.000,00', {reverse: true});
+
         function editar(idJogador, nome, idTime) {
             document.form1.idJogador.value = idJogador;
             document.form1.view.value = "@((int)View.Edit)"
