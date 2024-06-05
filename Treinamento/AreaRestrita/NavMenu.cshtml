@@ -35,7 +35,7 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark-subtle" data-bs-theme="dark">
     <div class=" container-fluid">
         <a class="navbar-brand" href="#">
-            <img width="60px" src="https://png.pngtree.com/png-vector/20220722/ourmid/pngtree-fifa-logo-png-image_6034648.png" alt="Logo">
+            <img width="60" src="https://png.pngtree.com/png-vector/20220722/ourmid/pngtree-fifa-logo-png-image_6034648.png" alt="Logo">
             Copa do Mundo
         </a>
 
@@ -45,21 +45,59 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="d-flex flex-wrap navbar-nav me-auto mb-2 mb-lg-0">
+            <ul class="text-white d-flex gap-4 flex-wrap navbar-nav me-auto mb-2 mb-lg-0">
                 @if (paginas != null)
                 {
-                    foreach (Pagina item in paginas)
+                    string saida = "";
+                    string sistema = null;
+                    string modulo = null;
+
+                    for (int i = 0; i < paginas.Count; i++)
                     {
-                        <li class="nav-item">
-                            <a class="nav-link" href="~/AreaRestrita/@item.CodigoSistema/@item.CodigoModulo/@item.CodigoPagina">@item.CaptionSistema/@item.CaptionModulo/@item.CaptionPagina</a>
-                        </li>
+                        Pagina pagina = paginas[i];
+
+                        if (sistema != pagina.CodigoSistema)
+                        {
+                            sistema = pagina.CodigoSistema;
+                            saida += "<li class=\"nav-item dropdown\">";
+                            saida += $"<a class=\"nav-link dropdown-toggle\" data-bs-auto-close=\"outside\"  role=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">{@pagina.CaptionSistema}</a>";
+                            saida += "<ul class=\"dropdown-menu dropend\">";
+                        }
+
+                        if (sistema == pagina.CodigoSistema && modulo != pagina.CodigoModulo)
+                        {
+                            modulo = pagina.CodigoModulo;
+                            saida += $"<li class=\"nav-item dropdown\">";
+                            saida += $"<a class=\"nav-link dropdown-toggle\"  role=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">{pagina.CaptionModulo}</a>";
+                            saida += "<ul class=\"dropdown-menu\">";
+                        }
+
+                        saida += $"<li><a class=\"dropdown-item\" href=\"/AreaRestrita/{pagina.CodigoSistema}/{pagina.CodigoModulo}/{pagina.CodigoPagina}\">{pagina.CaptionPagina}</a></li>";
+
+
+                        if (i == paginas.Count - 1 || paginas[i + 1].CodigoModulo != pagina.CodigoModulo)
+                        { // Ultimo modulo percorrido? Se sim, fecha com a tag ul.
+                            saida += "</ul>";
+                        }
+
+                        if (i == paginas.Count - 1 || paginas[i + 1].CodigoSistema != pagina.CodigoSistema)
+                        { // Ultima pagina percorrida? Se sim, fecha com a tag li.
+                            saida += "</ul>";
+                            saida += "</li>";
+                        }
+
 
                     }
 
+                    @Html.Raw(saida)
+
                 }
+
                 <li class="nav-item">
                     <a class="nav-link" href="~/ControleAcesso/Sair.cshtml">Sair</a>
                 </li>
+
+
             </ul>
         </div>
     </div>

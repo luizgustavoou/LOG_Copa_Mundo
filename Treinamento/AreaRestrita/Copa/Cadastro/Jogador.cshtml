@@ -150,116 +150,115 @@
 
 }
 
-<body>
-    <form name="form1" method="post">
-        <input type="hidden" name="acao" id="acao" />
-        <input type="hidden" name="idJogador" id="idJogador" value="@idJogador" />
-        <input type="hidden" name="view" id="view" value="@view" />
 
-        <div class="container">
-            <h1>Jogador</h1>
+<form name="form1" method="post">
+    <input type="hidden" name="acao" id="acao" />
+    <input type="hidden" name="idJogador" id="idJogador" value="@idJogador" />
+    <input type="hidden" name="view" id="view" value="@view" />
 
-
-            @PageHelper.MakeAlert()
+    <div class="container">
+        <h1>Jogador</h1>
 
 
-            @if (view == View.New || view == View.Edit)
-            {
-                <div class="mb-3">
-                    <label for="nome" class="form-label">Nome: </label>
-                    <input class="form-control @isInvalid("nome")" type="text" name="nome" id="nome" value="@jogador.Nome" />
-                    @PageHelper.makeFeedback("nome")
-                </div>
-
-                <div class="mb-3">
-                    <label for="idTime">Time: </label>
-
-                    <select class="form-select @isInvalid("idTime")" name="idTime" id="idTime">
-                        <option value=""></option>
-                        @foreach (Time item in times)
-                        {
-                            <option value="@item.IdTime" @(jogador.IdTime == item.IdTime ? "selected" : "")>@item.Nome</option>
-                        }
+        @PageHelper.MakeAlert()
 
 
-                    </select>
-                    @PageHelper.makeFeedback("idTime")
-
-                </div>
-
-            }
-
+        @if (view == View.New || view == View.Edit)
+        {
             <div class="mb-3">
-                <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
-
-                @if (view == View.New)
-                {
-                    @PageHelper.MakeBotao(botoes, "I")
-
-                }
-
-                @if (view == View.Edit)
-                {
-
-                    @PageHelper.MakeBotao(botoes, "E")
-                    @PageHelper.MakeBotao(botoes, "A")
-                }
-
-                @if (view == View.Index)
-                {
-                    if (botoes.Any(x => x.Codigo == "I"))
-                    {
-                        <button class="btn btn-primary" type="button" onclick="novo()">Adicionar novo</button>
-                    }
-
-                }
+                <label for="nome" class="form-label">Nome: </label>
+                <input class="form-control @isInvalid("nome")" type="text" name="nome" id="nome" value="@jogador.Nome" />
+                @PageHelper.makeFeedback("nome")
             </div>
 
-            @if (jogadores != null)
+            <div class="mb-3">
+                <label for="idTime">Time: </label>
+
+                <select class="form-select @isInvalid("idTime")" name="idTime" id="idTime">
+                    <option value=""></option>
+                    @foreach (Time item in times)
+                    {
+                        <option value="@item.IdTime" @(jogador.IdTime == item.IdTime ? "selected" : "")>@item.Nome</option>
+                    }
+
+
+                </select>
+                @PageHelper.makeFeedback("idTime")
+
+            </div>
+
+        }
+
+        <div class="mb-3">
+            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+
+            @if (view == View.New)
             {
-                if (view == View.Index)
+                @PageHelper.MakeBotao(botoes, "I")
+
+            }
+
+            @if (view == View.Edit)
+            {
+
+                @PageHelper.MakeBotao(botoes, "E")
+                @PageHelper.MakeBotao(botoes, "A")
+            }
+
+            @if (view == View.Index)
+            {
+                if (botoes.Any(x => x.Codigo == "I"))
                 {
-                    <table class="mt-3 table table-dark table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>IdJogador</th>
-                                <th>Nome</th>
-                                <th>Time</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (Jogador item in jogadores)
-                            {
-                                <tr>
-                                    <td>@item.IdJogador</td>
-                                    <td>@item.Nome</td>
-                                    <td>@item.NomeTime</td>
-                                    <td>
-                                        @if (botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
-                                        {
-                                            <button class="btn btn-warning" type="button" onclick="editar('@item.IdJogador', '@item.Nome', '@item.IdTime')">
-                                                Editar
-                                                <i class="bi bi-pencil-fill"></i>
-                                            </button>
-
-                                        }
-
-                                    </td>
-                                </tr>
-
-                            }
-                        </tbody>
-                    </table>
+                    <button class="btn btn-primary" type="button" onclick="novo()">Adicionar novo</button>
                 }
+
             }
         </div>
-    </form>
 
-    <script src="~/Scripts/scripts.js">
-    </script>
+        @if (jogadores != null)
+        {
+            if (view == View.Index)
+            {
+                <table class="mt-3 table table-dark table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>IdJogador</th>
+                            <th>Nome</th>
+                            <th>Time</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Jogador item in jogadores)
+                        {
+                            <tr>
+                                <td>@item.IdJogador</td>
+                                <td>@item.Nome</td>
+                                <td>@item.NomeTime</td>
+                                <td>
+                                    @if (botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
+                                    {
+                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdJogador', '@item.Nome', '@item.IdTime')">
+                                            Editar
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
 
-    <script>
+                                    }
+
+                                </td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+            }
+        }
+    </div>
+</form>
+
+<script src="~/Scripts/scripts.js"></script>
+
+<script>
         function editar(idJogador, nome, idTime) {
             document.form1.idJogador.value = idJogador;
             document.form1.view.value = "@((int)View.Edit)"
@@ -270,7 +269,6 @@
             document.form1.view.value = "@((int)View.New)";
             executarAcao('');
         }
-    </script>
-</body>
+</script>
 
 

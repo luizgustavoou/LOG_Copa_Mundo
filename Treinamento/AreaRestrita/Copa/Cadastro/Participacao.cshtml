@@ -39,7 +39,7 @@
 
     private void instanciarJogo()
     {
-        if(jogo == null)
+        if (jogo == null)
         {
             jogo = new Jogo();
         }
@@ -136,127 +136,125 @@
     <link href="~/Scripts/Style.css" rel="stylesheet">
 }
 
-<body>
-    <form class="text-light flex-grow-1" name="form1" id="form1" method="post">
-        <input type="hidden" name="acao" id="acao" />
-        <input type="hidden" name="idJogo" id="idJogo" value="@idJogo" />
-        <input type="hidden" name="idJogador" id="idJogador" value="@idJogador" />
+<form class="text-light flex-grow-1" name="form1" id="form1" method="post">
+    <input type="hidden" name="acao" id="acao" />
+    <input type="hidden" name="idJogo" id="idJogo" value="@idJogo" />
+    <input type="hidden" name="idJogador" id="idJogador" value="@idJogador" />
 
-        <div class="container">
+    <div class="container">
 
 
-            <div>
-                <h1>Escolha uma partida</h1>
-                @PageHelper.MakeAlert()
+        <div>
+            <h1>Escolha uma partida</h1>
+            @PageHelper.MakeAlert()
 
-                @if (jogos != null)
-                {
-                    <select class="form-select" name="idJogoSelecionado" id="idJogoSelecionado">
-                        @if (idJogo == null)
-                        {
-                            <option value="" selected>
-                            </option>
-                        }
-                        @foreach (Jogo item in jogos)
-                        {
-                            <option value="@item.IdJogo" @(idJogo == item.IdJogo ? "selected" : "")>
-                                <span>@item.NomeTime1</span>
-                                <span>@item.Placar1</span>
-                                <span>X</span>
-                                <span>@item.NomeTime2</span>
-                                <span>@item.Placar2</span>
-                            </option>
-                        }
-                    </select>
+            @if (jogos != null)
+            {
+                <select class="form-select" name="idJogoSelecionado" id="idJogoSelecionado">
+                    @if (idJogo == null)
+                    {
+                        <option value="" selected>
+                        </option>
+                    }
+                    @foreach (Jogo item in jogos)
+                    {
+                        <option value="@item.IdJogo" @(idJogo == item.IdJogo ? "selected" : "")>
+                            <span>@item.NomeTime1</span>
+                            <span>@item.Placar1</span>
+                            <span>X</span>
+                            <span>@item.NomeTime2</span>
+                            <span>@item.Placar2</span>
+                        </option>
+                    }
+                </select>
 
-                    <div class="mt-5">
-                        @if (idJogo != null && jogo != null)
-                        {
-                            <div class="position-relative  text-white  mb-3 border border-5 rounded  d-flex justify-content-between" style="border-color: #C9CCCB;">
-                                <div class="flex-grow-1 p-4  d-flex justify-content-center align-items-center" style="background-color: #008cff">
-                                    <span class="fw-bolder" style="letter-spacing: 2px; font-size: 1.5rem;">
-                                        @jogo.NomeTime1
-                                    </span>
-                                </div>
-
-                                <div class="px-5 border border-5 rounded position-absolute flex-grow-1 justify-content-center align-items-center px-4 py-2 d-flex gap-2" style="height: 150%; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: black; border-color: #C9CCCB">
-                                    <span class="fw-bolder" style="font-size: 2.5rem; ">
-                                        @jogo.Placar1
-                                    </span>
-                                    <span class="fw-bolder" style="font-size: 2.5rem; ">
-                                        -
-                                    </span>
-                                    <span class="fw-bolder" style="font-size: 2.5rem; ">
-                                        @jogo.Placar2
-                                    </span>
-                                </div>
-
-                                <div class="flex-grow-1 p-4  d-flex justify-content-center align-items-center" style="background-color: #f53030">
-                                    <span class="fw-bolder" style="letter-spacing: 2px; font-size: 1.5rem;">
-                                        @jogo.NomeTime2
-
-                                    </span>
-                                </div>
+                <div class="mt-5">
+                    @if (idJogo != null && jogo != null)
+                    {
+                        <div class="position-relative  text-white  mb-3 border border-5 rounded  d-flex justify-content-between" style="border-color: #C9CCCB;">
+                            <div class="flex-grow-1 p-4  d-flex justify-content-center align-items-center" style="background-color: #008cff">
+                                <span class="fw-bolder" style="letter-spacing: 2px; font-size: 1.5rem;">
+                                    @jogo.NomeTime1
+                                </span>
                             </div>
 
-                        }
-                        @if (idJogo != null && partipacoes != null)
-                        {
-                            <section>
-                                @foreach (Participacao item in partipacoes)
-                                {
-                                    <div>
-                                        <span>@item.NomeTime</span>
-                                        <span>@item.NomeJogador</span>
-                                        <span>@item.GolsMarcados</span>
-                                        <span>
-                                            @if(botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
-                                            {
-                                                <button class="btn btn-success" type="button" onclick="editar('@idJogo', '@item.IdJogador')"><i class="bi bi-plus-lg"></i> Gols</button>
-                                            }
-                                        </span>
-                                    </div>
+                            <div class="px-5 border border-5 rounded position-absolute flex-grow-1 justify-content-center align-items-center px-4 py-2 d-flex gap-2" style="height: 150%; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: black; border-color: #C9CCCB">
+                                <span class="fw-bolder" style="font-size: 2.5rem; ">
+                                    @jogo.Placar1
+                                </span>
+                                <span class="fw-bolder" style="font-size: 2.5rem; ">
+                                    -
+                                </span>
+                                <span class="fw-bolder" style="font-size: 2.5rem; ">
+                                    @jogo.Placar2
+                                </span>
+                            </div>
 
-                                }
+                            <div class="flex-grow-1 p-4  d-flex justify-content-center align-items-center" style="background-color: #f53030">
+                                <span class="fw-bolder" style="letter-spacing: 2px; font-size: 1.5rem;">
+                                    @jogo.NomeTime2
 
-                            </section>
-                        }
+                                </span>
+                            </div>
+                        </div>
 
-                    </div>
+                    }
+                    @if (idJogo != null && partipacoes != null)
+                    {
+                        <section>
+                            @foreach (Participacao item in partipacoes)
+                            {
+                                <div>
+                                    <span>@item.NomeTime</span>
+                                    <span>@item.NomeJogador</span>
+                                    <span>@item.GolsMarcados</span>
+                                    <span>
+                                        @if (botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
+                                        {
+                                            <button class="btn btn-success" type="button" onclick="editar('@idJogo', '@item.IdJogador')"><i class="bi bi-plus-lg"></i> Gols</button>
+                                        }
+                                    </span>
+                                </div>
+
+                            }
+
+                        </section>
+                    }
+
+                </div>
 
 
-                }
-            </div>
-
-
+            }
         </div>
-    </form>
+
+
+    </div>
+</form>
 
 
 
-    <script>
-        const form1 = document.getElementById("form1");
-        const selectJogoSelecionado = document.getElementById("idJogoSelecionado");
+<script>
+    const form1 = document.getElementById("form1");
+    const selectJogoSelecionado = document.getElementById("idJogoSelecionado");
 
-        function handleJogoSelecionado() {
-            form1.idJogo.value = selectJogoSelecionado.value;
-            form1.submit();
-        }
+    function handleJogoSelecionado() {
+        form1.idJogo.value = selectJogoSelecionado.value;
+        form1.submit();
+    }
 
-        selectJogoSelecionado.addEventListener("change", handleJogoSelecionado)
+    selectJogoSelecionado.addEventListener("change", handleJogoSelecionado)
 
-        function executarAcao(acao) {
-            form1.acao.value = acao;
-            form1.submit();
-        }
+    function executarAcao(acao) {
+        form1.acao.value = acao;
+        form1.submit();
+    }
 
-        function editar(idJogo, idJogador) {
-            form1.idJogo.value = idJogo;
-            form1.idJogador.value = idJogador;
-            form1.acao.value = "A"
+    function editar(idJogo, idJogador) {
+        form1.idJogo.value = idJogo;
+        form1.idJogador.value = idJogador;
+        form1.acao.value = "A"
 
 
-            form1.submit();
-        }
-    </script>
-</body>
+        form1.submit();
+    }
+</script>

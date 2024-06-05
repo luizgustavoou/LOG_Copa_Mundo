@@ -141,45 +141,45 @@
     }, this.ModelState);
 }
 
-<body>
-    <form name="form1" id="form1" method="post">
-        <input type="hidden" name="acao" id="acao" />
-        <input type="hidden" name="idJogo" id="idJogo" value="@idJogo" />
-        <input type="hidden" name="view" id="view" value="@view" />
 
-        <div class="container">
-            <h1>Jogo</h1>
+<form name="form1" id="form1" method="post">
+    <input type="hidden" name="acao" id="acao" />
+    <input type="hidden" name="idJogo" id="idJogo" value="@idJogo" />
+    <input type="hidden" name="view" id="view" value="@view" />
 
-            @PageHelper.MakeAlert()
+    <div class="container">
+        <h1>Jogo</h1>
 
-            @if (view == View.New || view == View.Edit)
-            {
-                <div class="mb-3">
-                    <label for="idTime1">Time 1: </label>
+        @PageHelper.MakeAlert()
 
-                    <select class="form-select @isInvalid("idTime1")" name="idTime1" id="idTime1">
-                        <option value=""></option>
-                        @foreach (Time item in times)
-                        {
-                            <option value="@item.IdTime" @(jogo.IdTime1 == item.IdTime ? "selected" : "")>@item.Nome</option>
-                        }
-                    </select>
-                    @PageHelper.makeFeedback("idTime1")
-                </div>
+        @if (view == View.New || view == View.Edit)
+        {
+            <div class="mb-3">
+                <label for="idTime1">Time 1: </label>
 
-                <div class="mb-3">
-                    <label for="idTime2">Time 2: </label>
+                <select class="form-select @isInvalid("idTime1")" name="idTime1" id="idTime1">
+                    <option value=""></option>
+                    @foreach (Time item in times)
+                    {
+                        <option value="@item.IdTime" @(jogo.IdTime1 == item.IdTime ? "selected" : "")>@item.Nome</option>
+                    }
+                </select>
+                @PageHelper.makeFeedback("idTime1")
+            </div>
 
-                    <select class="form-select @isInvalid("idTime2")" name="idTime2" id="idTime2">
-                        <option value=""></option>
-                        @foreach (Time item in times)
-                        {
-                            <option value="@item.IdTime" @(jogo.IdTime2 == item.IdTime ? "selected" : "")>@item.Nome</option>
-                        }
-                    </select>
-                    @PageHelper.makeFeedback("idTime2")
-                </div>
-            }
+            <div class="mb-3">
+                <label for="idTime2">Time 2: </label>
+
+                <select class="form-select @isInvalid("idTime2")" name="idTime2" id="idTime2">
+                    <option value=""></option>
+                    @foreach (Time item in times)
+                    {
+                        <option value="@item.IdTime" @(jogo.IdTime2 == item.IdTime ? "selected" : "")>@item.Nome</option>
+                    }
+                </select>
+                @PageHelper.makeFeedback("idTime2")
+            </div>
+        }
 
         <div class="mb-3">
             <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
@@ -206,51 +206,50 @@
             }
         </div>
 
-            @if (view == View.Index)
+        @if (view == View.Index)
+        {
+            if (jogos != null)
             {
-                if (jogos != null)
-                {
-                    <table class="mt-2 table table-dark table-striped table-hover">
-                        <thead>
+                <table class="mt-2 table table-dark table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Time 1</th>
+                            <th>Time 2</th>
+                            <th>Placar 1</th>
+                            <th>Placar 2</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Jogo item in jogos)
+                        {
                             <tr>
-                                <th>Time 1</th>
-                                <th>Time 2</th>
-                                <th>Placar 1</th>
-                                <th>Placar 2</th>
-                                <th></th>
+                                <td>@item.NomeTime1</td>
+                                <td>@item.NomeTime2</td>
+                                <td>@item.Placar1</td>
+                                <td>@item.Placar2</td>
+                                <td>
+                                    @if (botoes.Any(x => x.Codigo == "E" || x.Codigo == "E"))
+                                    {
+                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdJogo')" @(item.Placar1 > 0 || item.Placar2 > 0 ? "disabled" : "")>
+                                            <i class="bi bi-pencil-fill"></i>
+                                            Editar
+                                        </button>
+                                    }
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (Jogo item in jogos)
-                            {
-                                <tr>
-                                    <td>@item.NomeTime1</td>
-                                    <td>@item.NomeTime2</td>
-                                    <td>@item.Placar1</td>
-                                    <td>@item.Placar2</td>
-                                    <td>
-                                        @if (botoes.Any(x => x.Codigo == "E" || x.Codigo == "E"))
-                                        {
-                                            <button class="btn btn-warning" type="button" onclick="editar('@item.IdJogo')" @(item.Placar1 > 0 || item.Placar2 > 0 ? "disabled" : "")>
-                                                <i class="bi bi-pencil-fill"></i>
-                                                Editar
-                                            </button>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
+                        }
+                    </tbody>
+                </table>
             }
+        }
 
 
-    </form>
+</form>
 
-    <script src="~/Scripts/scripts.js">
-    </script>
+<script src="~/Scripts/scripts.js"></script>
 
-    <script>
+<script>
 
         const form = document.getElementById("form1");
 
@@ -264,7 +263,7 @@
             form.view.value = "@((int)View.New)"
             executarAcao('C');
         }
-    </script>
-</body>
+</script>
+
 
 

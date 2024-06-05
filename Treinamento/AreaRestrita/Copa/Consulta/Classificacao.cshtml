@@ -28,52 +28,52 @@
     Util.ExceptionHandler(Consultar, this.ModelState);
 }
 
-<body>
-    <form name="form1" method="post">
-        <div class="container">
-            <h1>Classificacao</h1>
+
+<form name="form1" method="post">
+    <div class="container">
+        <h1>Classificacao</h1>
 
 
-            @PageHelper.MakeAlert()
+        @PageHelper.MakeAlert()
 
-            @if (classificacoes != null)
-            {
-                <table class="table table-dark table-striped table-hover">
-                    <thead>
+        @if (classificacoes != null)
+        {
+            <table class="table table-dark table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>NomeTime</th>
+                        <th>GolsMarcados</th>
+                        <th>GolsSofridos</th>
+                        <th>SaldoGols</th>
+                        <th>Pontos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Classificacao item in classificacoes)
+                    {
                         <tr>
-                            <th>NomeTime</th>
-                            <th>GolsMarcados</th>
-                            <th>GolsSofridos</th>
-                            <th>SaldoGols</th>
-                            <th>Pontos</th>
+                            <td>@item.NomeTime</td>
+                            <td>@item.GolsMarcados</td>
+                            <td>@item.GolsSofridos</td>
+                            <td>@item.SaldoGols</td>
+                            <td>@item.Pontos</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (Classificacao item in classificacoes)
-                        {
-                            <tr>
-                                <td>@item.NomeTime</td>
-                                <td>@item.GolsMarcados</td>
-                                <td>@item.GolsSofridos</td>
-                                <td>@item.SaldoGols</td>
-                                <td>@item.Pontos</td>
-                            </tr>
 
-                        }
-                    </tbody>
-                </table>
-            }
-        </div>
-    </form>
-
-    <script>
-        function consultar() {
-            document.form1.acao.value = "C";
-            document.form1.submit();
+                    }
+                </tbody>
+            </table>
         }
+    </div>
+</form>
+
+<script>
+    function consultar() {
+        document.form1.acao.value = "C";
+        document.form1.submit();
+    }
 
 
-    </script>
-</body>
+</script>
+
 
 

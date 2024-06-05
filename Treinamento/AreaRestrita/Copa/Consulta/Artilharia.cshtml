@@ -27,49 +27,47 @@
     Util.ExceptionHandler(Consultar, this.ModelState);
 }
 
-<body>
-    <form name="form1" method="post">
-        <div class="container">
-            <h1>Artilharia</h1>
+<form name="form1" method="post">
+    <div class="container">
+        <h1>Artilharia</h1>
 
-            @PageHelper.MakeAlert()
+        @PageHelper.MakeAlert()
 
-            @if (artilharias != null)
-            {
-                <table class="table table-dark table-striped table-hover">
-                    <thead>
+        @if (artilharias != null)
+        {
+            <table class="table table-dark table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>NomeTime</th>
+                        <th>NomeJogador</th>
+                        <th>TotalGols</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Artilharia item in artilharias)
+                    {
                         <tr>
-                            <th>NomeTime</th>
-                            <th>NomeJogador</th>
-                            <th>TotalGols</th>
+                            <td>@item.NomeTime</td>
+                            <td>@item.NomeJogador</td>
+                            <td>
+                                @item.TotalGols
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (Artilharia item in artilharias)
-                        {
-                            <tr>
-                                <td>@item.NomeTime</td>
-                                <td>@item.NomeJogador</td>
-                                <td>
-                                    @item.TotalGols
-                                </td>
-                            </tr>
 
-                        }
-                    </tbody>
-                </table>
-            }
-        </div>
-    </form>
-
-    <script>
-        function consultar() {
-            document.form1.acao.value = "C";
-            document.form1.submit();
+                    }
+                </tbody>
+            </table>
         }
+    </div>
+</form>
+
+<script>
+    function consultar() {
+        document.form1.acao.value = "C";
+        document.form1.submit();
+    }
 
 
-    </script>
-</body>
+</script>
 
 
