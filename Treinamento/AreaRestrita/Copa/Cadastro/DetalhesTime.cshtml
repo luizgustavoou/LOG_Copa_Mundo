@@ -106,13 +106,13 @@
 
     }
 
-    //private void CarregarDados()
-    //{
-    //    if (view == View.Edit && acao == "C" && jogadores != null && jogadores.Count == 1)
-    //    {
-    //        jogador = jogadores.FirstOrDefault();
-    //    }
-    //}
+    private void CarregarDados()
+    {
+        if (acao == "C" && jogadores != null && jogadores.Count == 1)
+        {
+            time = times.FirstOrDefault();
+        }
+    }
 }
 
 @{
@@ -128,13 +128,13 @@
     {
         ConsultarTimes();
         ConsultarJogadores();
-        //CarregarDados();
+        CarregarDados();
     }, this.ModelState);
 
 }
 
 
-<form name="form1" method="post">
+<form name="form1" id="form1" method="post">
     <input type="hidden" name="acao" id="acao" />
     <input type="hidden" name="idTime" id="idTime" value="@idTime" />
 
@@ -149,7 +149,7 @@
         <div class="mb-3">
             <label for="idTime">Time: </label>
 
-            <select class="form-select @isInvalid("idTime")" name="idTime" id="idTime">
+            <select class="form-select @isInvalid("idTime")" name="idTimeSelecionado" id="idTimeSelecionado">
                 <option value=""></option>
                 @foreach (Time item in times)
                 {
@@ -173,43 +173,30 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Nome</th>
-                        <th>Time</th>
-                        <th>Salário</th>
-                        <th>Ações</th>
+                        <th>
+                            <img width="40" src="~/captain.png" />
+                            Capitão
+                        </th>
+                        <th>
+                            <img width="40" src="~/coach.png" />
+                            Técnico
+                        </th>
+                        <th>
+                            <img width="40" src="~/penalty-card.png" />
+                            Suspenso
+                        </th>
+                        <th>Jogador</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (Jogador item in jogadores)
                     {
                         <tr>
-                            <td>
-                                @if (item.Capitao)
-                                {
-                                    <img width="40" src="~/captain.png" />
-                                }
-
-                                @if (item.Tecnico)
-                                {
-                                    <img width="40" src="~/coach.png" />
-                                }
-                            </td>
-                            <td class="@(item.Suspenso ? "text-decoration-line-through fw-bold" : "")" style="text-decoration-color: red!important; text-decoration-thickness: 2px!important;">
-
-                                @if (item.Suspenso)
-                                {
-                                    <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Jogador suspenso"></i>
-
-                                }
-                                <span>
-                                    @item.Nome
-
-                                </span>
-                            </td>
-                            <td>
-                                xx
-
-                            </td>
+                            <td></td>
+                            <td>@item.Capitao</td>
+                            <td>@item.Tecnico</td>
+                            <td>@item.Suspenso</td>
+                            <td>@item.Nome</td>
                         </tr>
 
                     }
@@ -228,10 +215,21 @@
         crossorigin="anonymous"></script>
 
 <script>
+    const form1 = document.getElementById("form1");
+    const selectTimeSelecionado = document.getElementById("idTimeSelecionado");
+
+    function handleTimeSelecionado() {
+        form1.idTime.value = selectTimeSelecionado.value;
+        form1.submit();
+    }
+
+    selectTimeSelecionado.addEventListener("change", handleTimeSelecionado)
+
+
     $('input[name="salario"]').mask('000.000.000.000.000,00', {reverse: true});
 
         function editar(idJogador, nome, idTime) {
-            document.form1.idJogador.value = idJogador;
+            form1.idJogador.value = idJogador;
             executarAcao('C');
         }
 </script>
