@@ -1,0 +1,239 @@
+﻿@RenderPage("~/AreaRestrita/Seguranca.cshtml");
+@{
+    Page.Title = "Jogador";
+    Layout = "~/AreaRestrita/_Layout.cshtml";
+}
+
+
+@functions {
+    private class Jogador
+    {
+        public string IdJogador { get; set; }
+        public bool Tecnico { get; set; }
+        public bool Capitao { get; set; }
+        public bool Suspenso { get; set; }
+        public string Nome { get; set; }
+    }
+
+    private class Time
+    {
+        public string IdTime { get; set; }
+        public string Nome { get; set; }
+    }
+
+
+    string acao = null;
+    string idTime = null;
+    Time time = null;
+
+    List<Botao> botoes = null;
+    List<Jogador> jogadores = null;
+    List<Time> times = null;
+
+
+    private void instanciarTime()
+    {
+        if (time != null) return;
+
+        time = new Time();
+    }
+
+    private void AlimentaVariaveis()
+    {
+        instanciarTime();
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+        idTime = Util.ChecaNulo(Request.Form["idTime"]);
+
+        botoes = new BotaoDao().GetAll();
+    }
+
+    private void LimpaVariaveis()
+    {
+        acao = null;
+        idTime = null;
+    }
+
+    private void ConsultarJogadores()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+        parametros.Add("@TipoConsulta", 1);
+        parametros.Add("@IdTime", idTime);
+
+        jogadores = new Dao().ExecutarAcaoList<Jogador>("C", parametros);
+
+    }
+
+    private void ConsultarTimes()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@IdTime", idTime);
+        times = new Dao().ExecutarAcaoList<Time>("C", parametros);
+    }
+
+    private string isInvalid(string key)
+    {
+        return (!ModelState.IsValidField(key) ? "is-invalid" : "");
+    }
+
+    private void Manutencao()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        //parametros.Add("@IdJogador", Util.ChecaNulo(jogador.IdJogador));
+        //parametros.Add("@Nome", Util.ChecaNulo(jogador.Nome));
+        //parametros.Add("@IdTime", Util.ChecaNulo(jogador.IdTime));
+        //parametros.Add("@Salario", jogador.Salario);
+
+        new Dao().ExecutarAcao(acao, parametros);
+
+    }
+
+    private void ExecutarManutencao()
+    {
+        //instanciarJogador();
+
+        //jogador.IdJogador = Request.Form["IdJogador"];
+        //jogador.Nome = Request.Form["Nome"];
+        //jogador.IdTime = Request.Form["IdTime"];
+        //jogador.NomeTime = Request.Form["NomeTime"];
+        //jogador.Salario = Decimal.Parse(Request.Form["Salario"]);
+
+
+        Manutencao();
+        LimpaVariaveis();
+        ModelState.AddError("alert-success", "Operação realizada com sucesso.");
+
+    }
+
+    //private void CarregarDados()
+    //{
+    //    if (view == View.Edit && acao == "C" && jogadores != null && jogadores.Count == 1)
+    //    {
+    //        jogador = jogadores.FirstOrDefault();
+    //    }
+    //}
+}
+
+@{
+    AlimentaVariaveis();
+
+    if (acao == "I" || acao == "A" || acao == "E")
+    {
+        Util.ExceptionHandler(ExecutarManutencao, this.ModelState);
+
+    }
+
+    Util.ExceptionHandler(() =>
+    {
+        ConsultarTimes();
+        ConsultarJogadores();
+        //CarregarDados();
+    }, this.ModelState);
+
+}
+
+
+<form name="form1" method="post">
+    <input type="hidden" name="acao" id="acao" />
+    <input type="hidden" name="idTime" id="idTime" value="@idTime" />
+
+    <div class="text-white container">
+        <h1>Detalhes dos times</h1>
+
+
+        @PageHelper.MakeAlert()
+
+
+
+        <div class="mb-3">
+            <label for="idTime">Time: </label>
+
+            <select class="form-select @isInvalid("idTime")" name="idTime" id="idTime">
+                <option value=""></option>
+                @foreach (Time item in times)
+                {
+                    <option value="@item.IdTime" @(time.IdTime == item.IdTime ? "selected" : "")>@item.Nome</option>
+                }
+
+
+            </select>
+            @PageHelper.makeFeedback("idTime")
+
+        </div>
+
+
+        <div class="mb-3">
+            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+        </div>
+
+        @if (jogadores != null)
+        {
+            <table class="mt-3 table table-dark table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Nome</th>
+                        <th>Time</th>
+                        <th>Salário</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Jogador item in jogadores)
+                    {
+                        <tr>
+                            <td>
+                                @if (item.Capitao)
+                                {
+                                    <img width="40" src="~/captain.png" />
+                                }
+
+                                @if (item.Tecnico)
+                                {
+                                    <img width="40" src="~/coach.png" />
+                                }
+                            </td>
+                            <td class="@(item.Suspenso ? "text-decoration-line-through fw-bold" : "")" style="text-decoration-color: red!important; text-decoration-thickness: 2px!important;">
+
+                                @if (item.Suspenso)
+                                {
+                                    <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Jogador suspenso"></i>
+
+                                }
+                                <span>
+                                    @item.Nome
+
+                                </span>
+                            </td>
+                            <td>
+                                xx
+
+                            </td>
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+
+        }
+    </div>
+</form>
+
+<script src="~/Scripts/scripts.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js"
+        integrity="sha256-yE5LLp5HSQ/z+hJeCqkz9hdjNkk1jaiGG0tDCraumnA="
+        crossorigin="anonymous"></script>
+
+<script>
+    $('input[name="salario"]').mask('000.000.000.000.000,00', {reverse: true});
+
+        function editar(idJogador, nome, idTime) {
+            document.form1.idJogador.value = idJogador;
+            executarAcao('C');
+        }
+</script>
+
+
