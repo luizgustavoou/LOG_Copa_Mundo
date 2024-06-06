@@ -235,6 +235,7 @@
                     <thead>
                         <tr>
                             <th></th>
+                            <th>Suspenso</th>
                             <th>Nome</th>
                             <th>Time</th>
                             <th>Salário</th>
@@ -245,6 +246,7 @@
                         @foreach (Jogador item in jogadores)
                         {
                             <tr>
+                                <td>@item.Suspenso</td>
                                 <td>
                                     @if (item.Capitao)
                                     {
@@ -256,7 +258,7 @@
                                         <img width="40" src="~/coach.png" />
                                     }
                                 </td>
-                                <td>@item.Nome</td>
+                                <td class="@(item.Suspenso ? "text-decoration-line-through fw-bold" : "")" style="text-decoration-color: red!important; text-decoration-thickness: 2px!important;">@item.Nome</td>
                                 <td>@item.NomeTime</td>
                                 <td>@item.Salario.ToString("C2")</td>
                                 <td>
