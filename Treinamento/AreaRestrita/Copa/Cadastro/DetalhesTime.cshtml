@@ -60,14 +60,12 @@
         parametros.Add("@IdTime", idTime);
 
         jogadores = new Dao().ExecutarAcaoList<Jogador>("C", parametros);
-
     }
 
     private void ConsultarTimes()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
-        parametros.Add("@IdTime", idTime);
         times = new Dao().ExecutarAcaoList<Time>("C", parametros);
     }
 
@@ -80,26 +78,12 @@
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
-        //parametros.Add("@IdJogador", Util.ChecaNulo(jogador.IdJogador));
-        //parametros.Add("@Nome", Util.ChecaNulo(jogador.Nome));
-        //parametros.Add("@IdTime", Util.ChecaNulo(jogador.IdTime));
-        //parametros.Add("@Salario", jogador.Salario);
-
         new Dao().ExecutarAcao(acao, parametros);
 
     }
 
     private void ExecutarManutencao()
     {
-        //instanciarJogador();
-
-        //jogador.IdJogador = Request.Form["IdJogador"];
-        //jogador.Nome = Request.Form["Nome"];
-        //jogador.IdTime = Request.Form["IdTime"];
-        //jogador.NomeTime = Request.Form["NomeTime"];
-        //jogador.Salario = Decimal.Parse(Request.Form["Salario"]);
-
-
         Manutencao();
         LimpaVariaveis();
         ModelState.AddError("alert-success", "Operação realizada com sucesso.");
@@ -128,7 +112,7 @@
     {
         ConsultarTimes();
         ConsultarJogadores();
-        CarregarDados();
+        //CarregarDados();
     }, this.ModelState);
 
 }
@@ -141,10 +125,7 @@
     <div class="text-white container">
         <h1>Detalhes dos times</h1>
 
-
         @PageHelper.MakeAlert()
-
-
 
         <div class="mb-3">
             <label for="idTime">Time: </label>
@@ -161,7 +142,6 @@
             @PageHelper.makeFeedback("idTime")
 
         </div>
-
 
         <div class="mb-3">
             <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
@@ -193,12 +173,17 @@
                     {
                         <tr>
                             <td></td>
-                            <td>@item.Capitao</td>
-                            <td>@item.Tecnico</td>
-                            <td>@item.Suspenso</td>
+                            <td>
+                                <input class="form-check-input" type="radio" name="idCapitao" id="idCapitao" value="1" @(item.Capitao ? "checked" : "")>
+                            </td>
+                            <td>
+                                <input class="form-check-input" type="radio" name="idTecnico" id="idTecnico" value="1" @(item.Tecnico ? "checked" : "")>
+                            </td>
+                            <td>
+                                <input class="form-check-input" type="checkbox" name="idSuspenso" id="idSuspenso" value="1" @(item.Suspenso ? "checked" : "")>
+                            </td>
                             <td>@item.Nome</td>
                         </tr>
-
                     }
                 </tbody>
             </table>
