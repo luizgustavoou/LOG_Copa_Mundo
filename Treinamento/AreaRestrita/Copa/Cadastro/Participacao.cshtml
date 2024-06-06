@@ -24,6 +24,9 @@
         public string IdJogador { get; set; }
         public string NomeJogador { get; set; }
         public int GolsMarcados { get; set; }
+        public bool Tecnico { get; set; }
+        public bool Capitao { get; set; }
+        public bool Suspenso { get; set; }
     }
 
 
@@ -205,6 +208,20 @@
                             @foreach (Participacao item in partipacoes)
                             {
                                 <div>
+                                    <span>
+                                        <td>
+                                            @if (item.Capitao)
+                                            {
+                                                <img width="40" src="~/captain.png" />
+                                            }
+
+                                            @if (item.Tecnico)
+                                            {
+                                                <img width="40" src="~/coach.png" />
+                                            }
+                                        </td>
+
+                                    </span>
                                     <span>@item.NomeTime</span>
                                     <span>@item.NomeJogador</span>
                                     <span>@item.GolsMarcados</span>
