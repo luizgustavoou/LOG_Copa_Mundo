@@ -71,6 +71,7 @@
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
+        parametros.Add("@IdAcesso", idAcesso);
         acessos = new Dao().ExecutarAcaoList<Acesso>("C", parametros);
 
     }
@@ -93,9 +94,10 @@
     private void Manutencao()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
+        parametros.Add("@IdAcesso", acesso.IdAcesso);
         parametros.Add("@IdOperador", acesso.IdOperador);
-        parametros.Add("@IdOperador", acesso.HoraInicio);
-        parametros.Add("@IdOperador", acesso.HoraFinal);
+        parametros.Add("@HoraInicio", acesso.HoraInicio);
+        parametros.Add("@HoraFinal", acesso.HoraFinal);
 
 
         new Dao().ExecutarAcao(acao, parametros);
@@ -103,19 +105,20 @@
 
 
 
-    //private void carregarDados()
-    //{
-    //    if (view == View.Edit && acao == "C" && operadores != null && operadores.Count == 1)
-    //    {
-    //        operador = operadores.FirstOrDefault();
+    private void carregarDados()
+    {
+        if (view == View.Edit && acao == "C" && acessos != null && acessos.Count == 1)
+        {
+            acesso = acessos.FirstOrDefault();
 
-    //    }
-    //}
+        }
+    }
 
     private void executarManutencao()
     {
         acesso = new Acesso()
         {
+            IdAcesso = Util.ChecaNulo(Request.Form["idAcesso"]),
             IdOperador = Util.ChecaNulo(Request.Form["idOperador"]),
             HoraInicio = Util.ChecaNulo(Request.Form["horaInicio"]),
             HoraFinal = Util.ChecaNulo(Request.Form["horaFinal"])
@@ -140,7 +143,7 @@
     {
         ConsultarAcessos();
         ConsultarOperadores();
-        //carregarDados();
+        carregarDados();
 
     }, this.ModelState);
 
@@ -180,14 +183,14 @@
 
             <div class="mb-3">
                 <label class="text-white" for="horaInicio">Hora inicial: </label>
-                <input class="form-select @isInvalid("horaInicio")" type="time" name="hora" id="hora" />
+                <input class="form-select @isInvalid("horaInicio")" type="time" name="horaInicio" id="horaInicio" value="@acesso.HoraInicio" />
 
                 @PageHelper.makeFeedback("horaInicio")
             </div>
 
             <div class="mb-3">
                 <label class="text-white" for="horaFinal">Hora Final: </label>
-                <input class="form-select @isInvalid("horaFinal")" type="time" name="hora" id="hora" />
+                <input class="form-select @isInvalid("horaFinal")" type="time" name="horaFinal" id="horaFinal" value="@acesso.HoraFinal"/>
 
                 @PageHelper.makeFeedback("horaFinal")
             </div>
@@ -271,7 +274,14 @@
         function editar(idAcesso) {
             document.form1.view.value = "@((int)View.Edit)"
             document.form1.idAcesso.value = idAcesso;
-            executarAcao('C');
+
+            console.log(document.form1.acao)
+
+            document.form1.acao.value = 'C';
+            console.log(document.form1.acao)
+
+            document.form1.submit();
+            //executarAcao('C');
         }
 
         function novo() {
