@@ -1,0 +1,283 @@
+﻿@RenderPage("~/AreaRestrita/Seguranca.cshtml");
+@{
+    Page.Title = "Operador";
+    Layout = "~/AreaRestrita/_Layout.cshtml";
+}
+
+@functions {
+    private enum View
+    {
+        Index,
+        New,
+        Edit
+    }
+
+    private class Acesso
+    {
+        public string IdAcesso { get; set; }
+        public string IdOperador { get; set; }
+        public string Nome { get; set; }
+        public string HoraInicio { get; set; }
+        public string HoraFinal { get; set; }
+    }
+
+    private class Operador
+    {
+        public string IdOperador { get; set; }
+        public string Nome { get; set; }
+    }
+
+
+    string acao = null;
+    string idAcesso = null;
+
+    View view = View.Index;
+    List<Acesso> acessos = null;
+    List<Operador> operadores = null;
+    Acesso acesso = null;
+    List<Botao> botoes = null;
+
+    private void instanciarAcesso()
+    {
+        if (acesso == null)
+        {
+            acesso = new Acesso();
+        }
+    }
+
+    private void AlimentaVariaveis()
+    {
+        instanciarAcesso();
+
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+        idAcesso = Util.ChecaNulo(Request.Form["idAcesso"]);
+
+
+        botoes = new BotaoDao().GetAll();
+
+        if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
+        {
+            view = (View)Enum.Parse(typeof(View), Request.Form["view"]);
+        }
+    }
+
+    private void LimpaVariaveis()
+    {
+        acao = null;
+        idAcesso = null;
+    }
+
+    private void ConsultarAcessos()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        acessos = new Dao().ExecutarAcaoList<Acesso>("C", parametros);
+
+    }
+
+    private void ConsultarOperadores()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@TipoRetorno", 1);
+
+        operadores = new Dao().ExecutarAcaoList<Operador>("C", parametros);
+
+    }
+
+    private string isInvalid(string key)
+    {
+        return (!ModelState.IsValidField(key) ? "is-invalid" : "");
+    }
+
+    private void Manutencao()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+        parametros.Add("@IdOperador", acesso.IdOperador);
+        parametros.Add("@IdOperador", acesso.HoraInicio);
+        parametros.Add("@IdOperador", acesso.HoraFinal);
+
+
+        new Dao().ExecutarAcao(acao, parametros);
+    }
+
+
+
+    //private void carregarDados()
+    //{
+    //    if (view == View.Edit && acao == "C" && operadores != null && operadores.Count == 1)
+    //    {
+    //        operador = operadores.FirstOrDefault();
+
+    //    }
+    //}
+
+    private void executarManutencao()
+    {
+        acesso = new Acesso()
+        {
+            IdOperador = Util.ChecaNulo(Request.Form["idOperador"]),
+            HoraInicio = Util.ChecaNulo(Request.Form["horaInicio"]),
+            HoraFinal = Util.ChecaNulo(Request.Form["horaFinal"])
+        };
+
+        Manutencao();
+        view = View.Index;
+        LimpaVariaveis();
+        ModelState.AddError("alert-success", "Operação realizada com sucesso.");
+    }
+}
+
+@{
+    AlimentaVariaveis();
+
+    if (acao == "I" || acao == "A" || acao == "E")
+    {
+        Util.ExceptionHandler(executarManutencao, this.ModelState);
+    }
+
+    Util.ExceptionHandler(() =>
+    {
+        ConsultarAcessos();
+        ConsultarOperadores();
+        //carregarDados();
+
+    }, this.ModelState);
+
+
+}
+
+
+<form class="text-light" name="form1" method="post">
+    <input type="hidden" name="acao" id="acao" />
+    <input type="hidden" name="idAcesso" id="idAcesso" value="@idAcesso" />
+    <input type="hidden" name="view" id="view" value="@((int)view)" />
+
+    <div class="container">
+        <h1>Acessos</h1>
+
+        @PageHelper.MakeAlert()
+
+
+
+        @if (view == View.New || view == View.Edit)
+        {
+            <div class="mb-3">
+                <label for="idOperador">Operador: </label>
+
+                <select class="form-select @isInvalid("idOperador")" name="idOperador" id="idOperador">
+                    <option value=""></option>
+                    @foreach (Operador item in operadores)
+                    {
+                        <option value="@item.IdOperador" @(acesso.IdOperador == item.IdOperador ? "selected" : "")>@item.Nome</option>
+                    }
+
+
+                </select>
+                @PageHelper.makeFeedback("idTime")
+
+            </div>
+
+            <div class="mb-3">
+                <label class="text-white" for="horaInicio">Hora inicial: </label>
+                <input class="form-select @isInvalid("horaInicio")" type="time" name="hora" id="hora" />
+
+                @PageHelper.makeFeedback("horaInicio")
+            </div>
+
+            <div class="mb-3">
+                <label class="text-white" for="horaFinal">Hora Final: </label>
+                <input class="form-select @isInvalid("horaFinal")" type="time" name="hora" id="hora" />
+
+                @PageHelper.makeFeedback("horaFinal")
+            </div>
+
+        }
+
+
+        <div class="mb-3">
+            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+            @if (view == View.New)
+            {
+                @PageHelper.MakeBotao(botoes, "I")
+            }
+
+            @if (view == View.Edit)
+            {
+                @PageHelper.MakeBotao(botoes, "E")
+                @PageHelper.MakeBotao(botoes, "A")
+            }
+
+            @if (view == View.Index)
+            {
+                if (botoes.Any(x => x.Codigo == "I"))
+                {
+                    <button class="btn btn-primary" type="button" onclick="novo()">Novo</button>
+                }
+
+            }
+
+
+
+        </div>
+
+        @if (view == View.Index)
+        {
+            if (acessos != null)
+            {
+                <table class="mt-2 table table-dark table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>IdAcesso</th>
+                            <th>Nome</th>
+                            <th>HoraInicio</th>
+                            <th>HoraFinal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Acesso item in acessos)
+                        {
+                            <tr>
+                                <td>@item.IdAcesso</td>
+                                <td>@item.Nome</td>
+                                <td>@item.HoraInicio</td>
+                                <td>@item.HoraFinal</td>
+                                <td>
+                                    @if (botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
+                                    {
+                                        <button class="btn btn-warning" type="button" onclick="editar('@item.IdAcesso')">
+                                            <i class="bi bi-pencil-fill"></i>
+                                            Editar
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+
+            }
+        }
+
+
+    </div>
+</form>
+
+<script src="~/Scripts/scripts.js"></script>
+
+<script>
+        function editar(idAcesso) {
+            document.form1.view.value = "@((int)View.Edit)"
+            document.form1.idAcesso.value = idAcesso;
+            executarAcao('C');
+        }
+
+        function novo() {
+            document.form1.view.value = "@((int)View.New)";
+            executarAcao('');
+        }
+</script>
+
+
