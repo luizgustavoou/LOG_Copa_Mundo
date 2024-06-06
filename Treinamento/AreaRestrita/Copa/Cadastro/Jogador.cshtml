@@ -20,6 +20,9 @@
         public string IdTime { get; set; }
         public string NomeTime { get; set; }
         public decimal Salario { get; set; }
+        public bool Tecnico { get; set; }
+        public bool Capitao { get; set; }
+        public bool Suspenso { get; set; }
 
     }
 
@@ -231,7 +234,7 @@
                 <table class="mt-3 table table-dark table-striped table-hover">
                     <thead>
                         <tr>
-                            <th>IdJogador</th>
+                            <th></th>
                             <th>Nome</th>
                             <th>Time</th>
                             <th>Salário</th>
@@ -242,7 +245,17 @@
                         @foreach (Jogador item in jogadores)
                         {
                             <tr>
-                                <td>@item.IdJogador</td>
+                                <td>
+                                    @if (item.Capitao)
+                                    {
+                                        <img width="40" src="~/captain.png" />
+                                    }
+
+                                    @if (item.Tecnico)
+                                    {
+                                        <img width="40" src="~/coach.png" />
+                                    }
+                                </td>
                                 <td>@item.Nome</td>
                                 <td>@item.NomeTime</td>
                                 <td>@item.Salario.ToString("C2")</td>
