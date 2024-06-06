@@ -14,6 +14,8 @@
         public string NomeTime2 { get; set; }
         public int Placar1 { get; set; }
         public int Placar2 { get; set; }
+        public string DataInicio { get; set; }
+        public string DataFim { get; set; }
     }
 
     private class Participacao
@@ -181,17 +183,30 @@
                                 </span>
                             </div>
 
-                            <div class="px-5 border border-5 rounded position-absolute flex-grow-1 justify-content-center align-items-center px-4 py-2 d-flex gap-2" style="height: 150%; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: black; border-color: #C9CCCB">
-                                <span class="fw-bolder" style="font-size: 2.5rem; ">
-                                    @jogo.Placar1
-                                </span>
-                                <span class="fw-bolder" style="font-size: 2.5rem; ">
-                                    -
-                                </span>
-                                <span class="fw-bolder" style="font-size: 2.5rem; ">
-                                    @jogo.Placar2
-                                </span>
-                            </div>
+                            <section class="px-5 border border-5 rounded position-absolute flex-grow-1 justify-content-center align-items-center px-4 py-2 d-flex flex-column" style="min-height: 150%; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: black; border-color: #C9CCCB">
+                                <div>
+                                    <span class="fw-bolder" style="font-size: 2.5rem; ">
+                                        @jogo.Placar1
+                                    </span>
+                                    <span class="fw-bolder" style="font-size: 2.5rem; ">
+                                        -
+                                    </span>
+                                    <span class="fw-bolder" style="font-size: 2.5rem; ">
+                                        @jogo.Placar2
+                                    </span>
+
+                                </div>
+                                <div class="d-flex flex-column align-items-center">
+                                    <span>
+                                        @(Util.FormatarData(@jogo.DataInicio, Util.TypeFormat.BRAZIL_DATETIME))
+                                    </span>
+                                    <span>às</span>
+                                    <span>
+                                        @(Util.FormatarData(@jogo.DataFim, Util.TypeFormat.BRAZIL_DATETIME))
+                                    </span>
+
+                                </div>
+                            </section>
 
                             <div class="flex-grow-1 p-4  d-flex justify-content-center align-items-center" style="background-color: #f53030">
                                 <span class="fw-bolder" style="letter-spacing: 2px; font-size: 1.5rem;">
@@ -224,9 +239,14 @@
                                     </span>
                                     <span>@item.NomeTime</span>
                                     <span>@item.NomeJogador</span>
-                                    <span>@item.GolsMarcados</span>
                                     <span>
-                                        @if (botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
+                                        @if (!item.Tecnico)
+                                        {
+                                            @item.GolsMarcados
+                                        }
+                                    </span>
+                                    <span>
+                                        @if (!item.Tecnico && botoes.Any(x => x.Codigo == "A" || x.Codigo == "E"))
                                         {
                                             <button class="btn btn-success" type="button" onclick="editar('@idJogo', '@item.IdJogador')"><i class="bi bi-plus-lg"></i> Gols</button>
                                         }
