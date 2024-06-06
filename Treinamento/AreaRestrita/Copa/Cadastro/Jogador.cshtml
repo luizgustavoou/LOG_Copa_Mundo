@@ -235,7 +235,6 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Suspenso</th>
                             <th>Nome</th>
                             <th>Time</th>
                             <th>Salário</th>
@@ -246,7 +245,6 @@
                         @foreach (Jogador item in jogadores)
                         {
                             <tr>
-                                <td>@item.Suspenso</td>
                                 <td>
                                     @if (item.Capitao)
                                     {
@@ -258,7 +256,18 @@
                                         <img width="40" src="~/coach.png" />
                                     }
                                 </td>
-                                <td class="@(item.Suspenso ? "text-decoration-line-through fw-bold" : "")" style="text-decoration-color: red!important; text-decoration-thickness: 2px!important;">@item.Nome</td>
+                                <td class="@(item.Suspenso ? "text-decoration-line-through fw-bold" : "")" style="text-decoration-color: red!important; text-decoration-thickness: 2px!important;">
+
+                                    @if (item.Suspenso)
+                                    {
+                                        <i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Jogador suspenso"></i>
+
+                                    }
+                                    <span>
+                                        @item.Nome
+
+                                    </span>
+                                </td>
                                 <td>@item.NomeTime</td>
                                 <td>@item.Salario.ToString("C2")</td>
                                 <td>
@@ -290,6 +299,9 @@
         crossorigin="anonymous"></script>
 
 <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
     $('input[name="salario"]').mask('000.000.000.000.000,00', {reverse: true});
 
         function editar(idJogador, nome, idTime) {
