@@ -63,6 +63,8 @@
     }
 
     string acao = null;
+    string jsonRequest = null;
+    string jsonResponse = null;
 
     List<Botao> botoes = null;
 
@@ -100,8 +102,8 @@
 
 
         List<RelatoriosTimeResponse> response = new Dao().ExecutarAcaoList<RelatoriosTimeResponse>("C", parametros);
-
-        timesJsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<List<TimeJsonResponse>>(response.FirstOrDefault().Json);
+        jsonResponse = response.FirstOrDefault().Json;
+        timesJsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<List<TimeJsonResponse>>(jsonResponse);
     }
 
     private void ConsultarJogadores()
@@ -193,8 +195,8 @@
     }, this.ModelState);
 
     List<TimeJson> timesJson = TransformarTimesParaJSON(times, jogadores);
-    string json = SerializarParaJSON(timesJson);
-    ConsultarTimesJson(json);
+    jsonRequest = SerializarParaJSON(timesJson);
+    ConsultarTimesJson(jsonRequest);
 
 
 }
@@ -221,7 +223,7 @@
                         <thead>
                             <tr>
                                 <th>
-                                    <img width="40" src="~/football-player.png"/>
+                                    <img width="40" src="~/football-player.png" />
                                     Nome Jogador
                                 </th>
                                 <th>
@@ -270,6 +272,17 @@
 
             <button class="btn btn-primary" onclick="executarAcao('A')">Registar</button>
         }
+    </div>
+
+    <div class="d-flex flex-column gap-3 p-3 ">
+        <div class="text-white fw-bold p-3 rounded-top" style="background-color: #149414 ">
+            @jsonRequest
+        </div>
+
+        <div class="text-white fw-bold p-3 rounded-top" style="background-color: #149414 ">
+            @jsonResponse
+        </div>
+
     </div>
 </form>
 
