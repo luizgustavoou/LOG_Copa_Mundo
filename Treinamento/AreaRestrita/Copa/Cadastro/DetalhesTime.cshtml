@@ -24,6 +24,9 @@
 
     string acao = null;
     string idTime = null;
+    string idTecnico = null;
+    string idCapitao = null;
+    string idsSuspensos = null;
     Time time = null;
 
     List<Botao> botoes = null;
@@ -43,6 +46,9 @@
         instanciarTime();
         acao = Util.ChecaNulo(Request.Form["acao"]);
         idTime = Util.ChecaNulo(Request.Form["idTime"]);
+        idTecnico = Util.ChecaNulo(Request.Form["idTecnico"]);
+        idCapitao = Util.ChecaNulo(Request.Form["idCapitao"]);
+        idsSuspensos = Util.ChecaNulo(Request.Form["idSuspenso"]);
 
         botoes = new BotaoDao().GetAll();
     }
@@ -78,6 +84,12 @@
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
+        parametros.Add("@IdTime", idTime);
+        parametros.Add("@IdTecnico", idTecnico);
+        parametros.Add("@IdCapitao", idCapitao);
+        parametros.Add("@IdsSuspensos", idsSuspensos);
+
+
         new Dao().ExecutarAcao(acao, parametros);
 
     }
@@ -85,7 +97,6 @@
     private void ExecutarManutencao()
     {
         Manutencao();
-        LimpaVariaveis();
         ModelState.AddError("alert-success", "Operação realizada com sucesso.");
 
     }
@@ -177,19 +188,22 @@
                         <tr>
                             <td></td>
                             <td>
-                                <input class="form-check-input" type="radio" name="idCapitao" id="idCapitao" value="1" @(item.Capitao ? "checked" : "")>
+                                <input class="form-check-input" type="radio" name="idCapitao" id="idCapitao" value="@item.IdJogador" @(item.Capitao ? "checked" : "")>
                             </td>
                             <td>
-                                <input class="form-check-input" type="radio" name="idTecnico" id="idTecnico" value="1" @(item.Tecnico ? "checked" : "")>
+                                <input class="form-check-input" type="radio" name="idTecnico" id="idTecnico" value="@item.IdJogador" @(item.Tecnico ? "checked" : "")>
                             </td>
                             <td>
-                                <input class="form-check-input" type="checkbox" name="idSuspenso" id="idSuspenso" value="1" @(item.Suspenso ? "checked" : "")>
+                                <input class="form-check-input" type="checkbox" name="idSuspenso" id="idSuspenso" value="@item.IdJogador" @(item.Suspenso ? "checked" : "")>
                             </td>
                             <td>@item.Nome</td>
                         </tr>
                     }
                 </tbody>
             </table>
+
+            <button class="btn btn-primary" onclick="executarAcao('A')">Registar</button>
+
 
         }
     </div>
