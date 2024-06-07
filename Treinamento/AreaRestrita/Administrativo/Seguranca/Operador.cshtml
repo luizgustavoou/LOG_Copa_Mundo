@@ -308,24 +308,41 @@
 
     $inputCep.on('input', $.debounce(600, function (e) {
         const cep = e.target.value;
-
-        if (cep.lenght < 9) return;
+       
+        if (cep.length < 9) return;
 
         getCepInfo(cep);
 
-    }));    
+    }));
 
     function getCepInfo(cep) {
         $.ajax({
             method: "GET",
-            url: `https://viacep.com.br/ws/${cep}/json/`
-        }).done(function (res) {
-            const { localidade, bairro, logradouro } = res;
+            url: `https://viacep.com.br/ws/${cep}/json/`,
+            
+            beforeSend: function () {
 
-            $inputLocalidade.val(localidade);
-            $inputBairro.val(bairro);
-            $inputLogradouro.val(logradouro);
+                $inputCep.prop('disabled', true);
+                $inputLocalidade.prop('disabled', true);
+                $inputBairro.prop('disabled', true);
+                $inputLogradouro.prop('disabled', true);
+            },
+            success: (function (res) {
+                const { localidade, bairro, logradouro } = res;
+
+                $inputLocalidade.val(localidade);
+                $inputBairro.val(bairro);
+                $inputLogradouro.val(logradouro);
+            }),
+            complete: function () {
+                $inputCep.prop('disabled', false);
+                $inputLocalidade.prop('disabled', false);
+                $inputBairro.prop('disabled', false);
+                $inputLogradouro.prop('disabled', false);
+            }
         })
+
+
     }
 
 
@@ -354,10 +371,12 @@
                 method: "POST",
                 url: "Operador.cshtml",
                 data: { acao: "GS" }
-            }).done(function (res) {
-                $("input[name='senha']").val(res);
-
             })
+                .done(function (res) {
+                    $("input[name='senha']").val(res);
+                })
+
+
         }
 
         function editar(idOperador) {
