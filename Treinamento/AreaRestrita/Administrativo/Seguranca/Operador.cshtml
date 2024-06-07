@@ -185,7 +185,7 @@
                 <label for="senha" class="form-label">Senha: </label>
                 <input class="form-control @isInvalid("senha")" type="password" name="senha" id="senha" value="@operador.Senha" />
                 <span class="input-group-text" id="basic-addon1">
-                    <i class="bi bi-eye-fill"></i>
+                    <i role="button" class="bi bi-eye-fill"></i>
                 </span>
                 @PageHelper.makeFeedback("senha")
             </div>
@@ -271,6 +271,21 @@
         $('button#geradorSenha').click(function () {
             gerarSenha();
         });
+
+    $('.input-group-text i').click(function () {
+        const $inputPassword = $("input[name='senha']")
+
+        if ($inputPassword.attr("type") == 'password') {
+            $inputPassword.prop("type", "text")
+            $(this).attr("class", 'bi bi-eye-slash-fill')
+            return;
+        }
+
+        $inputPassword.prop("type", "password")
+        $(this).attr("class", 'bi bi-eye-fill')
+
+
+    });
 
 
         function gerarSenha() {
