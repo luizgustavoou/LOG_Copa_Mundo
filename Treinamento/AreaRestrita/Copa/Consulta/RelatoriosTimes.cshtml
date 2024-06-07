@@ -33,13 +33,33 @@
         public string nome { get; set; }
     }
 
+    private class TimeJsonResponse
+    {
+        public string id { get; set; }
+        public string nome { get; set; }
+        public decimal aproveitamento { get; set; }
+        public decimal folhaPagamento { get; set; }
+        public int gols { get; set; }
+        public List<JogadorJsonResponse> jogadores { get; set; }
+    }
+
+    private class JogadorJsonResponse
+    {
+        public string id { get; set; }
+        public string nome { get; set; }
+        public int gols { get; set; }
+        public decimal salario { get; set; }
+        public decimal aproveitamento { get; set; }
+    }
+
+
+
 
 
 
     private class RelatoriosTimeResponse
     {
         public string Json { get; set; }
-
     }
 
     string acao = null;
@@ -48,6 +68,10 @@
 
     List<Time> times = null;
     List<Jogador> jogadores = null;
+
+    List<TimeJsonResponse> timesJsonResponse = null;
+
+
 
     private void AlimentaVariaveis()
     {
@@ -64,7 +88,20 @@
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
 
+
         times = new Dao().ExecutarAcaoList<Time>("C", parametros);
+    }
+
+    private void ConsultarTimesJson(string json)
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+        parametros.Add("@TipoRetorno", 2);
+        parametros.Add("@Json", json);
+
+
+        List<RelatoriosTimeResponse> response = new Dao().ExecutarAcaoList<RelatoriosTimeResponse>("C", parametros);
+
+        timesJsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<List<TimeJsonResponse>>(response.FirstOrDefault().Json);
     }
 
     private void ConsultarJogadores()
@@ -116,6 +153,8 @@
 
 
 
+
+
     private string isInvalid(string key)
     {
         return (!ModelState.IsValidField(key) ? "is-invalid" : "");
@@ -155,6 +194,8 @@
 
     List<TimeJson> timesJson = TransformarTimesParaJSON(times, jogadores);
     string json = SerializarParaJSON(timesJson);
+    ConsultarTimesJson(json);
+
 
 }
 
@@ -168,52 +209,58 @@
         @PageHelper.MakeAlert()
 
 
-        @*@if (jogadores != null)
+        @if (timesJson != null)
+        {
+            foreach (TimeJsonResponse timeJ in timesJsonResponse)
             {
-                <table class="mt-3 table table-dark table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>
-                                <img width="40" src="~/captain.png" />
-                                Capitão
-                            </th>
-                            <th>
-                                <img width="40" src="~/coach.png" />
-                                Técnico
-                            </th>
-                            <th>
-                                <img width="40" src="~/penalty-card.png" />
-                                Suspenso
-                            </th>
-                            <th>
-                                <img width="40" src="~/football-player.png" />
-                                Jogador
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (Jogador item in jogadores)
-                        {
-                            <tr>
-                                <td></td>
-                                <td>
-                                    <input class="form-check-input" type="radio" name="idCapitao" id="idCapitao" value="@item.IdJogador" @(item.Capitao ? "checked" : "")>
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="radio" name="idTecnico" id="idTecnico" value="@item.IdJogador" @(item.Tecnico ? "checked" : "")>
-                                </td>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" name="idSuspenso" id="idSuspenso" value="@item.IdJogador" @(item.Suspenso ? "checked" : "")>
-                                </td>
-                                <td>@item.Nome</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                <h2 class="fw-bold">@timeJ.nome [ QtdeGols: @timeJ.gols, Aproveitamento: @timeJ.aproveitamento, Folha: @timeJ.folhaPagamento]</h2>
 
-                <button class="btn btn-primary" onclick="executarAcao('A')">Registar</button>
-            }*@
+                if (timeJ.jogadores != null)
+                {
+                    <table class="mt-3 table table-dark table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Nome Jogador
+                                </th>
+                                <th>
+                                    Salário
+                                </th>
+                                <th>
+                                    Qtd Gols
+                                </th>
+                                <th>
+                                    Aproveitamento
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (JogadorJsonResponse item in timeJ.jogadores)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.nome
+                                    </td>
+                                    <td>
+                                        @item.salario
+                                    </td>
+                                    <td>
+                                        @item.gols
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>@item.aproveitamento</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+
+            }
+
+            <button class="btn btn-primary" onclick="executarAcao('A')">Registar</button>
+        }
     </div>
 </form>
 
