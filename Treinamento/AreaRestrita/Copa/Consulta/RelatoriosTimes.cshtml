@@ -1,0 +1,229 @@
+﻿@RenderPage("~/AreaRestrita/Seguranca.cshtml");
+@{
+    Page.Title = "Jogador";
+    Layout = "~/AreaRestrita/_Layout.cshtml";
+}
+
+
+@functions {
+    private class Time
+    {
+        public string IdTime { get; set; }
+        public string Nome { get; set; }
+    }
+
+    private class Jogador
+    {
+        public string IdJogador { get; set; }
+        public string IdTime { get; set; }
+        public string Nome { get; set; }
+    }
+
+
+    private class TimeJson
+    {
+        public string Id { get; set; }
+        public string Nome { get; set; }
+        public JogadorJson[] jogadores { get; set; }
+    }
+
+    private class JogadorJson
+    {
+        public string Id { get; set; }
+        public string Nome { get; set; }
+    }
+
+
+
+
+    private class RelatoriosTimeResponse
+    {
+        public string Json { get; set; }
+
+    }
+
+    string acao = null;
+
+    List<Botao> botoes = null;
+
+    List<Time> times = null;
+    List<Jogador> jogadores = null;
+
+    private void AlimentaVariaveis()
+    {
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+        botoes = new BotaoDao().GetAll();
+    }
+
+    private void LimpaVariaveis()
+    {
+        acao = null;
+    }
+
+    private void ConsultarTimes()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        times = new Dao().ExecutarAcaoList<Time>("C", parametros);
+    }
+
+    private void ConsultarJogadores()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@TipoRetorno", 1);
+
+        jogadores = new Dao().ExecutarAcaoList<Jogador>("C", parametros);
+    }
+
+    private List<TimeJson> TransformarTimesParaJSON(List<Time> tms, List<Jogador> jgs)
+    {
+        List<TimeJson> timesJson = new List<TimeJson>();
+
+        foreach (Time time in tms)
+        {
+            TimeJson timeJson = new TimeJson()
+            {
+                Id = time.IdTime,
+                Nome = time.Nome,
+                jogadores = new JogadorJson[] { }
+            };
+
+            foreach (Jogador jogador in jgs)
+            {
+                if (time.IdTime == jogador.IdTime)
+                {
+                    timeJson.jogadores.Append(new JogadorJson()
+                    {
+                        Id = jogador.IdJogador,
+                        Nome = jogador.Nome
+                    });
+                }
+            }
+
+            timesJson.Add(timeJson);
+        }
+
+        return timesJson;
+    }
+
+
+
+    private string isInvalid(string key)
+    {
+        return (!ModelState.IsValidField(key) ? "is-invalid" : "");
+    }
+
+    private void Manutencao()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+
+        new Dao().ExecutarAcao(acao, parametros);
+
+    }
+
+    private void ExecutarManutencao()
+    {
+        Manutencao();
+        ModelState.AddError("alert-success", "Operação realizada com sucesso.");
+
+    }
+}
+
+@{
+    AlimentaVariaveis();
+
+    if (acao == "I" || acao == "A" || acao == "E")
+    {
+        Util.ExceptionHandler(ExecutarManutencao, this.ModelState);
+
+    }
+
+    Util.ExceptionHandler(() =>
+    {
+        ConsultarTimes();
+        ConsultarJogadores();
+    }, this.ModelState);
+
+    List<TimeJson> timesJson = TransformarTimesParaJSON(times, jogadores);
+
+}
+
+
+<form name="form1" id="form1" method="post">
+    <input type="hidden" name="acao" id="acao" />
+
+    <div class="text-white container">
+        <h1>Relatórios dos times</h1>
+
+        @PageHelper.MakeAlert()
+
+
+
+        @*@if (jogadores != null)
+            {
+                <table class="mt-3 table table-dark table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>
+                                <img width="40" src="~/captain.png" />
+                                Capitão
+                            </th>
+                            <th>
+                                <img width="40" src="~/coach.png" />
+                                Técnico
+                            </th>
+                            <th>
+                                <img width="40" src="~/penalty-card.png" />
+                                Suspenso
+                            </th>
+                            <th>
+                                <img width="40" src="~/football-player.png" />
+                                Jogador
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Jogador item in jogadores)
+                        {
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <input class="form-check-input" type="radio" name="idCapitao" id="idCapitao" value="@item.IdJogador" @(item.Capitao ? "checked" : "")>
+                                </td>
+                                <td>
+                                    <input class="form-check-input" type="radio" name="idTecnico" id="idTecnico" value="@item.IdJogador" @(item.Tecnico ? "checked" : "")>
+                                </td>
+                                <td>
+                                    <input class="form-check-input" type="checkbox" name="idSuspenso" id="idSuspenso" value="@item.IdJogador" @(item.Suspenso ? "checked" : "")>
+                                </td>
+                                <td>@item.Nome</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <button class="btn btn-primary" onclick="executarAcao('A')">Registar</button>
+            }*@
+    </div>
+</form>
+
+<script src="~/Scripts/scripts.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js"
+        integrity="sha256-yE5LLp5HSQ/z+hJeCqkz9hdjNkk1jaiGG0tDCraumnA="
+        crossorigin="anonymous"></script>
+
+<script>
+    const form1 = document.getElementById("form1");
+
+    function editar(idJogador) {
+        form1.idJogador.value = idJogador;
+        executarAcao('C');
+    }
+</script>
+
+

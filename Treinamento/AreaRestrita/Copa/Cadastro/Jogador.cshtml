@@ -1,11 +1,13 @@
-﻿@RenderPage("~/AreaRestrita/Seguranca.cshtml");
+﻿
+@RenderPage("~/AreaRestrita/Seguranca.cshtml");
 @{
     Page.Title = "Jogador";
     Layout = "~/AreaRestrita/_Layout.cshtml";
 }
 
 
-@functions {
+@using Newtonsoft.Json.Linq;
+@functions  {
     private enum View
     {
         Index,
@@ -153,6 +155,15 @@
         ConsultarJogadores();
         CarregarDados();
     }, this.ModelState);
+
+    JArray array = new JArray();
+    array.Add("Manual text");
+    array.Add(new DateTime(2000, 5, 23));
+
+    JObject o = new JObject();
+    o["MyArray"] = array;
+
+    string json = o.ToString();
 
 }
 
