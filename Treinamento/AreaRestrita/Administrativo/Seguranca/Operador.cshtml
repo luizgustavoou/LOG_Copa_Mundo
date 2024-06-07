@@ -21,6 +21,7 @@
     }
 
 
+    string senha = null;
     string acao = null;
 
     string idOperador = null;
@@ -110,6 +111,21 @@
         LimpaVariaveis();
         ModelState.AddError("alert-success", "Operação realizada com sucesso.");
     }
+
+    public static string GenerateRandomPassword(int length)
+    {
+        const string charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+~`|}{[]\\:;?><,./-=";
+        Random random = new Random();
+        string password = "";
+
+        for (int i = 0; i < length; i++)
+        {
+            int randomIndex = random.Next(charset.Length);
+            password += charset[randomIndex];
+        }
+
+        return password;
+    }
 }
 
 @{
@@ -119,6 +135,13 @@
     {
         Util.ExceptionHandler(executarManutencao, this.ModelState);
 
+    }
+
+    if (acao == "GS")
+    {
+        senha = GenerateRandomPassword(12);
+        Response.Write(senha);
+        Response.End();
     }
 
     Util.ExceptionHandler(() =>
@@ -158,39 +181,45 @@
                 @PageHelper.makeFeedback("nome")
             </div>
 
-            <div class="mb-3">
+            <div class="input-group mb-3">
                 <label for="senha" class="form-label">Senha: </label>
                 <input class="form-control @isInvalid("senha")" type="password" name="senha" id="senha" value="@operador.Senha" />
+                <span class="input-group-text" id="basic-addon1">
+                    <i class="bi bi-eye-fill"></i>
+                </span>
                 @PageHelper.makeFeedback("senha")
             </div>
+
         }
 
 
-        <div class="mb-3">
-            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
-            @if (view == View.New)
+    <div class="mb-3">
+        <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+        @if (view == View.New)
+        {
+            @PageHelper.MakeBotao(botoes, "I")
+            <button class="btn btn-primary" type="button" id="geradorSenha">Gerar senha</button>
+
+        }
+
+        @if (view == View.Edit)
+        {
+            @PageHelper.MakeBotao(botoes, "E")
+            @PageHelper.MakeBotao(botoes, "A")
+        }
+
+        @if (view == View.Index)
+        {
+            if (botoes.Any(x => x.Codigo == "I"))
             {
-                @PageHelper.MakeBotao(botoes, "I")
+                <button class="btn btn-primary" type="button" onclick="novo()">Novo</button>
             }
 
-            @if (view == View.Edit)
-            {
-                @PageHelper.MakeBotao(botoes, "E")
-                @PageHelper.MakeBotao(botoes, "A")
-            }
-
-            @if (view == View.Index)
-            {
-                if (botoes.Any(x => x.Codigo == "I"))
-                {
-                    <button class="btn btn-primary" type="button" onclick="novo()">Novo</button>
-                }
-
-            }
+        }
 
 
 
-        </div>
+    </div>
 
         @if (view == View.Index)
         {
@@ -235,10 +264,26 @@
 
     </div>
 </form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="~/Scripts/scripts.js"></script>
 
-    <script src="~/Scripts/scripts.js"></script>
+<script>
+        $('button#geradorSenha').click(function () {
+            gerarSenha();
+        });
 
-    <script>
+
+        function gerarSenha() {
+            $.ajax({
+                method: "POST",
+                url: "Operador.cshtml",
+                data: { acao: "GS" }
+            }).done(function (res) {
+                $("input[name='senha']").val(res);
+
+            })
+        }
+
         function editar(idOperador) {
             document.form1.view.value = "@((int)View.Edit)"
             document.form1.idOperador.value = idOperador;
@@ -249,6 +294,6 @@
             document.form1.view.value = "@((int)View.New)";
             executarAcao('');
         }
-    </script>
+</script>
 
 
