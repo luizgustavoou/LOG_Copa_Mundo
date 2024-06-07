@@ -22,15 +22,15 @@
 
     private class TimeJson
     {
-        public string Id { get; set; }
-        public string Nome { get; set; }
-        public JogadorJson[] jogadores { get; set; }
+        public string id { get; set; }
+        public string nome { get; set; }
+        public List<JogadorJson> jogadores { get; set; }
     }
 
     private class JogadorJson
     {
-        public string Id { get; set; }
-        public string Nome { get; set; }
+        public string id { get; set; }
+        public string nome { get; set; }
     }
 
 
@@ -84,19 +84,19 @@
         {
             TimeJson timeJson = new TimeJson()
             {
-                Id = time.IdTime,
-                Nome = time.Nome,
-                jogadores = new JogadorJson[] { }
+                id = time.IdTime,
+                nome = time.Nome,
+                jogadores = new List<JogadorJson>()
             };
 
             foreach (Jogador jogador in jgs)
             {
                 if (time.IdTime == jogador.IdTime)
                 {
-                    timeJson.jogadores.Append(new JogadorJson()
+                    timeJson.jogadores.Add(new JogadorJson()
                     {
-                        Id = jogador.IdJogador,
-                        Nome = jogador.Nome
+                        id = jogador.IdJogador,
+                        nome = jogador.Nome
                     });
                 }
             }
@@ -105,6 +105,13 @@
         }
 
         return timesJson;
+    }
+
+    private string SerializarParaJSON(List<TimeJson> timesJson)
+    {
+        string json = Newtonsoft.Json.JsonConvert.SerializeObject(timesJson);
+
+        return json;
     }
 
 
@@ -147,6 +154,7 @@
     }, this.ModelState);
 
     List<TimeJson> timesJson = TransformarTimesParaJSON(times, jogadores);
+    string json = SerializarParaJSON(timesJson);
 
 }
 
@@ -158,7 +166,6 @@
         <h1>Relatórios dos times</h1>
 
         @PageHelper.MakeAlert()
-
 
 
         @*@if (jogadores != null)
