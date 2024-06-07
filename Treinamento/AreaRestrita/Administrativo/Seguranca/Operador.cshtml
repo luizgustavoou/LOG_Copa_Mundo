@@ -181,47 +181,70 @@
                 @PageHelper.makeFeedback("nome")
             </div>
 
-                <div>
-                    <label for="senha" class="form-label">Senha: </label>
-                    <div class="input-group mb-3">
-                        <input class="form-control @isInvalid("senha")" type="password" name="senha" id="senha" value="@operador.Senha" />
-                        <span class="input-group-text" id="basic-addon1">
-                            <i role="button" class="bi bi-eye-fill"></i>
-                        </span>
-                        @PageHelper.makeFeedback("senha")
-                    </div>
+            <div>
+                <label for="senha" class="form-label">Senha: </label>
+                <div class="input-group mb-3">
+                    <input class="form-control @isInvalid("senha")" type="password" name="senha" id="senha" value="@operador.Senha" />
+                    <span class="input-group-text" id="basic-addon1">
+                        <i role="button" class="bi bi-eye-fill"></i>
+                    </span>
+                    @PageHelper.makeFeedback("senha")
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-3">
+                    <label for="cep" class="form-label">CEP: </label>
+                    <input class="form-control" type="text" name="cep" id="cep" />
                 </div>
 
+                <div class="col-3">
+                    <label for="localidade" class="form-label">Localidade: </label>
+                    <input class="form-control" type="text" name="localidade" id="localidade" />
+                </div>
+
+                <div class="col-3">
+                    <label for="bairro" class="form-label">Bairro: </label>
+                    <input class="form-control" type="text" name="bairro" id="bairro" />
+                </div>
+
+                <div class="col-3">
+                    <label for="logradouro" class="form-label">Logradouro: </label>
+                    <input class="form-control" type="text" name="logradouro" id="logradouro" />
+                </div>
+
+            </div>
         }
 
 
-    <div class="mb-3">
-        <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
-        @if (view == View.New)
-        {
-            @PageHelper.MakeBotao(botoes, "I")
-            <button class="btn btn-primary" type="button" id="geradorSenha">Gerar senha</button>
-
-        }
-
-        @if (view == View.Edit)
-        {
-            @PageHelper.MakeBotao(botoes, "E")
-            @PageHelper.MakeBotao(botoes, "A")
-        }
-
-        @if (view == View.Index)
-        {
-            if (botoes.Any(x => x.Codigo == "I"))
+        <div class="mt-3">
+            <button class="btn btn-primary" type="submit" onclick="estadoInicial()">Limpar</button>
+            @if (view == View.New)
             {
-                <button class="btn btn-primary" type="button" onclick="novo()">Novo</button>
+                @PageHelper.MakeBotao(botoes, "I")
+                <button class="btn btn-primary" type="button" id="geradorSenha">Gerar senha</button>
+
             }
 
-        }
+            @if (view == View.Edit)
+            {
+                @PageHelper.MakeBotao(botoes, "E")
+                @PageHelper.MakeBotao(botoes, "A")
+            }
+
+            @if (view == View.Index)
+            {
+                if (botoes.Any(x => x.Codigo == "I"))
+                {
+                    <button class="btn btn-primary" type="button" onclick="novo()">Novo</button>
+                }
+
+            }
 
 
 
-    </div>
+        </div>
 
         @if (view == View.Index)
         {
@@ -267,12 +290,48 @@
     </div>
 </form>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+@*JQuery Mask libk*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js"
+        integrity="sha256-yE5LLp5HSQ/z+hJeCqkz9hdjNkk1jaiGG0tDCraumnA="
+        crossorigin="anonymous"></script>
+@*JQuery Debounce lib*@
+<script src="http://benalman.com/code/projects/jquery-throttle-debounce/jquery.ba-throttle-debounce.js"></script>
 <script src="~/Scripts/scripts.js"></script>
 
 <script>
-        $('button#geradorSenha').click(function () {
-            gerarSenha();
-        });
+    const $inputCep = $('input[name="cep"]')
+    const $inputLocalidade = $("input[name='localidade']");
+    const $inputBairro = $("input[name='bairro']");
+    const $inputLogradouro = $("input[name='logradouro']");
+
+    $inputCep.mask('00000-000');
+
+    $inputCep.on('input', $.debounce(600, function (e) {
+        const cep = e.target.value;
+
+        if (cep.lenght < 9) return;
+
+        getCepInfo(cep);
+
+    }));    
+
+    function getCepInfo(cep) {
+        $.ajax({
+            method: "GET",
+            url: `https://viacep.com.br/ws/${cep}/json/`
+        }).done(function (res) {
+            const { localidade, bairro, logradouro } = res;
+
+            $inputLocalidade.val(localidade);
+            $inputBairro.val(bairro);
+            $inputLogradouro.val(logradouro);
+        })
+    }
+
+
+    $('button#geradorSenha').click(function () {
+        gerarSenha();
+    });
 
     $('.input-group-text i').click(function () {
         const $inputPassword = $("input[name='senha']")
