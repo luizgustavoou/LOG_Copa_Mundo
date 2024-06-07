@@ -181,14 +181,16 @@
                 @PageHelper.makeFeedback("nome")
             </div>
 
-            <div class="input-group mb-3">
-                <label for="senha" class="form-label">Senha: </label>
-                <input class="form-control @isInvalid("senha")" type="password" name="senha" id="senha" value="@operador.Senha" />
-                <span class="input-group-text" id="basic-addon1">
-                    <i role="button" class="bi bi-eye-fill"></i>
-                </span>
-                @PageHelper.makeFeedback("senha")
-            </div>
+                <div>
+                    <label for="senha" class="form-label">Senha: </label>
+                    <div class="input-group mb-3">
+                        <input class="form-control @isInvalid("senha")" type="password" name="senha" id="senha" value="@operador.Senha" />
+                        <span class="input-group-text" id="basic-addon1">
+                            <i role="button" class="bi bi-eye-fill"></i>
+                        </span>
+                        @PageHelper.makeFeedback("senha")
+                    </div>
+                </div>
 
         }
 
