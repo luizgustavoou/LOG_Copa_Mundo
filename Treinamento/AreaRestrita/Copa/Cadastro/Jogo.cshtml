@@ -193,7 +193,9 @@
     {
         if (nomeArquivo != null)
         {
-            string caminhoArquivo = Path.Combine(Server.MapPath("~/AreaRestrita/arquivos"), nomeArquivo);
+
+            string caminhoArquivo = Server.MapPath(nomeArquivo);
+
 
             if (File.Exists(caminhoArquivo))
             {
@@ -214,6 +216,16 @@
         }
         , this.ModelState);
 
+    }
+
+    if (acao == "ES")
+    {
+        Util.ExceptionHandler(() =>
+        {
+            ExcluirArquivo();
+            ModelState.AddError("alert-success", "Súmula removida com sucesso");
+        }
+        , this.ModelState);
     }
 
     Util.ExceptionHandler(() =>
@@ -294,7 +306,6 @@
                         <div class="small">Extensões válidas: @extensoesValidas</div>
                         <div class="small">Tamanho máximo do arquivo: 512kB</div>
                     </div>
-
                 </div>
 
             </div>
@@ -352,9 +363,20 @@
                                 <td>@Util.FormatarData(item.DataInicio, Util.TypeFormat.BRAZIL_DATETIME).ToString()</td>
                                 <td>@item.DataFim</td>
                                 <td>
-                                    <button type="button" class="btn btn-success" onclick="verSumula('@item.CaminhoSumula')">
-                                        <i class="bi bi-search"></i>
-                                    </button>
+                                    @if (item.CaminhoSumula == null)
+                                    {
+                                        <span>Sem súmula</span>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-success" onclick="verSumula('@item.CaminhoSumula')">
+                                            <i class="bi bi-search"></i>
+                                        </button>
+
+                                        <button type="button" class="btn btn-danger" onclick="excluirArquivo('@item.CaminhoSumula')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    }
                                 </td>
                                 <td>
                                     @if (botoes.Any(x => x.Codigo == "E" || x.Codigo == "E"))
@@ -418,7 +440,7 @@
      //}
 
      function excluirArquivo(nomeArquivo) {
-         document.form1.acao.value = "E";
+         document.form1.acao.value = "ES";
          document.form1.nomeArquivo.value = nomeArquivo;
          document.form1.submit();
     }
@@ -427,9 +449,6 @@
         const urlDestiono = "/AreaRestrita/ConsultarSumula?caminhoArquivo=" + encodeURIComponent(caminhoArquivo)
 
         window.open(urlDestiono, "_blank");
-
-
-
     }
 </script>
 
