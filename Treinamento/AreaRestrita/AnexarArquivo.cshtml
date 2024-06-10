@@ -1,0 +1,129 @@
+﻿@RenderPage("~/AreaRestrita/Seguranca.cshtml");
+
+@{
+    Page.Title = "Time";
+    Layout = "~/AreaRestrita/_Layout.cshtml";
+}
+
+@functions {
+    string acao = null;
+    string extensoesValidas = ".pdf,.jpg,.txt,.docx";
+    HttpPostedFileBase arquivo = null;
+
+    private void AlimentaVariaveis()
+    {
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+
+        if (Request.Files.Count > 0)
+        {
+            arquivo = Request.Files["arquivo"];
+        }
+    }
+
+    private string IsInvalid(string key)
+    {
+        return !ModelState.IsValidField(key) ? "is-invalid" : "";
+    }
+
+    private void SalvarArquivo()
+    {
+        if (arquivo == null)
+        {
+            throw new InvalidOperationException("Informe o arquivo");
+        }
+
+        if (string.IsNullOrWhiteSpace(arquivo.FileName))
+        {
+            throw new InvalidOperationException("Não foi possível identificar o nome do arquivo");
+        }
+
+        if (arquivo.ContentLength > 512 * 1000)
+        {
+            ModelState.AddError("arquivo", "Arquivo deve ter o tamanho de até 512KB");
+        }
+
+        if (!Directory.Exists(Server.MapPath("arquivos")))
+        {
+            Directory.CreateDirectory(Server.MapPath("arquivos"));
+        }
+
+        string caminhoArquivo = Path.Combine(Server.MapPath("arquivos"), arquivo.FileName);
+
+        arquivo.SaveAs(caminhoArquivo);
+    }
+
+
+}
+
+@{
+    AlimentaVariaveis();
+
+    if (acao == "I")
+    {
+        Util.ExceptionHandler(() =>
+        {
+            SalvarArquivo();
+            ModelState.AddError("alert-success", "Operação realizada com sucesso");
+        }, this.ModelState);
+    }
+}
+
+<form name="form1" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="acao" id="acao" />
+
+    <div class="text-white container">
+        <h1>Anexar arquivo</h1>
+
+        @PageHelper.MakeAlert()
+
+        <div class="mt-5">
+            <div class="row">
+                <div class="col">
+                    <input type="file" id="arquivo" name="arquivo" class="form-control @IsInvalid("arquivo")" onchange="checkFile(this)" />
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="enviar()">Enviar arquivo</button>
+                </div>
+                <div class="mt-3">
+                    <div class="small">Extensões válidas: @extensoesValidas</div>
+                    <div class="small">Tamanho máximo do arquivo: 512kB</div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</form>
+
+<script src="~/Scripts/scripts.js"></script>
+
+<script>
+
+    function checkFile(input) {
+        const extensoesValidas = "@extensoesValidas".toUpperCase().split(",");
+        const extensaoArquivo = input.value.substring(input.value.lastIndexOf("."));
+
+        if (extensoesValidas.indexOf(extensaoArquivo.toUpperCase()) < 0) {
+            alert("Formato do arquivo inválido. Extensões aceitas: " + extensoesValidas);
+            input.value = "";
+            return false;
+        }
+
+        return true;
+    }
+
+    function enviar() {
+        var arquivo = document.form1.arquivo.value;
+
+        if (!arquivo) {
+            alert("Informe o arquivo");
+            return;
+        }
+
+        document.form1.acao.value = "I";
+        document.form1.submit();
+    }
+</script>
+
+
