@@ -151,7 +151,7 @@
 }
 
 
-<form class="text-light" name="form1" method="post">
+<form name="form1" method="post">
     <input type="hidden" name="acao" id="acao" />
     <input type="hidden" name="idAcesso" id="idAcesso" value="@idAcesso" />
     <input type="hidden" name="view" id="view" value="@((int)view)" />
@@ -182,14 +182,14 @@
             </div>
 
             <div class="mb-3">
-                <label class="text-white" for="horaInicio">Hora inicial: </label>
+                <label for="horaInicio">Hora inicial: </label>
                 <input class="form-select @isInvalid("horaInicio")" type="time" name="horaInicio" id="horaInicio" value="@acesso.HoraInicio" />
 
                 @PageHelper.makeFeedback("horaInicio")
             </div>
 
             <div class="mb-3">
-                <label class="text-white" for="horaFinal">Hora Final: </label>
+                <label for="horaFinal">Hora Final: </label>
                 <input class="form-select @isInvalid("horaFinal")" type="time" name="horaFinal" id="horaFinal" value="@acesso.HoraFinal"/>
 
                 @PageHelper.makeFeedback("horaFinal")

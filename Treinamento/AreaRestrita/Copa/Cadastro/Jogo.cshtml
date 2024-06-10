@@ -244,14 +244,14 @@
 
     <input type="hidden" name="view" id="view" value="@view" />
 
-    <div class="text-white container">
+    <div class="container">
         <h1>Jogo</h1>
 
         @PageHelper.MakeAlert()
 
         @if (view == View.New || view == View.Edit)
         {
-            <div class="text-white mb-3">
+            <div class=" mb-3">
                 <label for="idTime1">Time 1: </label>
 
                 <select class="form-select @isInvalid("idTime1")" name="idTime1" id="idTime1">
@@ -296,7 +296,7 @@
 
         @if (view == View.Edit)
         {
-            <div class="text-white mt-5">
+            <div class=" mt-5">
                 <div class="row">
                     <div class="col">
                         <label for="arquivo">Súmula: </label>
