@@ -1,0 +1,64 @@
+﻿@RenderPage("~/AreaRestrita/Seguranca.cshtml");
+@{
+    Page.Title = "Operador";
+    Layout = "~/AreaRestrita/_Layout.cshtml";
+}
+
+@functions {
+    string acao = null;
+
+
+    private void AlimentaVariaveis()
+    {
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+    }
+
+    private bool PegarTemaSistema()
+    {
+        bool temaSistema = false;
+
+        if (HttpContext.Current.Session["IdOperador"] != null)
+        {
+            var temaSistemaStr = HttpContext.Current.Session["TemaSistema"]?.ToString();
+            if (!string.IsNullOrEmpty(temaSistemaStr) && bool.TryParse(temaSistemaStr, out bool parsedTemaSistema))
+            {
+                temaSistema = parsedTemaSistema;
+            }
+        }
+
+        return temaSistema;
+    }
+
+    private void MudarTemaSistema()
+    {
+        bool temaSistema = PegarTemaSistema();
+        temaSistema = !temaSistema;
+
+        HttpContext.Current.Session["TemaSistema"] = temaSistema;
+
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@IdOperador", new Identificacao().IdOperador);
+        parametros.Add("@TemaSistema", temaSistema);
+
+        new Dao().ExecutarProcedure("stp_LGU_TemaSistema_Upd", parametros);
+    }
+}
+
+@{
+    AlimentaVariaveis();
+
+    if (acao == "AT")
+    {
+        MudarTemaSistema();
+        Response.Write("Hello World!");
+        Response.End();
+    }
+
+
+
+}
+
+
+
+

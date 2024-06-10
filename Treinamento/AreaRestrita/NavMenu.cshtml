@@ -1,5 +1,14 @@
 
 @functions  {
+
+    string acao = null;
+
+
+    private void AlimentaVariaveis()
+    {
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+    }
+
     private class Pagina
     {
         public string CodigoSistema { get; set; }
@@ -30,6 +39,12 @@
 
 @{
     Consultar();
+
+    if(acao == "AT")
+    {
+        Response.Write("Hello World!");
+        Response.End();
+    }
 }
 
 <nav class="navbar navbar-expand-lg">
@@ -133,14 +148,33 @@
     const $html = $("html")
 
     $("#btn-theme").click(function (e) {
+        let tema;
+
         if ($html.attr("data-bs-theme") == "dark") {
             $html.attr("data-bs-theme", "light")
             $(this).attr("class", "bi bi-brightness-high-fill");
+            tema = 0;
 
 
         } else {
             $html.attr("data-bs-theme", "dark")
             $(this).attr("class", "bi bi-moon-stars-fill");
+            tema = 1;
         }
+
+        alterarTema(tema);
     });
+
+    function alterarTema() {
+        $.ajax({
+            method: "POST",
+            url: "/AreaRestrita/TemaSistema.cshtml",
+            data: { acao: "AT" }
+        })
+            .done(function (res) {
+                console.log({ res });
+            })
+    }
+
+
 </script>

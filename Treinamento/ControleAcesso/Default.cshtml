@@ -13,6 +13,7 @@
     {
         public string IdOperador { get; set; }
         public string Nome { get; set; }
+        public bool TemaSistema { get; set; }
     }
 
     string acao = null;
@@ -49,6 +50,7 @@
             if (operador != null)
             {
                 Session["IdOperador"] = operador.IdOperador;
+                Session["TemaSistema"] = operador.TemaSistema;
                 redirect = true;
                 //Response.Redirect("~/");
             }
