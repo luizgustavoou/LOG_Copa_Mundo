@@ -244,7 +244,7 @@
 
     <input type="hidden" name="view" id="view" value="@view" />
 
-    <div class="container">
+    <div class="text-white container">
         <h1>Jogo</h1>
 
         @PageHelper.MakeAlert()
@@ -369,7 +369,7 @@
                                     }
                                     else
                                     {
-                                        <button type="button" class="btn btn-success" onclick="verSumula('@item.CaminhoSumula')">
+                                        <button type="button" class="btn btn-success" onclick="verSumula('@item.IdJogo', '@item.CaminhoSumula')">
                                             <i class="bi bi-search"></i>
                                         </button>
 
@@ -445,10 +445,11 @@
          document.form1.submit();
     }
 
-    function verSumula(caminhoArquivo) {
-        const urlDestiono = "/AreaRestrita/ConsultarSumula?caminhoArquivo=" + encodeURIComponent(caminhoArquivo)
+    function verSumula(idJogo, caminhoArquivo) {
+        console.log({ idJogo, caminhoArquivo })
+        const urlDestino = "/AreaRestrita/Copa/cadastro/ConsultarSumula?idJogo=" + encodeURIComponent(idJogo) + "&caminhoArquivo=" + encodeURIComponent(caminhoArquivo)
 
-        window.open(urlDestiono, "_blank");
+        window.open(urlDestino, "_blank");
     }
 </script>
 

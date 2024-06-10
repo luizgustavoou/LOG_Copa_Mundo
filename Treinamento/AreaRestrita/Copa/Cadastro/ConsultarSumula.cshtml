@@ -9,11 +9,18 @@
     string acao = null;
 
     string nomeArquivo = null;
+    string idJogo = null;
+
+    List<Botao> botoes = null;
+
 
     private void AlimentaVariaveis()
     {
         acao = Util.ChecaNulo(Request.Form["acao"]);
         nomeArquivo = Util.ChecaNulo(Request.QueryString["caminhoArquivo"]);
+        idJogo = Util.ChecaNulo(Request.QueryString["idJogo"]);
+
+        botoes = new BotaoDao().GetAll();
     }
 
     private string IsInvalid(string key)
@@ -30,7 +37,18 @@
             if (File.Exists(caminhoArquivo))
             {
                 File.Delete(caminhoArquivo);
+
+                Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+                parametros.Add("@IdJogo", idJogo);
+
+                new Dao().ExecutarAcao("ES", parametros);
+
+                ModelState.AddError("alert-success", "Súmula removida com sucesso");
+
                 HttpContext.Current.Response.Redirect("/AreaRestrita/Copa/cadastro/Jogo");
+
+
             }
         }
     }
@@ -39,12 +57,11 @@
 @{
     AlimentaVariaveis();
 
-    if (acao == "E")
+    if (acao == "ES")
     {
         Util.ExceptionHandler(() =>
         {
             ExcluirArquivo();
-            ModelState.AddError("alert-success", "Operação realizada com sucesso");
         }, this.ModelState);
     }
 }
@@ -58,7 +75,10 @@
 
         @PageHelper.MakeAlert()
 
-        <button type="button" class="btn btn-danger" onclick="excluirArquivo('@nomeArquivo')">Excluir</button>
+
+        @PageHelper.MakeBotao(botoes, "ES")
+
+
 
         <object class="mt-3" style="width: 100%; aspect-ratio: 4/3"
                 data="@nomeArquivo"
@@ -70,12 +90,12 @@
     </div>
 </form>
 
-<script src="~/Scripts/scripts.js"></script>
+@*<script src="~/Scripts/scripts.js"></script>*@
 
 <script>
-    function excluirArquivo(nomeArquivo) {
-        document.form1.acao.value = "E";
-        document.form1.nomeArquivo.value = nomeArquivo;
+    function executarAcao(acao) {
+        document.form1.acao.value = acao;
+        document.form1.nomeArquivo.value = '@nomeArquivo';
         document.form1.submit();
     }
 </script>
