@@ -9,10 +9,12 @@
     string acao = null;
     string extensoesValidas = ".pdf,.jpg,.txt,.docx";
     HttpPostedFileBase arquivo = null;
+    string nomeArquivo = null;
 
     private void AlimentaVariaveis()
     {
         acao = Util.ChecaNulo(Request.Form["acao"]);
+        nomeArquivo = Util.ChecaNulo(Request.Form["nomeArquivo"]);
 
         if (Request.Files.Count > 0)
         {
@@ -52,6 +54,19 @@
         arquivo.SaveAs(caminhoArquivo);
     }
 
+    private void ExcluirArquivo()
+    {
+        if (nomeArquivo != null)
+        {
+            string caminhoArquivo = Path.Combine(Server.MapPath("arquivos"), nomeArquivo);
+
+            if (File.Exists(caminhoArquivo))
+            {
+                File.Delete(caminhoArquivo);
+            }
+        }
+    }
+
 
 }
 
@@ -66,10 +81,20 @@
             ModelState.AddError("alert-success", "Operação realizada com sucesso");
         }, this.ModelState);
     }
+
+    if (acao == "E")
+    {
+        Util.ExceptionHandler(() =>
+        {
+            ExcluirArquivo();
+            ModelState.AddError("alert-success", "Operação realizada com sucesso");
+        }, this.ModelState);
+    }
 }
 
 <form name="form1" method="post" enctype="multipart/form-data">
     <input type="hidden" name="acao" id="acao" />
+    <input type="hidden" name="nomeArquivo" id="nomeArquivo" />
 
     <div class="text-white container">
         <h1>Anexar arquivo</h1>
@@ -93,6 +118,39 @@
             </div>
 
         </div>
+
+        @{
+            if (Directory.Exists(Server.MapPath("arquivos")))
+            {
+                string[] arquivos = Directory.GetFiles(Server.MapPath("arquivos"));
+
+                if (arquivos != null && arquivos.Length > 0)
+                {
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            Arquivos enviados
+                        </div>
+                        <div class="list-group list-group-flush">
+                            @foreach (string item in arquivos)
+                            {
+                                <div class="list-group-item list-group-flush">
+                                    <div class="row">
+                                        <div class="col">
+                                            @Path.GetFileName(item)
+                                        </div>
+                                        <div class="col-auto">
+                                            <a href="~/AreaRestrita/arquivos/@Path.GetFileName(item)" target="_blank">Baixar</a>
+                                            <a href="javascript:void(0)" onclick="excluirArquivo('@Path.GetFileName(item)')">Excluir</a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        }
     </div>
 </form>
 
@@ -122,6 +180,12 @@
         }
 
         document.form1.acao.value = "I";
+        document.form1.submit();
+    }
+
+    function excluirArquivo(nomeArquivo) {
+        document.form1.acao.value = "E";
+        document.form1.nomeArquivo.value = nomeArquivo;
         document.form1.submit();
     }
 </script>
