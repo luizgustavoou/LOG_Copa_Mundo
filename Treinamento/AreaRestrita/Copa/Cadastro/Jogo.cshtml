@@ -129,6 +129,8 @@
         if (acao == "A")
         {
             string nomeArquivoSalvado = SalvarArquivo();
+            nomeArquivoSalvado = Path.Combine("/AreaRestrita/arquivos/", nomeArquivoSalvado);
+
             parametros.Add("@CaminhoSumula", nomeArquivoSalvado);
         }
 
