@@ -144,7 +144,8 @@
         {
             IdJogo = Util.ChecaNulo(Request.Form["IdJogo"]),
             IdTime1 = Util.ChecaNulo(Request.Form["idTime1"]),
-            IdTime2 = Util.ChecaNulo(Request.Form["IdTime2"])
+            IdTime2 = Util.ChecaNulo(Request.Form["IdTime2"]),
+            DataInicio = Util.ChecaNulo(Request.Form["data"] + "T" + hora)
         };
 
         Manutencao();
@@ -193,7 +194,6 @@
     {
         if (nomeArquivo != null)
         {
-
             string caminhoArquivo = Server.MapPath(nomeArquivo);
 
 
