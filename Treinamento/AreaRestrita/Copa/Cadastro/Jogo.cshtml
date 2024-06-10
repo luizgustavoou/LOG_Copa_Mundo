@@ -5,6 +5,8 @@
 }
 
 @functions {
+    string extensoesValidas = ".pdf";
+
     private enum View
     {
         Index,
@@ -21,8 +23,9 @@
         public string NomeTime2 { get; set; }
         public int Placar1 { get; set; }
         public int Placar2 { get; set; }
-        public string DataInicio{ get; set; }
+        public string DataInicio { get; set; }
         public string DataFim { get; set; }
+        public string CaminhoSumula { get; set; }
 
     }
 
@@ -46,6 +49,9 @@
     List<Time> times = null;
     List<Botao> botoes = null;
 
+    HttpPostedFileBase arquivo = null;
+    string nomeArquivo = null;
+
 
     private void instanciarJogo()
     {
@@ -67,6 +73,13 @@
         if (!string.IsNullOrWhiteSpace(Request.Form["view"]))
         {
             view = (View)Enum.Parse(typeof(View), Request.Form["view"]);
+        }
+
+        nomeArquivo = Util.ChecaNulo(Request.Form["nomeArquivo"]);
+
+        if (Request.Files.Count > 0)
+        {
+            arquivo = Request.Files["arquivo"];
         }
     }
 
@@ -113,6 +126,12 @@
         parametros.Add("@IdTime2", Util.ChecaNulo(jogo.IdTime2));
         parametros.Add("@DataInicio", data + "T" + hora + ":00");
 
+        if (acao == "A")
+        {
+            string nomeArquivoSalvado = SalvarArquivo();
+            parametros.Add("@CaminhoSumula", nomeArquivoSalvado);
+        }
+
         new Dao().ExecutarAcao(acao, parametros);
     }
 
@@ -131,6 +150,55 @@
         ModelState.AddError("alert-success", "Operação realizada com sucesso");
         LimpaVariaveis();
     }
+
+    private string IsInvalid(string key)
+    {
+        return !ModelState.IsValidField(key) ? "is-invalid" : "";
+    }
+
+    private string SalvarArquivo()
+    {
+        if (arquivo == null)
+        {
+            throw new InvalidOperationException("Informe o arquivo");
+        }
+
+        if (string.IsNullOrWhiteSpace(arquivo.FileName))
+        {
+            throw new InvalidOperationException("Não foi possível identificar o nome do arquivo");
+        }
+
+        if (arquivo.ContentLength > 512 * 1000)
+        {
+            ModelState.AddError("arquivo", "Arquivo deve ter o tamanho de até 512KB");
+        }
+
+        if (!Directory.Exists(Server.MapPath("~/AreaRestrita/arquivos")))
+        {
+            Directory.CreateDirectory(Server.MapPath("~/AreaRestrita/arquivos"));
+        }
+
+        string novoNomeArquivo = Util.GenerateUniqueFileName(arquivo.FileName);
+
+        string caminhoArquivo = Path.Combine(Server.MapPath("~/AreaRestrita/arquivos"), novoNomeArquivo);
+
+        arquivo.SaveAs(caminhoArquivo);
+
+        return novoNomeArquivo;
+    }
+
+    private void ExcluirArquivo()
+    {
+        if (nomeArquivo != null)
+        {
+            string caminhoArquivo = Path.Combine(Server.MapPath("~/AreaRestrita/arquivos"), nomeArquivo);
+
+            if (File.Exists(caminhoArquivo))
+            {
+                File.Delete(caminhoArquivo);
+            }
+        }
+    }
 }
 
 @{
@@ -138,7 +206,12 @@
 
     if (acao == "I" || acao == "A" || acao == "E")
     {
-        Util.ExceptionHandler(ExecutarManutencao, this.ModelState);
+        Util.ExceptionHandler(() =>
+        {
+            ExecutarManutencao();
+        }
+        , this.ModelState);
+
     }
 
     Util.ExceptionHandler(() =>
@@ -150,9 +223,11 @@
 }
 
 
-<form name="form1" id="form1" method="post">
+<form name="form1" id="form1" method="post" enctype="multipart/form-data">
     <input type="hidden" name="acao" id="acao" />
     <input type="hidden" name="idJogo" id="idJogo" value="@idJogo" />
+    <input type="hidden" name="nomeArquivo" id="nomeArquivo" />
+
     <input type="hidden" name="view" id="view" value="@view" />
 
     <div class="container">
@@ -162,7 +237,7 @@
 
         @if (view == View.New || view == View.Edit)
         {
-            <div class="mb-3">
+            <div class="text-white mb-3">
                 <label for="idTime1">Time 1: </label>
 
                 <select class="form-select @isInvalid("idTime1")" name="idTime1" id="idTime1">
@@ -189,17 +264,36 @@
             </div>
 
             <div class="mb-3">
-                <label class="text-white" for="dataInicio">Data inicial: </label>
-                <input class="form-select @isInvalid("dataInicio")"  type="hidden" name="dataInicio" id="dataInicio"/>
+                <label for="dataInicio">Data inicial: </label>
+                <input class="form-select @isInvalid("dataInicio")" type="hidden" name="dataInicio" id="dataInicio" />
 
                 <div class="d-flex gap-3">
-                    <input class="form-select @isInvalid("dataInicio")" type="date" name="data" id="data" value="@(jogo.DataInicio != null ? Util.FormatarData(@jogo.DataInicio, Util.TypeFormat.AMERICAN_DATE) : null)"  />
+                    <input class="form-select @isInvalid("dataInicio")" type="date" name="data" id="data" value="@(jogo.DataInicio != null ? Util.FormatarData(@jogo.DataInicio, Util.TypeFormat.AMERICAN_DATE) : null)" />
 
                     <input class="form-select @isInvalid("dataInicio")" type="time" name="hora" id="hora" value="@(jogo.DataInicio != null ? Util.FormatarData(@jogo.DataInicio, Util.TypeFormat.TIME_DEFAULT) : null)" />
 
                 </div>
 
                 @PageHelper.makeFeedback("dataInicio")
+
+            </div>
+
+        }
+
+        @if (view == View.Edit)
+        {
+            <div class="text-white mt-5">
+                <div class="row">
+                    <div class="col">
+                        <label for="arquivo">Súmula: </label>
+                        <input type="file" id="arquivo" name="arquivo" class="form-control @IsInvalid("arquivo")" onchange="checkFile(this)" />
+                    </div>
+                    <div class="mt-3">
+                        <div class="small">Extensões válidas: @extensoesValidas</div>
+                        <div class="small">Tamanho máximo do arquivo: 512kB</div>
+                    </div>
+
+                </div>
 
             </div>
         }
@@ -224,7 +318,6 @@
                 if (botoes.Any(x => x.Codigo == "I"))
                 {
                     <button class="btn btn-success" type="button" onclick="novo()">Adicionar novo</button>
-
                 }
             }
         </div>
@@ -242,6 +335,7 @@
                             <th>Placar 2</th>
                             <th>Início</th>
                             <th>Fim</th>
+                            <th>Súmula</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -255,6 +349,7 @@
                                 <td>@item.Placar2</td>
                                 <td>@Util.FormatarData(item.DataInicio, Util.TypeFormat.BRAZIL_DATETIME).ToString()</td>
                                 <td>@item.DataFim</td>
+                                <td>@item.CaminhoSumula</td>
                                 <td>
                                     @if (botoes.Any(x => x.Codigo == "E" || x.Codigo == "E"))
                                     {
@@ -278,18 +373,49 @@
 
 <script>
 
-        const form = document.getElementById("form1");
+    const form = document.getElementById("form1");
 
-        function editar(idJogo) {
-            form.view.value = "@((int)View.Edit)"
-            form.idJogo.value = idJogo;
-            executarAcao('C');
+    function editar(idJogo) {
+        form.view.value = "@((int)View.Edit)"
+        form.idJogo.value = idJogo;
+        executarAcao('C');
+    }
+
+    function novo() {
+        form.view.value = "@((int)View.New)"
+        executarAcao('');
+    }
+
+    function checkFile(input) {
+        const extensoesValidas = "@extensoesValidas".toUpperCase().split(",");
+        const extensaoArquivo = input.value.substring(input.value.lastIndexOf("."));
+
+        if (extensoesValidas.indexOf(extensaoArquivo.toUpperCase()) < 0) {
+            alert("Formato do arquivo inválido. Extensões aceitas: " + extensoesValidas);
+            input.value = "";
+            return false;
         }
 
-        function novo() {
-            form.view.value = "@((int)View.New)"
-            executarAcao('');
-        }
+        return true;
+    }
+
+     //function enviar() {
+     //    var arquivo = document.form1.arquivo.value;
+
+     //    if (!arquivo) {
+     //        alert("Informe o arquivo");
+     //        return;
+     //    }
+
+     //    document.form1.acao.value = "I";
+     //    document.form1.submit();
+     //}
+
+     function excluirArquivo(nomeArquivo) {
+         document.form1.acao.value = "E";
+         document.form1.nomeArquivo.value = nomeArquivo;
+         document.form1.submit();
+     }
 </script>
 
 

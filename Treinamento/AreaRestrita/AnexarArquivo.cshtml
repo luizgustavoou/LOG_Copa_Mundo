@@ -49,7 +49,9 @@
             Directory.CreateDirectory(Server.MapPath("arquivos"));
         }
 
-        string caminhoArquivo = Path.Combine(Server.MapPath("arquivos"), arquivo.FileName);
+        string novoNomeArquivo = Util.GenerateUniqueFileName(arquivo.FileName);
+
+        string caminhoArquivo = Path.Combine(Server.MapPath("arquivos"), novoNomeArquivo);
 
         arquivo.SaveAs(caminhoArquivo);
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Web.WebPages.Html;
 using static Util;
 
@@ -67,6 +68,20 @@ public static string ChecaNulo(string str)
         return saida;
 
         
+    }
+
+    public static string GenerateUniqueFileName(string originalFileName)
+    {
+        // Obtém a extensão do arquivo original
+        string fileExtension = Path.GetExtension(originalFileName);
+
+        // Gera um nome de arquivo único usando Guid
+        string uniqueFileName = Guid.NewGuid().ToString();
+
+        // Concatena o nome único com a extensão do arquivo original
+        string uniqueFileNameWithExtension = uniqueFileName + fileExtension;
+
+        return uniqueFileNameWithExtension;
     }
 }
 
