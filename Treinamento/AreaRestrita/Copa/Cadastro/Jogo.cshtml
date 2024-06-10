@@ -424,7 +424,12 @@
     }
 
     function verSumula(caminhoArquivo) {
-        window.location.href = "/AreaRestrita/ConsultarSumula?caminhoArquivo=" + caminhoArquivo
+        const urlDestiono = "/AreaRestrita/ConsultarSumula?caminhoArquivo=" + encodeURIComponent(caminhoArquivo)
+
+        window.open(urlDestiono, "_blank");
+
+
+
     }
 </script>
 
