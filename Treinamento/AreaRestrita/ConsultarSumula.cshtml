@@ -1,0 +1,80 @@
+﻿@RenderPage("~/AreaRestrita/Seguranca.cshtml");
+
+@{
+    Page.Title = "Time";
+    Layout = "~/AreaRestrita/_Layout.cshtml";
+}
+
+@functions {
+    string acao = null;
+
+    string nomeArquivo = null;
+
+    private void AlimentaVariaveis()
+    {
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+        nomeArquivo = Util.ChecaNulo(Request.QueryString["caminhoArquivo"]);
+    }
+
+    private string IsInvalid(string key)
+    {
+        return !ModelState.IsValidField(key) ? "is-invalid" : "";
+    }
+
+    private void ExcluirArquivo()
+    {
+        if (nomeArquivo != null)
+        {
+            string caminhoArquivo = Path.Combine(Server.MapPath("arquivos"), nomeArquivo);
+
+            if (File.Exists(caminhoArquivo))
+            {
+                File.Delete(caminhoArquivo);
+            }
+        }
+    }
+}
+
+@{
+    AlimentaVariaveis();
+
+    if (acao == "E")
+    {
+        Util.ExceptionHandler(() =>
+        {
+            ExcluirArquivo();
+            ModelState.AddError("alert-success", "Operação realizada com sucesso");
+        }, this.ModelState);
+    }
+}
+
+<form name="form1" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="acao" id="acao" />
+    <input type="hidden" name="nomeArquivo" id="nomeArquivo" />
+
+    <div class="text-white container">
+        <h1>Consultar súmula</h1>
+
+        @PageHelper.MakeAlert()
+
+        <object style="width: 100%; aspect-ratio: 4/3"
+                data="@nomeArquivo"
+                width="800"
+                height="500">
+        </object>
+
+
+    </div>
+</form>
+
+<script src="~/Scripts/scripts.js"></script>
+
+<script>
+    function excluirArquivo(nomeArquivo) {
+        document.form1.acao.value = "E";
+        document.form1.nomeArquivo.value = nomeArquivo;
+        document.form1.submit();
+    }
+</script>
+
+

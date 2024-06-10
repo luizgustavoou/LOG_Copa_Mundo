@@ -351,7 +351,11 @@
                                 <td>@item.Placar2</td>
                                 <td>@Util.FormatarData(item.DataInicio, Util.TypeFormat.BRAZIL_DATETIME).ToString()</td>
                                 <td>@item.DataFim</td>
-                                <td>@item.CaminhoSumula</td>
+                                <td>
+                                    <button type="button" class="btn btn-success" onclick="verSumula('@item.CaminhoSumula')">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </td>
                                 <td>
                                     @if (botoes.Any(x => x.Codigo == "E" || x.Codigo == "E"))
                                     {
@@ -417,7 +421,11 @@
          document.form1.acao.value = "E";
          document.form1.nomeArquivo.value = nomeArquivo;
          document.form1.submit();
-     }
+    }
+
+    function verSumula(caminhoArquivo) {
+        window.location.href = "/AreaRestrita/ConsultarSumula?caminhoArquivo=" + caminhoArquivo
+    }
 </script>
 
 
