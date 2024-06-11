@@ -18,12 +18,24 @@
     string quantidadePorPagina = null;
     string pagina = null;
     string pesquisa = null;
+    double valorInicio = 0;
+    double valorFim = 0;
 
     private void AlimentaVariaveis()
     {
         quantidadePorPagina = Util.ChecaNulo(Request.Form["quantidadePorPagina"]);
         pagina = Util.ChecaNulo(Request.Form["pagina"]);
         pesquisa = Util.ChecaNulo(Request.Form["pesquisa"]);
+
+        if (!string.IsNullOrWhiteSpace(Request.Form["valorInicio"]))
+        {
+            valorInicio = Convert.ToDouble(Request.Form["valorInicio"]);
+        }
+
+        if (!string.IsNullOrWhiteSpace(Request.Form["valorFim"]))
+        {
+            valorFim = Convert.ToDouble(Request.Form["valorFim"]);
+        }
     }
 
     private void Consulta()
@@ -33,6 +45,8 @@
         parametros.Add("@QuantidadePorPagina", quantidadePorPagina);
         parametros.Add("@Pagina", pagina);
         parametros.Add("@Pesquisa", pesquisa);
+        parametros.Add("@ValorInicio", valorInicio);
+        parametros.Add("@ValorFim", valorFim);
 
         itens = new Dao().ExecutarProcedureList<Item>("stp_LGU_Paginacao_Sel", parametros);
     }
@@ -42,7 +56,8 @@
         Dictionary<string, object> parametros = new Dictionary<string, object>();
         parametros.Add("@TipoConsulta", 1);
         parametros.Add("@Pesquisa", pesquisa);
-
+        parametros.Add("@ValorInicio", valorInicio);
+        parametros.Add("@ValorFim", valorFim);
 
         List<Quantidade> quantidades = new Dao().ExecutarProcedureList<Quantidade>("stp_LGU_Paginacao_Sel", parametros);
 

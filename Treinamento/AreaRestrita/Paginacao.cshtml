@@ -16,7 +16,7 @@
         <div class="mt-5">
             Exibindo
             <span id="span-infoPaginacaoInicio" class="text-primary"></span>
-            - 
+            -
             <span id="span-infoPaginacaoFim" class="text-primary"></span>
             de
 
@@ -26,6 +26,32 @@
 
         <div class="card mt-2">
             <div class="p-2">
+                <div class="row">
+                    <div class="col">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown">Valor</button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <div class="px-2">
+                                    <label for="valorInicio">De</label>
+                                    <input type="text" id="valorInicio" name="valorInicio" class="form-control form-control-sm" />
+
+                                    <label for="valorFim">Até</label>
+                                    <input type="text" id="valorFim" name="valorFim" class="form-control form-control-sm" />
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-auto">
+
+                        <button type="button" name="limpar" id="limpar" class="btn btn-sm btn-outline-secondary">Limpar</button>
+                        <button type="button" name="filtrar" id="filtrar" class="btn btn-sm btn-primary">Filtrar</button>
+                    </div>
+
+
+                </div>
                 <div class="row mt-2">
                     <div class="col">
                         <input type="text" name="pesquisa" id="pesquisa" class="form-control" placeholder="Buscar item por código ou nome" />
@@ -73,7 +99,11 @@
     </div>
 </form>
 
+<!-- jquery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- funcionar dropdown-->
+@*<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>*@
 
 <script>
     const resultado = document.querySelector('.resultado');
@@ -84,6 +114,9 @@
         const quantidadePorPagina = document.form1.quantidadePorPagina.value;
         const pagina = document.form1.pagina.value;
         const pesquisa = document.form1.pesquisa.value;
+        const valorInicio = document.form1.valorInicio.value;
+        const valorFim = document.form1.valorFim.value;
+
 
         $.ajax({
             type: "POST",
@@ -91,7 +124,9 @@
             data: {
                 quantidadePorPagina,
                 pagina,
-                pesquisa
+                pesquisa,
+                valorInicio,
+                valorFim
             },
             success: function (res) {
                 resultado.innerHTML = res;
@@ -248,6 +283,21 @@
             document.form1.pagina.value = 1;
             consultarItens();
         }, 300))
+
+        document.getElementById("filtrar").addEventListener("click", () => {
+            document.form1.pagina.value = 1;
+            consultarItens();
+        });
+
+        document.getElementById("limpar").addEventListener("click", () => {
+            document.form1.pagina.value = 1;
+            document.form1.valorInicio.value = "";
+            document.form1.valorFim.value = "";
+            document.form1.pesquisa.value = "";
+            consultarItens();
+        });
+
+        
     }
 
     function debounce(callback, delay) {
