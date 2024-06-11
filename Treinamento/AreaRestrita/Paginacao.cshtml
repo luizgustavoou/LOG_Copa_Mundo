@@ -1,0 +1,174 @@
+﻿@{
+    Page.Title = "Três Pontos";
+    Layout = "~/AreaRestrita/_Layout.cshtml";
+}
+
+@section head {
+    <link href="~/Scripts/Style.css" rel="stylesheet" />
+}
+
+<form name="form1" id="form1" method="post">
+    <input type="hidden" name="acao" id="acao" />
+
+    <div class="container">
+        <h1>Filtro, pesquisa e paginação</h1>
+
+        <div class="mt-5">
+            Exibindo
+            <span id="span-infoPaginacaoInicio" class="text-primary"></span>
+            - 
+            <span id="span-infoPaginacaoFim" class="text-primary"></span>
+            de
+
+            <span id="span-totalRegistros"></span>
+            registros
+        </div>
+
+        <div class="card mt-2">
+            <div class="p-2">
+                <div class="row mt-2">
+                    <div class="col">
+
+                    </div>
+                    <div class="col-auto">
+                        <select id="quantidadePorPagina" name="quantidadePorPagina" class="form-select">
+                            <option value="10">10 por página</option>
+                            <option value="20">20 por página</option>
+                            <option value="30">30 por página</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="resultado"></div>
+
+            <div class="card-footer">
+                <div id="paginacao" class="row justify-content-center">
+                    <div class="col-auto">
+                        <button type="button" id="btn-paginacaoPrimeiro" class="btn btn-outline-secondary" title="Ir para o primeiro" disabled><<</button>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" id="btn-paginacaoAnterior" class="btn btn-outline-secondary" title="Anterior" disabled><</button>
+                    </div>
+                    <div class="col-auto">
+                        Página
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" name="pagina" id="pagina"></select>
+                    </div>
+                    <div class="col-auto">
+                        de <span id="quantidadeDePaginas"></span>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" id="btn-paginacaoProximo" class="btn btn-outline-secondary" title="Próximo" disabled>></button>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" id="btn-paginacaoUltimo" class="btn btn-outline-secondary" title="Ir para o último" disabled>>></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script>
+    const resultado = document.querySelector('.resultado');
+
+    function consultarItens() {
+        resultado.innerHTML = "";
+
+        const quantidadePorPagina = document.form1.quantidadePorPagina.value;
+        const pagina = document.form1.pagina.value;
+
+        $.ajax({
+            type: "POST",
+            url: "AuxPaginacao.cshtml",
+            data: {
+                quantidadePorPagina,
+                pagina
+            },
+            success: function (res) {
+                resultado.innerHTML = res;
+
+                const totalRegistros = parseInt(resultado.querySelector('#totalRegistros').innerText);
+
+                atualizarPaginacao(pagina, totalRegistros);
+
+            },
+            error: function (xhr) {
+                body.innerHTML = xhr.responseText;
+            },
+            finally: function () {
+                body.remove(div);
+            }
+        })
+    }
+
+    function atualizarPaginacao(pagina, totalRegistros) {
+        const infoPaginacaoInicio = document.querySelector("#span-infoPaginacaoInicio");
+        const infoPaginacaoFim = document.querySelector("#span-infoPaginacaoFim");
+        const infoTotalRegistros = document.querySelector("#span-totalRegistros");
+        const infoQuantidadeDePaginas = document.querySelector("#quantidadeDePaginas");
+        const quantidadePorPagina = parseInt(document.form1.quantidadePorPagina.value);
+        const selectPaginas = document.querySelector("#pagina");
+
+        let paginacaoInicio = 0;
+        let paginacaoFim = 0;
+        let quantidadeDePaginas = 0;
+
+        if (totalRegistros == 0) {
+            pagina = "";
+        }
+
+        if (totalRegistros > 0) {
+            if (pagina == "") {
+                pagina = 1;
+            }
+
+            // paginacao inicio
+            paginacaoInicio = ((pagina - 1) * quantidadePorPagina) + 1;
+
+            // paginacao fim
+            if (pagina * quantidadePorPagina <= totalRegistros) {
+                paginacaoFim = pagina * quantidadePorPagina;
+            } else {
+                paginacaoFim = totalRegistros;
+            }
+
+            // quantidade de paginas
+            quantidadeDePaginas = Math.ceil(totalRegistros / quantidadePorPagina)
+        }
+
+
+
+        infoPaginacaoInicio.innerHTML = `<b>${paginacaoInicio}</b>`;
+        infoPaginacaoFim.innerHTML = `<b>${paginacaoFim}</b>`;
+        infoTotalRegistros.innerHTML = `<b>${totalRegistros}</b>`;
+        infoQuantidadeDePaginas.innerHTML = quantidadeDePaginas;
+
+        selectPaginas.innerHTML = "";
+
+        for (var ii = 0; ii <= quantidadeDePaginas; ii++) {
+            const option = document.createElement("option");
+            option.value = ii;
+            option.textContent = ii;
+            selectPaginas.appendChild(option);
+        }
+
+        selectPaginas.value = pagina;
+
+    }
+
+    function init() {
+        consultarItens();
+    }
+
+    init();
+
+
+
+</script>

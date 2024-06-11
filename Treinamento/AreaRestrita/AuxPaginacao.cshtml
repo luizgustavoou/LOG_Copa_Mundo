@@ -1,0 +1,106 @@
+﻿@functions {
+    private class Item
+    {
+        public string Codigo { get; set; }
+        public string Descricao { get; set; }
+        public decimal Valor { get; set; }
+        public DateTime DataInclusao { get; set; }
+    }
+
+    private class Quantidade
+    {
+        public string TotalRegistros { get; set; }
+    }
+
+    List<Item> itens = new List<Item>();
+    Exception exception = null;
+    Quantidade quantidade = null;
+    string quantidadePorPagina = null;
+    string pagina = null;
+
+    private void AlimentaVariaveis()
+    {
+        quantidadePorPagina = Util.ChecaNulo(Request.Form["quantidadePorPagina"]);
+        pagina = Util.ChecaNulo(Request.Form["pagina"]);
+    }
+
+    private void Consulta()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@QuantidadePorPagina", quantidadePorPagina);
+        parametros.Add("@Pagina", pagina);
+
+        itens = new Dao().ExecutarProcedureList<Item>("stp_LGU_Paginacao_Sel", parametros);
+    }
+
+    private void ConsultaQuantidade()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+        parametros.Add("@TipoConsulta", 1);
+
+        List<Quantidade> quantidades = new Dao().ExecutarProcedureList<Quantidade>("stp_LGU_Paginacao_Sel", parametros);
+
+        quantidade = quantidades.FirstOrDefault();
+
+    }
+}
+
+@{
+    try
+    {
+        AlimentaVariaveis();
+        Consulta();
+        ConsultaQuantidade();
+
+    }
+    catch (Exception ex)
+    {
+        exception = ex;
+    }
+}
+
+@if (exception != null)
+{
+    <div class="alert alert-warning">
+        @exception.Message
+    </div>
+}
+else
+{
+    if (itens != null && itens.Count > 0)
+    {
+        <span style="display: none;" id="totalRegistros">@quantidade.TotalRegistros</span>
+
+        <table class="table table-sm table-hover table-nowrap card-table">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody class="list">
+                @foreach (Item item in itens)
+                {
+                    <tr>
+                        <td>@item.Codigo</td>
+                        <td>@item.Descricao</td>
+                        <td>@item.Valor.ToString("N2", new System.Globalization.CultureInfo("pt-br"))</td>
+                        <td>@item.DataInclusao.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-light">
+            Nenhum registro encontrado
+        </div>
+    }
+}
+
