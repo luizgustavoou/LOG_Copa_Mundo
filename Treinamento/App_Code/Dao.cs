@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using System.Linq;
+using System.Data;
 
 public class Dao
 {
@@ -105,6 +106,37 @@ public class Dao
 
 
         return autorizacoes.FirstOrDefault().NomeProcedure;
+    }
+
+    public DataTable ExecutarProcedureDt(string procedure, Dictionary<string, object> parametros)
+    {
+        DataTable dt = new DataTable();
+
+        SqlConnection conn = new SqlConnection(stringConexao);
+
+        conn.Open();
+
+        SqlCommand cmmd = NovoCmd(procedure, conn);
+
+        AdicionarParametros(cmmd, parametros);
+
+        SqlDataReader dr = cmmd.ExecuteReader();
+
+        dt.BeginLoadData();
+
+        dt.Load(dr);
+
+        dt.EndLoadData();
+
+        dr.Close();
+        dr.Dispose();
+
+        cmmd.Dispose();
+
+        conn.Close();
+        conn.Dispose();
+
+        return dt;
     }
 
     public List<T> ExecutarProcedureList<T>(string procedure, Dictionary<string, object> parametros)
