@@ -29,7 +29,10 @@
                 <div class="row">
                     <div class="col">
                         <div class="dropdown">
-                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown">Valor</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown">
+                                <span class="d-none flag text-primary">•</span>
+                                Valor
+                            </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <div class="px-2">
                                     <label for="valorInicio">De</label>
@@ -107,6 +110,9 @@
 
 <script>
     const resultado = document.querySelector('.resultado');
+    const $inputInicio = $("input[name='valorInicio']");
+    const $inputFim = $("input[name='valorFim']");
+    const $filtroFlag = $(".flag");
 
     function consultarItens() {
         resultado.innerHTML = "";
@@ -297,8 +303,20 @@
             consultarItens();
         });
 
-        
+        $("input[name='valorInicio'], input[name='valorFim']").keyup(function () {
+            if ($inputInicio.val() != "" || $inputFim.val() != "") {
+                $filtroFlag.removeClass("d-none")
+                return;
+            }
+
+            $filtroFlag.addClass("d-none")
+
+        });
+
+
     }
+
+
 
     function debounce(callback, delay) {
         let timeout;
