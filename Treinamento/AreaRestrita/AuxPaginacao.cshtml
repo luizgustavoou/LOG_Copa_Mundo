@@ -17,11 +17,13 @@
     Quantidade quantidade = null;
     string quantidadePorPagina = null;
     string pagina = null;
+    string pesquisa = null;
 
     private void AlimentaVariaveis()
     {
         quantidadePorPagina = Util.ChecaNulo(Request.Form["quantidadePorPagina"]);
         pagina = Util.ChecaNulo(Request.Form["pagina"]);
+        pesquisa = Util.ChecaNulo(Request.Form["pesquisa"]);
     }
 
     private void Consulta()
@@ -30,6 +32,7 @@
 
         parametros.Add("@QuantidadePorPagina", quantidadePorPagina);
         parametros.Add("@Pagina", pagina);
+        parametros.Add("@Pesquisa", pesquisa);
 
         itens = new Dao().ExecutarProcedureList<Item>("stp_LGU_Paginacao_Sel", parametros);
     }
@@ -38,6 +41,8 @@
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
         parametros.Add("@TipoConsulta", 1);
+        parametros.Add("@Pesquisa", pesquisa);
+
 
         List<Quantidade> quantidades = new Dao().ExecutarProcedureList<Quantidade>("stp_LGU_Paginacao_Sel", parametros);
 

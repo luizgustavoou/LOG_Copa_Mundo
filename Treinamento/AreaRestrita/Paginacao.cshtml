@@ -28,7 +28,7 @@
             <div class="p-2">
                 <div class="row mt-2">
                     <div class="col">
-
+                        <input type="text" name="pesquisa" id="pesquisa" class="form-control" placeholder="Buscar item por código ou nome" />
                     </div>
                     <div class="col-auto">
                         <select id="quantidadePorPagina" name="quantidadePorPagina" class="form-select">
@@ -83,13 +83,15 @@
 
         const quantidadePorPagina = document.form1.quantidadePorPagina.value;
         const pagina = document.form1.pagina.value;
+        const pesquisa = document.form1.pesquisa.value;
 
         $.ajax({
             type: "POST",
             url: "AuxPaginacao.cshtml",
             data: {
                 quantidadePorPagina,
-                pagina
+                pagina,
+                pesquisa
             },
             success: function (res) {
                 resultado.innerHTML = res;
@@ -201,7 +203,6 @@
     }
 
     function mudarPagina(acao = null) {
-        console.log({ acao });
         var pagina = parseInt(document.form1.pagina.value);
 
         if (acao) {
@@ -229,7 +230,6 @@
 
     function adicionarEventos() {
         Array.from(form1.querySelectorAll(".js-mudarPagina")).forEach(function (item) {
-            console.log(item)
             if (item.tagName.toLowerCase() == "select") {
                 item.addEventListener("change", () => mudarPagina());
             } else if (item.tagName.toLowerCase() == "button") {
@@ -243,6 +243,20 @@
             document.form1.pagina.value = 1;
             consultarItens();
         });
+
+        document.form1.pesquisa.addEventListener("keyup", debounce(() => {
+            document.form1.pagina.value = 1;
+            consultarItens();
+        }, 300))
+    }
+
+    function debounce(callback, delay) {
+        let timeout;
+
+        return function () {
+            clearTimeout(timeout);
+            timeout = setTimeout(callback, delay);
+        }
     }
 
     function init() {
