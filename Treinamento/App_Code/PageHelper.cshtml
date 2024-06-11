@@ -43,13 +43,13 @@
 @helper MakeTresPontos(string group, string title, string label, string tipoConsulta, string consultaComposta)
 {
     <div class="search" data-group="@group" data-tipo-consulta="@tipoConsulta" data-consulta-composta="@consultaComposta">
-        <span class="btn btn-light" onclick="openSearch(this)">
+        <span class="btn btn-light" onclick="toggleShowSearch(this)">
             ...
         </span>
-        <div class="search-card">
+        <div class="search-card show">
             <div class="search-head">
                 <div class="search-title">@title</div>
-                <div class="search-close" onclick="closeSearch(this)">x</div>
+                <div class="search-close" onclick="toggleShowSearch(this)">x</div>
             </div>
             <div class="search-body">
                 <label for="chave">@label</label>

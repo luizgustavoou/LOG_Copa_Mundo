@@ -63,7 +63,15 @@
         //console.log('oi')
     })
 
-    function openSearch(obj) {
+    function findGroup(obj) {
+        if (obj.classList.contains("search")) {
+            return obj.getAttribute("data-group")
+        }
+
+        return findGroup(obj.parentElement);
+    }
+
+    function toggleShowSearch(obj) {
         if (!obj) return;
 
         const group = findGroup(obj);
@@ -78,30 +86,50 @@
 
         if (!card) return;
 
-        card.classList.add("show");
+        card.classList.toggle("show");
 
         initSearch(search);
     }
 
-    function closeSearch(obj) {
-        if (!obj) return;
+    //function openSearch(obj) {
+    //    if (!obj) return;
 
-        const group = findGroup(obj);
+    //    const group = findGroup(obj);
 
-        if (!group) return;
+    //    if (!group) return;
 
-        const search = document.querySelector(`[data-group="${group}"][class="search"]`)
+    //    const search = document.querySelector(`[data-group="${group}"][class="search"]`)
 
-        if (!search) return;
+    //    if (!search) return;
 
-        const card = search.querySelector(".search-card");
+    //    const card = search.querySelector(".search-card");
 
-        if (!card) return;
+    //    if (!card) return;
 
-        card.classList.remove("show");
+    //    card.classList.add("show");
 
-        initSearch(search);
-    }
+    //    initSearch(search);
+    //}
+
+    //function closeSearch(obj) {
+    //    if (!obj) return;
+
+    //    const group = findGroup(obj);
+
+    //    if (!group) return;
+
+    //    const search = document.querySelector(`[data-group="${group}"][class="search"]`)
+
+    //    if (!search) return;
+
+    //    const card = search.querySelector(".search-card");
+
+    //    if (!card) return;
+
+    //    card.classList.remove("show");
+
+    //    initSearch(search);
+    //}
 
     function initSearch(search) {
         const chave = search.querySelector('[name="chave"]');
@@ -202,16 +230,10 @@
             }
         })
 
-        closeSearch(obj);
+        toggleShowSearch(obj);
     }
 
-    function findGroup(obj) {
-        if (obj.classList.contains("search")) {
-            return obj.getAttribute("data-group")
-        }
-
-        return findGroup(obj.parentElement);
-    }
+   
 
 
 </script>
