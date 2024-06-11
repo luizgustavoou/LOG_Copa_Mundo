@@ -161,10 +161,47 @@
 
         selectPaginas.value = pagina;
 
+        atualizarBotoes(pagina, quantidadeDePaginas);
+
+    }
+
+    function atualizarBotoes(pagina, quantidadeDePaginas) {
+        const btnPrimeiro = document.querySelector("#btn-paginacaoPrimeiro");
+        const btnAnterior = document.querySelector("#btn-paginacaoAnterior");
+        const btnProximo = document.querySelector("#btn-paginacaoProximo");
+        const btnUltimo = document.querySelector("#btn-paginacaoUltimo");
+
+        if (pagina == "") {
+            btnProximo.disabled = true;
+            btnUltimo.disabled = true;
+            btnAnterior.disabled = true;
+            btnPrimeiro.disabled = true;
+        } else if (pagina == 1) {
+            btnAnterior.disabled = true;
+            btnPrimeiro.disabled = true;
+
+            if (quantidadeDePaginas == 1) {
+                btnProximo.disabled = true;
+                btnUltimo.disabled = true;
+            } else {
+                btnProximo.disabled = false;
+                btnUltimo.disabled = false;
+            }
+        } else if (pagina == quantidadeDePaginas) {
+            btnProximo.disabled = true;
+            btnUltimo.disabled = true;
+            btnAnterior.disabled = false;
+            btnPrimeiro.disabled = false;
+        } else {
+            btnProximo.disabled = false;
+            btnUltimo.disabled = false;
+            btnAnterior.disabled = false;
+            btnPrimeiro.disabled = false;
+        }
     }
 
     function mudarPagina(acao = null) {
-        console.log({acao});
+        console.log({ acao });
         var pagina = parseInt(document.form1.pagina.value);
 
         if (acao) {
