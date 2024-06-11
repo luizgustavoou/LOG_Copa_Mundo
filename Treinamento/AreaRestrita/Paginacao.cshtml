@@ -46,25 +46,25 @@
             <div class="card-footer">
                 <div id="paginacao" class="row justify-content-center">
                     <div class="col-auto">
-                        <button type="button" id="btn-paginacaoPrimeiro" class="btn btn-outline-secondary" title="Ir para o primeiro" disabled><<</button>
+                        <button type="button" id="btn-paginacaoPrimeiro" class="btn btn-outline-secondary js-mudarPagina" title="Ir para o primeiro" disabled data-acao="PRIMEIRO"><<</button>
                     </div>
                     <div class="col-auto">
-                        <button type="button" id="btn-paginacaoAnterior" class="btn btn-outline-secondary" title="Anterior" disabled><</button>
+                        <button type="button" id="btn-paginacaoAnterior" class="btn btn-outline-secondary js-mudarPagina" title="Anterior" disabled data-acao="ANTERIOR"><</button>
                     </div>
                     <div class="col-auto">
                         Página
                     </div>
                     <div class="col-auto">
-                        <select class="form-select" name="pagina" id="pagina"></select>
+                        <select class="form-select js-mudarPagina" name="pagina" id="pagina"></select>
                     </div>
                     <div class="col-auto">
                         de <span id="quantidadeDePaginas"></span>
                     </div>
                     <div class="col-auto">
-                        <button type="button" id="btn-paginacaoProximo" class="btn btn-outline-secondary" title="Próximo" disabled>></button>
+                        <button type="button" id="btn-paginacaoProximo" class="btn btn-outline-secondary js-mudarPagina" title="Próximo" disabled data-acao="PROXIMO">></button>
                     </div>
                     <div class="col-auto">
-                        <button type="button" id="btn-paginacaoUltimo" class="btn btn-outline-secondary" title="Ir para o último" disabled>>></button>
+                        <button type="button" id="btn-paginacaoUltimo" class="btn btn-outline-secondary js-mudarPagina" title="Ir para o último" disabled data-acao="ULTIMO">>></button>
                     </div>
                 </div>
 
@@ -163,7 +163,53 @@
 
     }
 
+    function mudarPagina(acao = null) {
+        console.log({acao});
+        var pagina = parseInt(document.form1.pagina.value);
+
+        if (acao) {
+            switch (acao) {
+                case "PROXIMO":
+                    pagina++;
+                    break;
+                case "ANTERIOR":
+                    pagina--;
+                    break;
+                case "PRIMEIRO":
+                    pagina = 1;
+                    break;
+                case "ULTIMO":
+                    pagina = parseInt(document.querySelector("#quantidadeDePaginas").innerText);
+                    break;
+            }
+
+            document.form1.pagina.value = pagina;
+        }
+
+        consultarItens();
+
+    }
+
+    function adicionarEventos() {
+        Array.from(form1.querySelectorAll(".js-mudarPagina")).forEach(function (item) {
+            console.log(item)
+            if (item.tagName.toLowerCase() == "select") {
+                item.addEventListener("change", () => mudarPagina());
+            } else if (item.tagName.toLowerCase() == "button") {
+                item.addEventListener("click", () => {
+                    mudarPagina(item.getAttribute("data-acao"));
+                })
+            }
+        });
+
+        document.form1.querySelector("#quantidadePorPagina").addEventListener("change", () => {
+            document.form1.pagina.value = 1;
+            consultarItens();
+        });
+    }
+
     function init() {
+        adicionarEventos();
         consultarItens();
     }
 
