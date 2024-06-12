@@ -1,0 +1,213 @@
+<!-- #include file='../../funcoes.asp' -->
+@functions {
+    private enum View
+    {
+        Index,
+        New,
+        Edit
+    }
+
+    private class PreQuadroObsCNH
+    {
+        public string IdPreQuadroObservacoesCNH { get; set; }
+        public string Chave { get; set; }
+        public string ChaveAntiga { get; set; }
+        public string ChaveGrafica { get; set; }
+        public string Descricao { get; set; }
+        public string Tipo { get; set; }
+    }
+
+    bool Erro = false;
+    string acao = null;
+    string idPreMotivoRequerimento = null;
+
+    List<PreQuadroObsCNH> preQuadrosObsCNHs = null;
+    PreQuadroObsCNH preQuadroObsCNH = null;
+
+    View view = View.Index;
+
+    private void AlimentaVariaveis()
+    {
+        Erro = false;
+        idPreMotivoRequerimento = Util.ChecaNulo(Request.Form["IdPreMotivoRequerimento"]);
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+    }
+
+    private void ExecutarManutencao()
+    {
+        Manutencao();
+        ModelState.AddError("alert-success", "Operação realizada com sucesso.");
+    }
+
+    private void Manutencao()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@IdSessao", Session.SessionID);
+        parametros.Add("@IdPreQuadroObservacoesCNH", preQuadroObsCNH.IdPreQuadroObservacoesCNH);
+        parametros.Add("@Chave", preQuadroObsCNH.Chave);
+        parametros.Add("@ChaveAntiga", preQuadroObsCNH.ChaveAntiga);
+        parametros.Add("@ChaveGrafica", preQuadroObsCNH.ChaveGrafica);
+        parametros.Add("@Descricao", preQuadroObsCNH.Descricao);
+        parametros.Add("@Tipo", preQuadroObsCNH.Tipo);
+
+        new Dao().ExecutarAcao(acao, parametros);
+    }
+
+    private void Consultar()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+        parametros.Add("@IdSessao", Session.SessionID);
+
+        preQuadrosObsCNHs = new Dao().ExecutarAcaoList<PreQuadroObsCNH>("C", parametros);
+    }
+
+    private void carregarDados()
+    {
+        if (view == View.Edit && acao == "C" && preQuadrosObsCNHs != null && preQuadrosObsCNHs.Count == 1)
+        {
+            preQuadroObsCNH = preQuadrosObsCNHs.FirstOrDefault();
+        }
+    }
+
+    private void executarManutencao()
+    {
+        preQuadroObsCNH = new PreQuadroObsCNH()
+        {
+            IdPreQuadroObservacoesCNH = Util.ChecaNulo(Request.Form["idPreQuadroObservacoesCNH"]),
+            Chave = Util.ChecaNulo(Request.Form["chave"]),
+            ChaveAntiga = Util.ChecaNulo(Request.Form["chaveAntiga"]),
+            ChaveGrafica = Util.ChecaNulo(Request.Form["chaveGrafica"]),
+            Descricao = Util.ChecaNulo(Request.Form["descricao"]),
+            Tipo = Util.ChecaNulo(Request.Form["tipo"])
+
+        };
+
+        Manutencao();
+        view = View.Index;
+        ModelState.AddError("alert-success", "Operação realizada com sucesso.");
+    }
+}
+
+@{
+    AlimentaVariaveis();
+
+    if (acao == "I" || acao == "E" || acao == "A")
+    {
+        Util.ExceptionHandler(ExecutarManutencao, this.ModelState);
+    }
+
+    Util.ExceptionHandler(() =>
+    {
+        Consultar();
+        carregarDados();
+
+    }, this.ModelState);
+}
+
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1" />
+    <link href="../../../css/jquery-ui.min.css" rel="stylesheet" type="text/css">
+    <link href="../../../css/EstiloDetranNet-1.css" rel="stylesheet" type="text/css">
+</head>
+
+<body onLoad="focusFirstField();">
+
+    <form method="POST" name="form1" id="form1">
+        <!--#include file="../../botoes.asp"-->
+        <input type="hidden" name="oculto" id="oculto">
+        <input type="hidden" name="IdPreQuadroObservacoesCNH" id="IdPreQuadroObservacoesCNH" value="@preQuadroObsCNH.IdPreQuadroObservacoesCNH">
+
+        <table class="form">
+            <tr>
+                <td>Chave Antiga:</td>
+                <td><input type="text" name="ChaveAntiga" id="ChaveAntiga" size="3" maxlength="2" value="@preQuadroObsCNH.ChaveAntiga"></td>
+            </tr>
+            <tr>
+                <td>Chave:</td>
+                <td><input type="text" name="Chave" id="Chave" size="3" maxlength="2" value="@preQuadroObsCNH.Chave"></td>
+            </tr>
+            <tr>
+                <td>Chave Gráfica:</td>
+                <td><input type="text" name="ChaveGrafica" id="ChaveGrafica" size="3" maxlength="2" value="@preQuadroObsCNH.ChaveGrafica"></td>
+            </tr>
+            <tr>
+                <td>Descrição:</td>
+                <td><input type="text" name="Descricao" id="Descricao" size="100" maxlength="200" value="@preQuadroObsCNH.Descricao"></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="radio" value="A" name="Tipo" id="Tipo" @(preQuadroObsCNH.Tipo.Trim() == "A" ? "checked" : "") class="semEstilo"> Ativo
+                    <input type="radio" value="P" name="Tipo" id="Tipo" @(preQuadroObsCNH.Tipo.Trim() == "P" ? "checked" : "") class="semEstilo"> Passivo
+                </td>
+            </tr>
+        </table>
+
+        <table class="grid">
+            <thead>
+                <tr>
+                    <th>Chave Antiga</th>
+                    <th>Chave</th>
+                    <th>Chave Gráfica</th>
+                    <th>Descrição</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (preQuadrosObsCNHs != null)
+                {
+                    foreach (PreQuadroObsCNH item in preQuadrosObsCNHs)
+                    {
+                        <tr onClick="Seleciona('@item.IdPreQuadroObservacoesCNH', '@item.Descricao', '@item.Chave', '@item.ChaveAntiga', '@item.ChaveGrafica', '@item.Tipo')">
+                            <td>@item.ChaveAntiga&nbsp;</td>
+                            <td>@item.Chave&nbsp;</td>
+                            <td>@item.ChaveGrafica&nbsp;</td>
+                            <td>@item.Descricao&nbsp;</td>
+                            <td>@(item.Tipo.Trim() == "A" ? "Ativo" : "Passivo")&nbsp;</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </form>
+</body>
+</html>
+<script language="JavaScript" src="../../../js/jquery-1.11.2.min.js"></script>
+<script language="JavaScript" src="../../../js/jquery-migrate-1.2.1.min.js"></script>
+<script language="JavaScript" src="../../../js/jquery-ui.min.js"></script>
+<script language="JavaScript" src="../../../js/funcoes.js"></script>
+<script language="JavaScript">
+    function Seleciona(codigo, descricao, Chave, ChaveAntiga, ChaveGrafica, Tipo) {
+        form1.IdPreQuadroObservacoesCNH.value = codigo;
+        form1.Descricao.value = descricao;
+        form1.Chave.value = Chave;
+        form1.ChaveAntiga.value = ChaveAntiga;
+        form1.ChaveGrafica.value = ChaveGrafica;
+        if (Tipo == 'A')
+            form1.Tipo[0].checked = true;
+        else
+            form1.Tipo[1].checked = true;
+
+        hide('I');
+        show('A');
+        show('E');
+    }
+</script>
+
+
+<script language="JavaScript">
+$(function() {
+    if(@Erro) {
+        show('A');
+        show('E');
+    }else {
+		show('I');
+
+    }
+
+})
+</script>
+
+
+

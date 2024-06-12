@@ -1,0 +1,185 @@
+<!-- #include file='../../funcoes.asp' -->
+
+@functions {
+
+    private enum View
+    {
+        Index,
+        New,
+        Edit
+    }
+
+    private class PreMotivoRequerimento
+    {
+        public string IdPreMotivoRequerimento { get; set; }
+        public string Descricao { get; set; }
+        public string Chave { get; set; }
+    }
+
+    bool Erro = false;
+    string acao = null;
+    string idPreMotivoRequerimento = null;
+    string chave = null;
+    string descricao = null;
+
+    View view = View.Index;
+
+
+    PreMotivoRequerimento preMotivoRequerimento = null;
+
+    List<PreMotivoRequerimento> preMotivoRequerimentos = null;
+
+    private void AlimentaVariaveis()
+    {
+        Erro = false;
+        idPreMotivoRequerimento = Util.ChecaNulo(Request.Form["IdPreMotivoRequerimento"]);
+        chave = Util.ChecaNulo(Request.Form["Chave"]);
+        descricao = Util.ChecaNulo(Request.Form["Descricao"]);
+
+
+    }
+
+    private void instanciarPreMotivoRequerimento()
+    {
+        if (preMotivoRequerimento == null)
+        {
+            preMotivoRequerimento = new PreMotivoRequerimento();
+        }
+    }
+
+    private void carregarDados()
+    {
+        if (view == View.Edit && acao == "C" && preMotivoRequerimentos != null && preMotivoRequerimentos.Count == 1)
+        {
+            preMotivoRequerimento = preMotivoRequerimentos.FirstOrDefault();
+
+        }
+    }
+
+    private void ExecutarManutencao()
+    {
+
+        Manutencao();
+        ModelState.AddError("alert-success", "Operação realizada com sucesso.");
+    }
+
+    private void Manutencao()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@IdSessao", Session.SessionID);
+        parametros.Add("@IdPreMotivoRequerimento", preMotivoRequerimento.IdPreMotivoRequerimento);
+        parametros.Add("@Descricao", preMotivoRequerimento.Descricao);
+        parametros.Add("@Chave", preMotivoRequerimento.Chave);
+
+        new Dao().ExecutarAcao(acao, parametros);
+    }
+
+    private void Consultar()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+        parametros.Add("@IdSessao", Session.SessionID);
+
+        preMotivoRequerimentos = new Dao().ExecutarAcaoList<PreMotivoRequerimento>("C", parametros);
+    }
+}
+
+@{
+    AlimentaVariaveis();
+
+    if (acao == "I" || acao == "E" || acao == "A")
+    {
+        Util.ExceptionHandler(ExecutarManutencao, this.ModelState);
+    }
+
+    Util.ExceptionHandler(() =>
+    {
+        Consultar();
+        carregarDados();
+
+    }, this.ModelState);
+}
+
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1" />
+    <link href="../../../css/jquery-ui.min.css" rel="stylesheet" type="text/css">
+    <link href="../../../css/EstiloDetranNet-1.css" rel="stylesheet" type="text/css">
+</head>
+
+<body onLoad="focusFirstField();">
+
+    <form method="POST" name="form1" id="form1">
+        <!--#include file="../../botoes.asp"-->
+        <input type="hidden" name="acao" id="acao">
+        <input type="hidden" name="IdPreMotivoRequerimento" id="IdPreMotivoRequerimento" value="@preMotivoRequerimento.IdPreMotivoRequerimento">
+
+        <table class="form">
+            <tr>
+                <td>Chave:</td>
+                <td><input type="text" name="Chave" id="Chave" size="3" maxlength="1" value="@preMotivoRequerimento.Chave" @(Erro ? "readonly" : "") /></td>
+            </tr>
+            <tr>
+                <td>Descrição:</td>
+                <td><input type="text" name="Descricao" id="Descricao" size="100" maxlength="60" value="@preMotivoRequerimento.Descricao"></td>
+            </tr>
+        </table>
+
+        <table class="grid">
+            <thead>
+                <tr>
+                    <th>Chave</th>
+                    <th>Descrição</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (preMotivoRequerimentos != null)
+                {
+                    foreach (PreMotivoRequerimento item in preMotivoRequerimentos)
+                    {
+                        <tr onclick="Seleciona('@item.IdPreMotivoRequerimento', '@item.Descricao', '@item.Chave')">
+                            <td>@item.Chave</td>
+                            <td>@item.Descricao</td>
+                        </tr>
+
+                    }
+                }
+
+            </tbody>
+        </table>
+    </form>
+</body>
+</html>
+
+<script src="../../../js/jquery-1.11.2.min.js"></script>
+<script src="../../../js/jquery-migrate-1.2.1.min.js"></script>
+<script src="../../../js/jquery-ui.min.js"></script>
+<script src="../../../js/funcoes.js"></script>
+<script>
+    function Seleciona(codigo, descricao, Chave) {
+        form1.IdPreMotivoRequerimento.value = codigo;
+        form1.Descricao.value = descricao;
+        form1.Chave.readOnly = true;
+        form1.Chave.value = Chave;
+
+        hide('I');
+        show('A');
+        show('E');
+    }
+</script>
+
+
+<script>
+$(function() {
+    if(@Erro) {
+        show('A');
+        show('E');
+    }else {
+		show('I');
+
+    }
+
+});
+</script>
+
+

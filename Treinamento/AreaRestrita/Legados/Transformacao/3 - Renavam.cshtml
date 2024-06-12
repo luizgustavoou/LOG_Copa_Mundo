@@ -1,0 +1,154 @@
+
+<!-- #include file='../../funcoes.asp' -->
+
+@functions {
+
+    private class RenavamEntidade
+    {
+        public string Placa { get; set; }
+        public string Renavam { get; set; }
+        public string Descricao { get; set; }
+
+    }
+
+    bool Erro = false;
+    string acao = null;
+    string renavam = null;
+
+    string novoRenavam = null;
+    string motivoCorrecao = null;
+    RenavamEntidade renavamEntidade = null;
+
+
+    private void AlimentaVariaveis()
+    {
+        Erro = false;
+        novoRenavam = Util.ChecaNulo(Request.Form["novoRenavam"]);
+        motivoCorrecao = Util.ChecaNulo(Request.Form["motivoCorrecao"]);
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+    }
+
+    private void ExecutarManutencao()
+    {
+        Manutencao();
+        ModelState.AddError("alert-success", "Operação realizada com sucesso.");
+    }
+
+    private void Manutencao()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@IdSessao", Session.SessionID);
+        parametros.Add("@Placa", renavamEntidade.Placa);
+        parametros.Add("@Renavam", renavamEntidade.Renavam);
+
+        parametros.Add("@NovoRenavam", novoRenavam);
+        parametros.Add("@MotivoCorrecao", motivoCorrecao);
+
+        new Dao().ExecutarAcao(acao, parametros);
+    }
+
+    private void Consultar()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+        parametros.Add("@IdSessao", Session.SessionID);
+        parametros.Add("@Placa", renavamEntidade.Placa);
+        parametros.Add("@Placa", renavamEntidade.Renavam);
+
+        renavamEntidade = new Dao().ExecutarAcaoList<RenavamEntidade>("C", parametros).FirstOrDefault();
+    }
+
+    private void executarManutencao()
+    {
+        renavamEntidade = new RenavamEntidade()
+        {
+            Renavam = Util.ChecaNulo(Request.Form["renavam"]),
+            Placa = Util.ChecaNulo(Request.Form["placa"]),
+        };
+
+        Manutencao();
+        ModelState.AddError("alert-success", "Operação realizada com sucesso.");
+    }
+}
+
+@{
+    AlimentaVariaveis();
+
+    if (acao == "I" || acao == "E" || acao == "A")
+    {
+        Util.ExceptionHandler(ExecutarManutencao, this.ModelState);
+    }
+
+    Util.ExceptionHandler(() =>
+    {
+        Consultar();
+
+    }, this.ModelState);
+}
+
+
+<html>
+<head>
+<link href="../../../css/jquery-ui.min.css" rel="stylesheet" type="text/css">
+<link href="../../../css/EstiloDetranNet-1.css" rel="stylesheet" type="text/css">
+</head>
+
+<body onLoad="focusFirstField();">
+    <form method="post" name="form1" id="form1">
+        <input type="hidden" name="acao" id="acao">
+        <input type="hidden" value="@renavamEntidade.Renavam" name="renavam" id="renavam">
+
+        <table>
+            <tr>
+                <td> Placa :</td>
+                <td>
+                    <input type="text" size="7" maxlength="7" class="box" name="placa" id="placa" value="@renavamEntidade.Placa" onKeyPress="maiusculo();"> @renavamEntidade.Descricao
+                </td>
+            </tr>
+            <tr>
+                <td> Renavam :</td>
+                <td>
+                    <input type="text" size="12" maxlength="11" class="box" name="renavam" id="renavam" value="@renavamEntidade.Renavam" onKeyPress="isnumeric();">
+                </td>
+            </tr>
+        </table>
+        <hr>
+
+        @if (renavamEntidade != null)
+        {
+            <table>
+                <tr>
+                    <td>Novo Renavam:</td>
+                    <td><input type="text" size="12" maxlength="11" class="box" name="txtNovoRenavam" id="txtNovoRenavam" value="@novoRenavam" onKeyPress="isnumeric();"></td>
+                </tr>
+                <tr>
+                    <td>Motivo:</td>
+                    <td>
+                        <select name="motivoCorrecao" id="motivoCorrecao" size="1">
+                            <option value=""> Escolha um motivo  </option>
+                            <option @(motivoCorrecao == "1" ? "selected" : "")>Código RENAVAM duplicado na BIN </option>
+                            <option @(motivoCorrecao == "2" ? "selected" : "")>Código RENAVAM duplicado na Base Estadual </option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+
+        }
+
+
+
+    </form>
+</body>
+</html>
+
+<script language="JavaScript" src="../../../js/jquery-1.11.2.min.js"></script>
+<script language="JavaScript" src="../../../js/jquery-migrate-1.2.1.min.js"></script>
+<script language="JavaScript" src="../../../js/jquery-ui.min.js"></script>
+<script language="JavaScript" src="../../../js/funcoes.js"></script>
+<script language="Javascript" src="../../entertab.js"></script>
+
+
+
+
+
+

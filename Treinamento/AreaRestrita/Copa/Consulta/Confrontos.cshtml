@@ -1,0 +1,70 @@
+@RenderPage("~/AreaRestrita/Seguranca.cshtml");
+@{
+    Page.Title = "Classificacao";
+    Layout = "~/AreaRestrita/_Layout.cshtml";
+}
+
+@functions {
+    private class Time
+    {
+        public string IdTime { get; set; }
+        public string Nome { get; set; }
+
+    }
+
+    List<Time> times = null;
+
+    private void Consultar()
+    {
+        times = new Dao().ExecutarAcaoList<Time>("C", null);
+
+    }
+}
+
+@{
+    Util.ExceptionHandler(Consultar, this.ModelState);
+}
+
+
+<form name="form1" method="post">
+    <div class="container">
+        <h1>Confrontos times</h1>
+
+
+        @PageHelper.MakeAlert()
+
+        @if (times != null)
+        {
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Time item in times)
+                    {
+                        <tr>
+                            <td>@item.IdTime</td>
+                            <td>@item.Nome</td>
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</form>
+
+<script>
+    function consultar() {
+        document.form1.acao.value = "C";
+        document.form1.submit();
+    }
+
+
+</script>
+
+
+
