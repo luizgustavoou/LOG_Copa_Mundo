@@ -104,9 +104,9 @@
                             <td>@time1.Nome</td>
                             @foreach (Time time2 in times)
                             {
-                                <td class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "compativel" : "incompativel")" onclick="ChecaSelecao('@time1.IdTime', '@time2.IdTime')">
+                                <td id="@("TD" + time1.IdTime + "_" + time2.IdTime)" class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "compativel" : "incompativel")" onclick="ChecaSelecao('@time1.IdTime', '@time2.IdTime')">
 
-                                    <input type="checkbox" name="timesCompativel" id="@( "TC" + time1.IdTime + "_" + time2.IdTime)" value="@(time1.IdTime + "_" + time2.IdTime)" @(ehCompativel(time1.IdTime, time2.IdTime) ? "checked" : "") />
+                                    <input type="checkbox" name="timesCompativel" id="@( "C" + time1.IdTime + "_" + time2.IdTime)" value="@(time1.IdTime + "_" + time2.IdTime)" @(ehCompativel(time1.IdTime, time2.IdTime) ? "checked" : "") />
                                 </td>
                             }
                         </tr>
@@ -148,18 +148,27 @@
     }
 
     function ChecaSelecao(ii, jj) {
-        console.log({ ii, jj, status })
+        $tdConfronto1 = $(`td#TD${ii}_${jj}`);
+        $tdConfronto2 = $(`td#TD${jj}_${ii}`);
+        $confrontoCheckbox1 = $(`input#C${ii}_${jj}`);
+        $confrontoCheckbox1 = $(`input#C${jj}_${ii}`);
 
-        //$("#SI" + ii + "J" + jj).attr('checked', status);
-        //$("#SI" + jj + "J" + ii).attr('checked', status);
+        const currentStatus = !!$confrontoCheckbox1.attr("checked");
+        const newStatus = !currentStatus;
 
-        //if (status) {
-        //    $("#CI" + ii + "J" + jj).removeClass("compativel").addClass("incompativel");
-        //    $("#CI" + jj + "J" + ii).removeClass("compativel").addClass("incompativel");
-        //} else {
-        //    $("#CI" + ii + "J" + jj).removeClass("incompativel").addClass("compativel");
-        //    $("#CI" + jj + "J" + ii).removeClass("incompativel").addClass("compativel");
-        //}
+        console.log({ currentStatus, newStatus });
+
+
+        $confrontoCheckbox1.attr('checked', newStatus);
+        $confrontoCheckbox1.attr('checked', newStatus);
+
+        if (newStatus) {
+            $tdConfronto1.removeClass("incompativel").addClass("compativel");
+            $tdConfronto2.removeClass("incompativel").addClass("compativel");
+        } else {
+            $tdConfronto1.removeClass("compativel").addClass("incompativel");
+            $tdConfronto2.removeClass("compativel").addClass("incompativel");
+        }
     }
 </script>
 
