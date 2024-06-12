@@ -166,7 +166,10 @@
                                     }
                                     else
                                     {
-                                        <td class="nao-alteravel" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Não é possível alterar esse confronto pois ele possui participações cadastradas."></td>
+                        <td class="nao-alteravel" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Não é possível alterar esse confronto pois ele possui participações cadastradas.">
+
+                            <input class="form-check-input d-none" type="checkbox" name="timesCompativel" id="@("C" + time1.IdTime + "_" + time2.IdTime)" value="@(time1.IdTime + "_" + time2.IdTime)" @(ehCompativel(time1.IdTime, time2.IdTime) ? "checked" : "") />
+                        </td>
                                     }
                                 }
                             }
