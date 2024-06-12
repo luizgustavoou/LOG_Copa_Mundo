@@ -32,6 +32,22 @@
     List<Time> times = null;
     List<Compativel> compativeis = null;
 
+    private void Manutencao()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+        parametros.Add("@Compativeis", strCompativeis);
+
+
+        new Dao().ExecutarAcao(acao, parametros);
+
+    }
+
+    private void executarManutencao()
+    {
+        Manutencao();
+        ModelState.AddError("alert-success", "Operação realizada com sucesso.");
+    }
+
     private void ConsultarTimes()
     {
         Dictionary<string, object> parametros = new Dictionary<string, object>();
@@ -68,6 +84,13 @@
 
 @{
     AlimentaVariaveis();
+
+
+    if (acao == "A")
+    {
+        Util.ExceptionHandler(executarManutencao, this.ModelState);
+
+    }
 
     Util.ExceptionHandler(() =>
     {
