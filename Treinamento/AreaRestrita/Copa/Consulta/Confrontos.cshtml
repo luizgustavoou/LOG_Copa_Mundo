@@ -104,10 +104,18 @@
                             <td>@time1.Nome</td>
                             @foreach (Time time2 in times)
                             {
-                                <td id="@("TD" + time1.IdTime + "_" + time2.IdTime)" class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "compativel" : "incompativel")" onclick="ChecaSelecao('@time1.IdTime', '@time2.IdTime')">
+                                if (time1.IdTime != time2.IdTime)
+                                {
+                                    <td id="@("TD" + time1.IdTime + "_" + time2.IdTime)" class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "compativel" : "incompativel")" onclick="ChecaSelecao('@time1.IdTime', '@time2.IdTime')">
 
-                                    <input type="checkbox" name="timesCompativel" id="@( "C" + time1.IdTime + "_" + time2.IdTime)" value="@(time1.IdTime + "_" + time2.IdTime)" @(ehCompativel(time1.IdTime, time2.IdTime) ? "checked" : "") />
-                                </td>
+                                        <input type="checkbox" name="timesCompativel" id="@( "C" + time1.IdTime + "_" + time2.IdTime)" value="@(time1.IdTime + "_" + time2.IdTime)" @(ehCompativel(time1.IdTime, time2.IdTime) ? "checked" : "") />
+                                    </td>
+
+                                }
+                                else
+                                {
+                                    <td style="background-color: #d3d3d3"></td>
+                                }
                             }
                         </tr>
                     }
