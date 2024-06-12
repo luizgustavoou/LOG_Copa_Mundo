@@ -85,7 +85,7 @@
         <h1>Confrontos times</h1>
 
         <div class="mb-3">
-            <button class="btn btn-outline-secondary">Limpar</button>
+            <button class="btn btn-outline-secondary" type="submit" onclick="estadoInicial()">Limpar</button>
             <button class="btn btn-primary" type="button" onclick="executarAcao('A')">Gravar</button>
 
         </div>
@@ -189,6 +189,27 @@
         } else {
             $tdConfronto1.removeClass("compativel").addClass("incompativel");
             $tdConfronto2.removeClass("compativel").addClass("incompativel");
+        }
+    }
+
+    function estadoInicial() {
+        var elements = document.querySelectorAll('input, select');
+
+        if (elements) {
+            elements.forEach(function (item) {
+                var type = item.type;
+                var tag = item.tagName.toLowerCase();
+
+
+                if (type == 'text' || type == 'hidden' || type == 'password' || tag == 'textarea') {
+                    item.value = '';
+                } else if (type == 'checkbox' || type == 'radio') {
+                    item.checked = false;
+                } else if (tag == 'select') {
+                    item.selectedIndex = -1;
+
+                }
+            })
         }
     }
 </script>
