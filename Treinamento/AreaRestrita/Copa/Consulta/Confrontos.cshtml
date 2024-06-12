@@ -108,7 +108,7 @@
                                 {
                                     <td id="@("TD" + time1.IdTime + "_" + time2.IdTime)" class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "compativel" : "incompativel")" onclick="ChecaSelecao('@time1.IdTime', '@time2.IdTime')">
 
-                                        <input type="checkbox" name="timesCompativel" id="@( "C" + time1.IdTime + "_" + time2.IdTime)" value="@(time1.IdTime + "_" + time2.IdTime)" @(ehCompativel(time1.IdTime, time2.IdTime) ? "checked" : "") />
+                                        <input type="checkbox" class="d-none" name="timesCompativel" id="@( "C" + time1.IdTime + "_" + time2.IdTime)" value="@(time1.IdTime + "_" + time2.IdTime)" @(ehCompativel(time1.IdTime, time2.IdTime) ? "checked" : "") />
                                     </td>
 
                                 }
@@ -130,17 +130,23 @@
 
 <style>
     .compativel {
+        cursor: pointer;
         background-color: var(--bs-success) !important;
+    }
+
+    .compativel:hover {
+        background-color: var(--bs-danger) !important;
+        opacity: 0.4;
     }
 
     .incompativel {
+        cursor: pointer;
         background-color: var(--bs-danger) !important;
     }
 
-    .confronto:hover {
+    .incompativel:hover {
         background-color: var(--bs-success) !important;
-        opacity: 0.6;
-        cursor: pointer;
+        opacity: 0.4;
     }
 </style>
 
