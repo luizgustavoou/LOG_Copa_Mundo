@@ -20,9 +20,14 @@
     private void AlimentaVariaveis()
     {
         acao = Util.ChecaNulo(Request.Form["acao"]);
+        strCompativeis = Util.ChecaNulo(Request.Form["timesCompativel"]);
+
+
     }
 
     string acao = null;
+    string strCompativeis = null;
+
 
     List<Time> times = null;
     List<Compativel> compativeis = null;
@@ -62,6 +67,8 @@
 }
 
 @{
+    AlimentaVariaveis();
+
     Util.ExceptionHandler(() =>
     {
         ConsultarTimes();
@@ -79,7 +86,7 @@
 
         <div class="mb-3">
             <button class="btn btn-outline-secondary">Limpar</button>
-            <button class="btn btn-primary" onclick="executarAcao('A')">Gravar</button>
+            <button class="btn btn-primary" type="button" onclick="executarAcao('A')">Gravar</button>
 
         </div>
 
@@ -108,7 +115,7 @@
                                 {
                                     <td id="@("TD" + time1.IdTime + "_" + time2.IdTime)" class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "compativel" : "incompativel")" onclick="ChecaSelecao('@time1.IdTime', '@time2.IdTime')">
 
-                                        <input type="checkbox" class="d-none" name="timesCompativel" id="@( "C" + time1.IdTime + "_" + time2.IdTime)" value="@(time1.IdTime + "_" + time2.IdTime)" @(ehCompativel(time1.IdTime, time2.IdTime) ? "checked" : "") />
+                                        <input class="form-check-input d-none"  type="checkbox" name="timesCompativel" id="@("C" + time1.IdTime + "_" + time2.IdTime)" value="@(time1.IdTime + "_" + time2.IdTime)" @(ehCompativel(time1.IdTime, time2.IdTime) ? "checked" : "") />
                                     </td>
 
                                 }
@@ -165,7 +172,7 @@
         $tdConfronto1 = $(`td#TD${ii}_${jj}`);
         $tdConfronto2 = $(`td#TD${jj}_${ii}`);
         $confrontoCheckbox1 = $(`input#C${ii}_${jj}`);
-        $confrontoCheckbox1 = $(`input#C${jj}_${ii}`);
+        $confrontoCheckbox2 = $(`input#C${jj}_${ii}`);
 
         const currentStatus = !!$confrontoCheckbox1.attr("checked");
         const newStatus = !currentStatus;
@@ -174,7 +181,7 @@
 
 
         $confrontoCheckbox1.attr('checked', newStatus);
-        $confrontoCheckbox1.attr('checked', newStatus);
+        $confrontoCheckbox2.attr('checked', newStatus);
 
         if (newStatus) {
             $tdConfronto1.removeClass("incompativel").addClass("compativel");
