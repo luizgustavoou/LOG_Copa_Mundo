@@ -15,6 +15,7 @@
     {
         public string IdTime1 { get; set; }
         public string IdTime2 { get; set; }
+        public bool Alteravel { get; set; }
     }
 
     private void AlimentaVariaveis()
@@ -80,6 +81,22 @@
 
         return compativel;
     }
+
+    private bool ehAlteravel(string idTime1, string idTime2)
+    {
+        bool alteravel = true;
+
+        foreach (Compativel cp in compativeis)
+        {
+            if ((cp.IdTime1 == idTime1 && cp.IdTime2 == idTime2) || (cp.IdTime1 == idTime2 && cp.IdTime2 == idTime1))
+            {
+                alteravel = cp.Alteravel;
+                break;
+            }
+        }
+
+        return alteravel;
+    }
 }
 
 @{
@@ -134,17 +151,23 @@
                             <td>@time1.Nome</td>
                             @foreach (Time time2 in times)
                             {
-                                if (time1.IdTime != time2.IdTime)
+                                if (time1.IdTime == time2.IdTime)
                                 {
-                                    <td id="@("TD" + time1.IdTime + "_" + time2.IdTime)" class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "compativel" : "incompativel")" onclick="ChecaSelecao('@time1.IdTime', '@time2.IdTime')">
-
-                                        <input class="form-check-input d-none"  type="checkbox" name="timesCompativel" id="@("C" + time1.IdTime + "_" + time2.IdTime)" value="@(time1.IdTime + "_" + time2.IdTime)" @(ehCompativel(time1.IdTime, time2.IdTime) ? "checked" : "") />
-                                    </td>
-
+                                    <td style="background-color: #d3d3d3"></td>
                                 }
                                 else
                                 {
-                                    <td style="background-color: #d3d3d3"></td>
+                                    if (ehAlteravel(time1.IdTime, time2.IdTime))
+                                    {
+                                        <td id="@("TD" + time1.IdTime + "_" + time2.IdTime)" class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "compativel" : "incompativel")" onclick="ChecaSelecao('@time1.IdTime', '@time2.IdTime')">
+
+                                            <input class="form-check-input d-none" type="checkbox" name="timesCompativel" id="@("C" + time1.IdTime + "_" + time2.IdTime)" value="@(time1.IdTime + "_" + time2.IdTime)" @(ehCompativel(time1.IdTime, time2.IdTime) ? "checked" : "") />
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="nao-alteravel" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Não é possível alterar esse confronto pois ele possui participações cadastradas."></td>
+                                    }
                                 }
                             }
                         </tr>
@@ -159,6 +182,11 @@
 
 
 <style>
+    .nao-alteravel {
+        cursor: help;
+        background-color: var(--bs-warning) !important;
+    }
+
     .compativel {
         cursor: pointer;
         background-color: var(--bs-success) !important;
@@ -186,6 +214,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
     function consultar() {
         document.form1.acao.value = "C";
         document.form1.submit();
