@@ -94,7 +94,7 @@
                             <td>@time1.Nome</td>
                             @foreach (Time time2 in times)
                             {
-                                <td class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "bg-danger" : "")"></td>
+                                <td class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "bg-success" : "bg-danger")"></td>
                             }
                         </tr>
                     }
@@ -106,7 +106,7 @@
 
 <style>
     .confronto:hover {
-        background-color: var(--bs-danger);
+        background-color: var(--bs-success)!important;
         opacity: 0.6;
         cursor: pointer;
     }
