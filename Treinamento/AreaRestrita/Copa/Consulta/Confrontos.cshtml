@@ -17,6 +17,13 @@
         public string IdTime2 { get; set; }
     }
 
+    private void AlimentaVariaveis()
+    {
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+    }
+
+    string acao = null;
+
     List<Time> times = null;
     List<Compativel> compativeis = null;
 
@@ -64,12 +71,15 @@
 
 
 <form name="form1" method="post">
+    <input type="hidden" name="acao" id="acao" />
+
+
     <div class="container">
         <h1>Confrontos times</h1>
 
         <div class="mb-3">
             <button class="btn btn-outline-secondary">Limpar</button>
-            <button class="btn btn-primary">Gravar</button>
+            <button class="btn btn-primary" onclick="executarAcao('A')">Gravar</button>
 
         </div>
 
@@ -94,7 +104,10 @@
                             <td>@time1.Nome</td>
                             @foreach (Time time2 in times)
                             {
-                                <td class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "bg-success" : "bg-danger")"></td>
+                                <td class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "compativel" : "incompativel")" onclick="ChecaSelecao('@time1.IdTime', '@time2.IdTime')">
+
+                                    <input type="checkbox" name="timesCompativel" id="@( "TC" + time1.IdTime + "_" + time2.IdTime)" value="@(time1.IdTime + "_" + time2.IdTime)" @(ehCompativel(time1.IdTime, time2.IdTime) ? "checked" : "") />
+                                </td>
                             }
                         </tr>
                     }
@@ -104,14 +117,29 @@
     </div>
 </form>
 
+
+
+
 <style>
+    .compativel {
+        background-color: var(--bs-success) !important;
+    }
+
+    .incompativel {
+        background-color: var(--bs-danger) !important;
+    }
+
     .confronto:hover {
-        background-color: var(--bs-success)!important;
+        background-color: var(--bs-success) !important;
         opacity: 0.6;
         cursor: pointer;
     }
-
 </style>
+
+<script src="~/Scripts/scripts.js"></script>
+
+@*jquery*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script>
     function consultar() {
@@ -119,7 +147,20 @@
         document.form1.submit();
     }
 
+    function ChecaSelecao(ii, jj) {
+        console.log({ ii, jj, status })
 
+        //$("#SI" + ii + "J" + jj).attr('checked', status);
+        //$("#SI" + jj + "J" + ii).attr('checked', status);
+
+        //if (status) {
+        //    $("#CI" + ii + "J" + jj).removeClass("compativel").addClass("incompativel");
+        //    $("#CI" + jj + "J" + ii).removeClass("compativel").addClass("incompativel");
+        //} else {
+        //    $("#CI" + ii + "J" + jj).removeClass("incompativel").addClass("compativel");
+        //    $("#CI" + jj + "J" + ii).removeClass("incompativel").addClass("compativel");
+        //}
+    }
 </script>
 
 
