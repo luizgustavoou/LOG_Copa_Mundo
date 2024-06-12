@@ -9,20 +9,57 @@
     {
         public string IdTime { get; set; }
         public string Nome { get; set; }
+    }
 
+    private class Compativel
+    {
+        public string IdTime1 { get; set; }
+        public string IdTime2 { get; set; }
     }
 
     List<Time> times = null;
+    List<Compativel> compativeis = null;
 
-    private void Consultar()
+    private void ConsultarTimes()
     {
-        times = new Dao().ExecutarAcaoList<Time>("C", null);
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
 
+        times = new Dao().ExecutarAcaoList<Time>("C", parametros);
+
+    }
+
+    private void ConsultarCompativeis()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+
+        parametros.Add("@TipoRetorno", 1);
+
+        compativeis = new Dao().ExecutarAcaoList<Compativel>("C", parametros);
+    }
+
+    private bool ehCompativel(string idTime1, string idTime2)
+    {
+        bool compativel = false;
+
+        foreach (Compativel cp in compativeis)
+        {
+            if ((cp.IdTime1 == idTime1 && cp.IdTime2 == idTime2) || (cp.IdTime1 == idTime2 && cp.IdTime2 == idTime1))
+            {
+                compativel = true;
+                break;
+            }
+        }
+
+        return compativel;
     }
 }
 
 @{
-    Util.ExceptionHandler(Consultar, this.ModelState);
+    Util.ExceptionHandler(() =>
+    {
+        ConsultarTimes();
+        ConsultarCompativeis();
+    }, this.ModelState);
 }
 
 
@@ -54,10 +91,10 @@
                     @foreach (Time time1 in times)
                     {
                         <tr>
-                            <td>@time1.Nome</td>    
+                            <td>@time1.Nome</td>
                             @foreach (Time time2 in times)
                             {
-                                <td class="confronto"></td>
+                                <td class="confronto @(ehCompativel(time1.IdTime, time2.IdTime) ? "bg-danger" : "")"></td>
                             }
                         </tr>
                     }
@@ -69,10 +106,11 @@
 
 <style>
     .confronto:hover {
-        background-color: #ff3232;
+        background-color: var(--bs-danger);
+        opacity: 0.6;
         cursor: pointer;
-        /*FF0000*/
     }
+
 </style>
 
 <script>
