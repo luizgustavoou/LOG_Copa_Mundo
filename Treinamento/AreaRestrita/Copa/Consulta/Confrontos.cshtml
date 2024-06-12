@@ -52,7 +52,7 @@
                             <td>@time1.Nome</td>    
                             @foreach (Time time2 in times)
                             {
-                                <td></td>
+                                <td class="confronto"></td>
                             }
                         </tr>
                     }
@@ -61,6 +61,14 @@
         }
     </div>
 </form>
+
+<style>
+    .confronto:hover {
+        background-color: #ff3232;
+        cursor: pointer;
+        /*FF0000*/
+    }
+</style>
 
 <script>
     function consultar() {
