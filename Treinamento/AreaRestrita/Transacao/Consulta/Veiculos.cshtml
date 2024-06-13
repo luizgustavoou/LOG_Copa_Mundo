@@ -1,0 +1,166 @@
+﻿@RenderPage("~/AreaRestrita/Seguranca.cshtml");
+
+@{
+    Page.Title = "Time";
+    Layout = "~/AreaRestrita/_Layout.cshtml";
+}
+
+@functions {
+    private class Veiculo
+    {
+        public string inParteFixa { get; set; }
+        public string inPlaca { get; set; }
+        public string outParteFixa { get; set; }
+        public string outCodigoRetorno { get; set; }
+        public string outMensagemErro { get; set; }
+        public string outCodigoIdentificacaoVeiculo { get; set; }
+        public string outPlaca { get; set; }
+        public string outRenavam { get; set; }
+        public string outNomeSituacaoVeiculo { get; set; }
+        public string outCodigoMunicipioEmplacamento { get; set; }
+        public string outCodigoCor { get; set; }
+        public string outAnoModelo { get; set; }
+        public string outAnoFabricacao { get; set; }
+        public string outPotenciaVeiculo { get; set; }
+        public string outCilindradas { get; set; }
+        public string outCodigoCombustivel { get; set; }
+        public string outCapacidadePassageiros { get; set; }
+    }
+
+    string placa = null;
+    string acao = null;
+    string idTime = null;
+    List<Botao> botoes = null;
+
+    Veiculo veiculo = null;
+
+
+    private void AlimentaVariaveis()
+    {
+        acao = Util.ChecaNulo(Request.Form["acao"]);
+        placa = Util.ChecaNulo(Request.Form["placa"]);
+        idTime = Util.ChecaNulo(Request.Form["idTime"]);
+        botoes = new BotaoDao().GetAll();
+    }
+
+    private void LimpaVariaveis()
+    {
+        acao = null;
+        idTime = null;
+        veiculo = null;
+    }
+
+    private void Consultar()
+    {
+        Dictionary<string, object> parametros = new Dictionary<string, object>();
+        parametros.Add("@Placa", placa);
+
+        veiculo = new Dao().ExecutarAcaoList<Veiculo>("C", parametros).FirstOrDefault();
+
+    }
+
+    private string isInvalid(string key)
+    {
+        return (!ModelState.IsValidField(key) ? "is-invalid" : "");
+    }
+}
+
+@{
+    AlimentaVariaveis();
+
+    Util.ExceptionHandler(() =>
+    {
+        Consultar();
+
+    }, this.ModelState);
+}
+
+<form name="form1" method="post">
+    <input type="hidden" name="acao" id="acao" />
+    <input type="hidden" name="idTime" id="idTime" value="@idTime" />
+
+    <div class="container">
+        <h1>Veículos</h1>
+
+        @PageHelper.MakeAlert()
+
+
+
+
+        <div class="mb-3">
+            <label for="placa" class="form-label">Nome: </label>
+            <input class="form-control @isInvalid("placa")" type="text" name="placa" id="placa" value="@placa" />
+            @PageHelper.makeFeedback("placa")
+        </div>
+
+
+
+        <div class="mb-3">
+            <button class="btn btn-outline-secondary" type="submit" onclick="estadoInicial()">Limpar</button>
+
+            <button class="btn btn-primary" type="submit" onclick="executarAcao('C')">Buscar</button>
+
+
+
+
+        </div>
+        @if (veiculo != null)
+        {
+            if (veiculo.outMensagemErro != null)
+            {
+                <div class="alert alert-warning">
+                    @veiculo.outMensagemErro
+                </div>
+            }
+            else
+            {
+
+                <table class="mt-2 table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Placa</th>
+                            <th>Renavam</th>
+                            <th>Situação veículo</th>
+                            <th>Múnicipio do emplacamento</th>
+                            <th>Código cor</th>
+                            <th>Ano do modelo</th>
+                            <th>Ano de fabricação</th>
+                            <th>Potência</th>
+                            <th>Cilindradas</th>
+                            <th>Código combustível</th>
+                            <th>Capacidade de passagaieros</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td>@veiculo.outPlaca</td>
+                            <td>@veiculo.outRenavam</td>
+                            <td>@veiculo.outNomeSituacaoVeiculo</td>
+                            <td>@veiculo.outCodigoMunicipioEmplacamento</td>
+                            <td>@veiculo.outCodigoCor</td>
+                            <td>@veiculo.outAnoModelo</td>
+                            <td>@veiculo.outAnoFabricacao</td>
+                            <td>@veiculo.outPotenciaVeiculo</td>
+                            <td>@veiculo.outCilindradas</td>
+                            <td>@veiculo.outCodigoCombustivel</td>
+                            <td>@veiculo.outCapacidadePassageiros</td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+            }
+        }
+
+
+
+    </div>
+</form>
+
+<script src="~/Scripts/scripts.js"></script>
+
+<script>
+</script>
+
+
