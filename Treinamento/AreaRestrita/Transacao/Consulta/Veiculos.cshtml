@@ -120,13 +120,63 @@
             int countCentena = 0;
 
 
-            <article class="border mb-2">
-                <header class="px-2  bg-secondary-subtle">
+            <article class="overflow-auto border mb-2">
+                <header class="px-4 bg-secondary-subtle">
                     <p class="text-secondary-emphasis">MENSAGEM ENVIO</p>
                 </header>
-                <section class="d-flex flex-column px-2 py-2">
-                    <PRE>@veiculo.MensagemEnvio</PRE>
+
+                <section class="px-4 d-flex flex-column">
+
+                    @for (int ii = 0; ii < veiculo.MensagemEnvio.Length; ii++)
+                    {
+                        if (countCentena != 0 && countCentena % 100 == 0)
+                        {
+                            centenas += (countCentena / 100) % 100;
+                        }
+                        else
+                        {
+                            centenas += " ";
+                        }
+
+                        countCentena++;
+
+                    }
+                    <PRE>@centenas</PRE>
+
+                    @for (int ii = 0; ii < veiculo.MensagemEnvio.Length; ii++)
+                    {
+                        if (countDezena != 0 && countDezena % 10 == 0)
+                        {
+                            dezenas += (countDezena / 10) % 10;
+                        }
+                        else
+                        {
+                            dezenas += " ";
+                        }
+
+                        countDezena++;
+
+                    }
+                    <PRE>@dezenas</PRE>
+
+                    @for (int ii = 0; ii < veiculo.MensagemEnvio.Length; ii++)
+                    {
+                        unidade += countUnidade;
+                        countUnidade++;
+
+                        if (countUnidade == 10)
+                        {
+                            countUnidade = 0;
+                        }
+                    }
+
+                    <PRE>@unidade</PRE>
+
+
                 </section>
+
+
+
 
 
             </article>
@@ -136,7 +186,7 @@
                     <p class="text-secondary-emphasis">MENSAGEM RETORNO</p>
                 </header>
 
-                <section class="px-2 d-flex flex-column">
+                <section class="px-4 d-flex flex-column">
 
                     @for (int ii = 0; ii < veiculo.MensagemRetorno.Length; ii++)
                     {
