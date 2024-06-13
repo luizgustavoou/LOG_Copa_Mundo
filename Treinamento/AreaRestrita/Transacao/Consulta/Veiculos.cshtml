@@ -8,6 +8,8 @@
 @functions {
     private class Veiculo
     {
+        public string MensagemEnvio { get; set; }
+        public string MensagemRetorno { get; set; }
         public string inParteFixa { get; set; }
         public string inPlaca { get; set; }
         public string outParteFixa { get; set; }
@@ -106,6 +108,28 @@
         </div>
         @if (veiculo != null)
         {
+            <article class="border mb-2">
+                <header class="px-2 py-1 bg-secondary-subtle ">
+                    <p class="text-secondary-emphasis">MENSAGEM ENVIO</p>
+                </header>
+                <section class="d-flex flex-column px-2 py-2">
+                    <span>@veiculo.MensagemEnvio</span>
+                </section>
+
+
+            </article>
+
+            <article class="border mb-2">
+                <header class="px-2 py-1 bg-secondary-subtle ">
+                    <p class="text-secondary-emphasis">MENSAGEM RETORNO</p>
+                </header>
+                <section class="d-flex flex-column px-2 py-2">
+                    <span>@veiculo.MensagemRetorno</span>
+                </section>
+
+
+            </article>
+
             if (veiculo.outMensagemErro != null)
             {
                 <div class="alert alert-warning">
