@@ -77,6 +77,8 @@
     }, this.ModelState);
 }
 
+
+
 <form name="form1" method="post">
     <input type="hidden" name="acao" id="acao" />
     <input type="hidden" name="idTime" id="idTime" value="@idTime" />
@@ -108,8 +110,18 @@
         </div>
         @if (veiculo != null)
         {
+            string unidade = "";
+            int countUnidade = 0;
+
+            string dezenas = "";
+            int countDezena = 0;
+
+            string centenas = "";
+            int countCentena = 0;
+
+
             <article class="border mb-2">
-                <header class="px-2  bg-secondary-subtle ">
+                <header class="px-2  bg-secondary-subtle">
                     <p class="text-secondary-emphasis">MENSAGEM ENVIO</p>
                 </header>
                 <section class="d-flex flex-column px-2 py-2">
@@ -119,14 +131,64 @@
 
             </article>
 
-            <article class="border mb-2">
-                <header class="px-2  bg-secondary-subtle ">
+            <article class="overflow-auto border mb-2">
+                <header class="px-2 bg-secondary-subtle">
                     <p class="text-secondary-emphasis">MENSAGEM RETORNO</p>
                 </header>
-                <section class="d-flex flex-column px-2 py-2">
-                    <PRE>@veiculo.MensagemRetorno</PRE>
+
+                <section class="px-2 d-flex flex-column">
+
+                    @for (int ii = 0; ii < veiculo.MensagemRetorno.Length; ii++)
+                    {
+                        if (countCentena != 0 && countCentena % 100 == 0)
+                        {
+                            centenas += (countCentena / 100) % 100;
+                        }
+                        else
+                        {
+                            centenas += " ";
+                        }
+
+                        countCentena++;
+
+                    }
+                    <PRE>@centenas</PRE>
+
+                    @for (int ii = 0; ii < veiculo.MensagemRetorno.Length; ii++)
+                    {
+                        if (countDezena != 0 && countDezena % 10 == 0)
+                        {
+                            dezenas += (countDezena / 10) % 10;
+                        }
+                        else
+                        {
+                            dezenas += " ";
+                        }
+
+                        countDezena++;
+
+                    }
+                    <PRE>@dezenas</PRE>
+
+                    @for (int ii = 0; ii < veiculo.MensagemRetorno.Length; ii++)
+                    {
+                        unidade += countUnidade;
+                        countUnidade++;
+
+                        if (countUnidade == 10)
+                        {
+                            countUnidade = 0;
+                        }
+                    }
+
+                    <PRE>@unidade</PRE>
+
+
                 </section>
 
+    
+
+           
 
             </article>
 
@@ -184,6 +246,27 @@
     </div>
 </form>
 
+<style>
+    .pai {
+        width: 300px; /* ou qualquer outra largura desejada */
+        overflow-x: auto;
+        white-space: nowrap; /* Para garantir que os filhos não quebrem linha */
+        border: 1px solid black; /* Apenas para visualização */
+    }
+
+    .filho1, .filho2 {
+        display: inline-block;
+        width: 100%;
+        height: 100px; /* Ajuste conforme necessário */
+        border: 1px solid red; /* Apenas para visualização */
+        box-sizing: border-box;
+    }
+
+    pre {
+        overflow: visible;
+        margin-bottom: 0;
+    }
+</style>
 <script src="~/Scripts/scripts.js"></script>
 
 <script>
