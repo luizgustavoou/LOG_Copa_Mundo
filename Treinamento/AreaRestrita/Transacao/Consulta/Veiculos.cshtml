@@ -110,22 +110,26 @@
         </div>
         @if (veiculo != null)
         {
-            string unidade = "";
-            int countUnidade = 0;
-
-            string dezenas = "";
-            int countDezena = 0;
-
-            string centenas = "";
-            int countCentena = 0;
 
 
-            <article class="overflow-auto border mb-2">
-                <header class="px-4 bg-secondary-subtle">
+
+            <article class="parent overflow-auto border mb-2" style="display: grid;">
+                @{
+                    string unidade = "";
+                    int countUnidade = 0;
+
+                    string dezenas = "";
+                    int countDezena = 0;
+
+                    string centenas = "";
+                    int countCentena = 0;
+                }
+
+                <header class="px-2 bg-secondary-subtle">
                     <p class="text-secondary-emphasis">MENSAGEM ENVIO</p>
                 </header>
 
-                <div class="px-4 d-flex flex-column">
+                <div class="px-4">
 
                     @for (int ii = 0; ii < veiculo.MensagemEnvio.Length; ii++)
                     {
@@ -144,9 +148,8 @@
                     <PRE>@centenas</PRE>
                 </div>
 
-                <div class="px-4 d-flex flex-column">
+                <div class="px-4">
 
-    
 
                     @for (int ii = 0; ii < veiculo.MensagemEnvio.Length; ii++)
                     {
@@ -163,14 +166,9 @@
 
                     }
                     <PRE>@dezenas</PRE>
-
-
-
-
                 </div>
 
-                <div class="px-4 d-flex flex-column">
-
+                <div class="px-4">
                     @for (int ii = 0; ii < veiculo.MensagemEnvio.Length; ii++)
                     {
                         unidade += countUnidade;
@@ -183,22 +181,26 @@
                     }
 
                     <PRE>@unidade</PRE>
-
-
                 </div>
-
-
-
-
-
             </article>
 
-            <article class="parent overflow-auto border mb-2">
+            <article class="parent overflow-auto border mb-2" style="display: grid;">
+                @{
+                    unidade = "";
+                    countUnidade = 0;
+
+                    dezenas = "";
+                    countDezena = 0;
+
+                    centenas = "";
+                    countCentena = 0;
+                }
+
                 <header class="px-2 bg-secondary-subtle">
                     <p class="text-secondary-emphasis">MENSAGEM RETORNO</p>
                 </header>
 
-                <div class="child px-4 d-flex flex-column" style="min-width: 100%">
+                <div class="px-4">
 
                     @for (int ii = 0; ii < veiculo.MensagemRetorno.Length; ii++)
                     {
@@ -217,7 +219,7 @@
                     <PRE>@centenas</PRE>
                 </div>
 
-                <div class="child px-4 d-flex flex-column" style="min-width: 100%">
+                <div class="px-4">
 
 
                     @for (int ii = 0; ii < veiculo.MensagemRetorno.Length; ii++)
@@ -235,14 +237,9 @@
 
                     }
                     <PRE>@dezenas</PRE>
-
-
-
-
                 </div>
 
-                <div class="child px-4 d-flex flex-column" style="min-width: 100%">
-
+                <div class="px-4">
                     @for (int ii = 0; ii < veiculo.MensagemRetorno.Length; ii++)
                     {
                         unidade += countUnidade;
@@ -255,14 +252,7 @@
                     }
 
                     <PRE>@unidade</PRE>
-
-
                 </div>
-
-
-
-
-
             </article>
 
 
@@ -320,21 +310,6 @@
 </form>
 
 <style>
-    /*.parent {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-      
-        
-    }
-
-    .child {
-        background-color: red;
-        min-width: 100%;
-        flex-grow: 1;
-
-    }*/
-
     pre {
         overflow: visible;
         margin-bottom: 0;
